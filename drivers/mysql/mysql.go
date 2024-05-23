@@ -31,12 +31,16 @@ func ConnectDB(config Config) *gorm.DB {
 	}
 
 	Migration(db)
-
-	seeder.SeedAdmin(db)
+	Seeder(db)
 
 	return db
 }
 
 func Migration(db *gorm.DB) {
 	db.AutoMigrate(entities.Admin{})
+	db.AutoMigrate(entities.User{})
+}
+
+func Seeder(db *gorm.DB) {
+	seeder.SeedAdmin(db)
 }
