@@ -44,5 +44,6 @@ func Migration(db *gorm.DB) {
 
 func Seeder(db *gorm.DB) {
 	seeder.SeedAdmin(db)
-	seeder.SeedCategory(db)
+	seeder.SeedUser(db)
+  seeder.SeedCategory(db)
 }
