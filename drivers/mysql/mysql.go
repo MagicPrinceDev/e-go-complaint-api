@@ -39,8 +39,10 @@ func ConnectDB(config Config) *gorm.DB {
 func Migration(db *gorm.DB) {
 	db.AutoMigrate(entities.Admin{})
 	db.AutoMigrate(entities.User{})
+	db.AutoMigrate(entities.Category{})
 }
 
 func Seeder(db *gorm.DB) {
 	seeder.SeedAdmin(db)
+	seeder.SeedCategory(db)
 }
