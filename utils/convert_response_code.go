@@ -9,8 +9,9 @@ func ConvertResponseCode(err error) int {
 	var badRequestErrors = []error{
 		constants.ErrAllFieldsMustBeFilled,
 		constants.ErrInvalidUsernameOrPassword,
-		constants.ErrEmailAlreadyExist,
-		constants.ErrUsernameAlreadyExist,
+		constants.ErrEmailAlreadyExists,
+		constants.ErrUsernameAlreadyExists,
+		constants.ErrInvalidJWT,
 	}
 
 	if contains(badRequestErrors, err) {

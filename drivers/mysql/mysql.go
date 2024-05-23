@@ -1,6 +1,8 @@
 package mysql
 
 import (
+	"e-complaint-api/drivers/mysql/seeder"
+	"e-complaint-api/entities"
 	"fmt"
 
 	"gorm.io/driver/mysql"
@@ -28,9 +30,13 @@ func ConnectDB(config Config) *gorm.DB {
 		panic(err)
 	}
 
-	MigrationUser(db)
+	Migration(db)
+
+	seeder.SeedAdmin(db)
+
 	return db
 }
 
-func MigrationUser(db *gorm.DB) {
+func Migration(db *gorm.DB) {
+	db.AutoMigrate(entities.Admin{})
 }
