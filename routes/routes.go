@@ -2,6 +2,7 @@ package routes
 
 import (
 	"e-complaint-api/controllers/admin"
+	"e-complaint-api/controllers/user"
 	"e-complaint-api/middlewares"
 	"os"
 
@@ -12,6 +13,7 @@ import (
 
 type RouteController struct {
 	AdminController *admin.AdminController
+	UserController  *user.UserController
 }
 
 func (r *RouteController) InitRoute(e *echo.Echo) {
@@ -27,6 +29,9 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	admin.POST("/admins/login", r.AdminController.Login)
 
 	// Route For User
+	user := e.Group("/api/v1")
+	user.POST("/users/login", r.UserController.Login)
+	user.POST("/users/register", r.UserController.Register)
 
 	// Route For Admin and User
 
