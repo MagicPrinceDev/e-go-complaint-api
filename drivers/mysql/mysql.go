@@ -1,6 +1,9 @@
 package mysql
 
 import (
+	"e-complaint-api/drivers/indonesia_area_api/district"
+	"e-complaint-api/drivers/indonesia_area_api/regency"
+	"e-complaint-api/drivers/indonesia_area_api/village"
 	"e-complaint-api/drivers/mysql/seeder"
 	"e-complaint-api/entities"
 	"fmt"
@@ -30,8 +33,12 @@ func ConnectDB(config Config) *gorm.DB {
 		panic(err)
 	}
 
+	regencyAPI := regency.NewRegencyAPI()
+	districtAPI := district.NewDistrictAPI()
+	villageAPI := village.NewVillageAPI()
+
 	Migration(db)
-	Seeder(db)
+	Seeder(db, regencyAPI, districtAPI, villageAPI)
 
 	return db
 }
@@ -40,10 +47,16 @@ func Migration(db *gorm.DB) {
 	db.AutoMigrate(entities.Admin{})
 	db.AutoMigrate(entities.User{})
 	db.AutoMigrate(entities.Category{})
+	db.AutoMigrate(entities.Regency{})
+	db.AutoMigrate(entities.District{})
+	db.AutoMigrate(entities.Village{})
 }
 
-func Seeder(db *gorm.DB) {
+func Seeder(db *gorm.DB, regencyAPI entities.RegencyIndonesiaAreaAPIInterface, districtAPI entities.DistrictIndonesiaAreaAPIInterface, villageAPI entities.VillageIndonesiaAreaAPIInterface) {
 	seeder.SeedAdmin(db)
 	seeder.SeedUser(db)
-  seeder.SeedCategory(db)
+	seeder.SeedCategory(db)
+	seeder.SeedRegencyFromAPI(db, regencyAPI)
+	seeder.SeedDistrictFromAPI(db, districtAPI)
+	seeder.SeedVillageFromAPI(db, villageAPI)
 }
