@@ -10,4 +10,5 @@ var (
 	ErrUsernameAlreadyExists     = errors.New("username already exists")
 	ErrUnauthorized              = errors.New("unauthorized")
 	ErrInvalidJWT                = errors.New("invalid jwt")
+	ErrPasswordDoesntMatch       = errors.New("password doesn't match")
 )
