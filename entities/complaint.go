@@ -7,7 +7,7 @@ import (
 )
 
 type Complaint struct {
-	ID          string          `gorm:"primaryKey;length:10"`
+	ID          string          `gorm:"primaryKey;length:15"`
 	UserID      int             `gorm:"not null"`
 	CategoryID  int             `gorm:"not null"`
 	Description string          `gorm:"not null"`

@@ -41,16 +41,6 @@ func SeedComplaint(db *gorm.DB) {
 				Type:        "private",
 			},
 			{
-				ID:          "C-91nda9280k",
-				UserID:      2,
-				CategoryID:  5,
-				Description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-				RegencyID:   "3671",
-				Address:     "Jl. lorem ipsum No. 1 RT 01 RW 01, Kelurahan Lorem Ipsum, Kecamatan Lorem Ipsum, Kota Lorem Ipsum, Provinsi Lorem Ipsum",
-				Status:      "pending",
-				Type:        "public",
-			},
-			{
 				ID:          "C-271j9ak280",
 				UserID:      3,
 				CategoryID:  1,
