@@ -1,6 +1,7 @@
 package mysql
 
 import (
+	"e-complaint-api/drivers/indonesia_area_api/regency"
 	"e-complaint-api/drivers/mysql/seeder"
 	"e-complaint-api/entities"
 	"fmt"
@@ -30,13 +31,24 @@ func ConnectDB(config Config) *gorm.DB {
 		panic(err)
 	}
 
-	Migration(db)
+	regencyAPI := regency.NewRegencyAPI()
 
-	seeder.SeedAdmin(db)
+	Migration(db)
+	Seeder(db, regencyAPI)
 
 	return db
 }
 
 func Migration(db *gorm.DB) {
 	db.AutoMigrate(entities.Admin{})
+	db.AutoMigrate(entities.User{})
+	db.AutoMigrate(entities.Category{})
+	db.AutoMigrate(entities.Regency{})
+}
+
+func Seeder(db *gorm.DB, regencyAPI entities.RegencyIndonesiaAreaAPIInterface) {
+	seeder.SeedAdmin(db)
+	seeder.SeedUser(db)
+	seeder.SeedCategory(db)
+	seeder.SeedRegencyFromAPI(db, regencyAPI)
 }
