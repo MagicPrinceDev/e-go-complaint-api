@@ -1,9 +1,8 @@
 package entities
 
 type Regency struct {
-	ID        string     `json:"id" gorm:"primaryKey"`
-	Name      string     `json:"name"`
-	Districts []District `gorm:"foreignKey:RegencyID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	ID   string `json:"id" gorm:"primaryKey"`
+	Name string `json:"name"`
 }
 
 type RegencyRepositoryInterface interface {
