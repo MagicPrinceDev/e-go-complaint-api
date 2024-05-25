@@ -27,8 +27,7 @@ type AdminRepositoryInterface interface {
 	GetAllAdmins() ([]*Admin, error)
 	GetAdminByID(id int) (*Admin, error)
 	DeleteAdmin(id int) error
-	UpdateAdmin(admin *Admin) error // New method
-
+	UpdateAdmin(admin *Admin) error
 }
 
 type AdminUseCaseInterface interface {
