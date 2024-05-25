@@ -1,9 +1,9 @@
 package admin
 
 import (
-	"e-complaint-api/controllers/admin/base"
 	"e-complaint-api/controllers/admin/request"
 	"e-complaint-api/controllers/admin/response"
+	"e-complaint-api/controllers/base"
 	"e-complaint-api/entities"
 	"e-complaint-api/utils"
 	"net/http"

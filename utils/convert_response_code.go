@@ -12,6 +12,10 @@ func ConvertResponseCode(err error) int {
 		constants.ErrEmailAlreadyExists,
 		constants.ErrUsernameAlreadyExists,
 		constants.ErrInvalidJWT,
+		constants.ErrLimitAndPageMustBeFilled,
+		constants.ErrReportNotFound,
+		constants.ErrRegencyNotFound,
+		constants.ErrCategoryNotFound,
 	}
 
 	if contains(badRequestErrors, err) {

@@ -3,7 +3,7 @@ package base
 type BaseSuccessResponse struct {
 	Status  bool   `json:"status"`
 	Message string `json:"message"`
-	Data    any    `json:"data"`
+	Data    any    `json:"data,omitempty"`
 }
 
 func NewSuccessResponse(message string, data any) *BaseSuccessResponse {

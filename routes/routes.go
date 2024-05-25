@@ -2,6 +2,7 @@ package routes
 
 import (
 	"e-complaint-api/controllers/admin"
+	"e-complaint-api/controllers/complaint"
 	"e-complaint-api/controllers/user"
 	"e-complaint-api/middlewares"
 	"os"
@@ -12,8 +13,9 @@ import (
 )
 
 type RouteController struct {
-	AdminController *admin.AdminController
-	UserController  *user.UserController
+	AdminController     *admin.AdminController
+	UserController      *user.UserController
+	ComplaintController *complaint.ComplaintController
 }
 
 func (r *RouteController) InitRoute(e *echo.Echo) {
@@ -32,8 +34,15 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	user := e.Group("/api/v1")
 	user.POST("/users/login", r.UserController.Login)
 	user.POST("/users/register", r.UserController.Register)
+	user.POST("/complaints", r.ComplaintController.Create)
+	user.PUT("/complaints/:id", r.ComplaintController.Update)
 
-	// Route For Admin and User
+	// Route For All Authenticated User
+	all_user := e.Group("/api/v1")
+	all_user.Use(jwt)
+	all_user.GET("/complaints", r.ComplaintController.GetPaginated)
+	all_user.GET("/complaints/:id", r.ComplaintController.GetByID)
+	all_user.DELETE("/complaints/:id", r.ComplaintController.Delete)
 
 	// Route For Public
 }
