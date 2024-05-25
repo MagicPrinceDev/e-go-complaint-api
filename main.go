@@ -24,6 +24,10 @@ import (
 	user_rp "e-complaint-api/drivers/mysql/user"
 	user_uc "e-complaint-api/usecases/user"
 
+	category_cl "e-complaint-api/controllers/category"
+	category_rp "e-complaint-api/drivers/mysql/category"
+	category_uc "e-complaint-api/usecases/category"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -59,10 +63,15 @@ func main() {
 	complaintUsecase := complaint_uc.NewComplaintUseCase(complaintRepo)
 	ComplaintController := complaint_cl.NewComplaintController(complaintUsecase, complaintFileUsecase)
 
+	categoryRepo := category_rp.NewCategoryRepo(DB)
+	categoryUsecase := category_uc.NewCategoryUseCase(categoryRepo)
+	CategoryController := category_cl.NewCategoryController(categoryUsecase)
+
 	routes := routes.RouteController{
 		AdminController:     AdminController,
 		UserController:      UserController,
 		ComplaintController: ComplaintController,
+		CategoryController:  CategoryController,
 	}
 
 	routes.InitRoute(e)
