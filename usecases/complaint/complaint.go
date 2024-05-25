@@ -116,3 +116,22 @@ func (u *ComplaintUseCase) Delete(id string, userId int, role string) error {
 
 	return nil
 }
+
+func (u *ComplaintUseCase) Update(complaint entities.Complaint) (entities.Complaint, error) {
+	if complaint.CategoryID == 0 || complaint.UserID == 0 || complaint.RegencyID == "" || complaint.Description == "" || complaint.Address == "" || complaint.Type == "" {
+		return entities.Complaint{}, constants.ErrAllFieldsMustBeFilled
+	}
+
+	complaint, err := u.repository.Update(complaint)
+	if err != nil {
+		if strings.HasSuffix(err.Error(), "REFERENCES `regencies` (`id`))") {
+			return entities.Complaint{}, constants.ErrRegencyNotFound
+		} else if strings.HasSuffix(err.Error(), "REFERENCES `categories` (`id`))") {
+			return entities.Complaint{}, constants.ErrCategoryNotFound
+		} else {
+			return entities.Complaint{}, constants.ErrInternalServerError
+		}
+	}
+
+	return complaint, nil
+}

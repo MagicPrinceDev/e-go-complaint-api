@@ -31,6 +31,7 @@ type ComplaintRepositoryInterface interface {
 	Create(complaint *Complaint) error
 	Delete(id string, userId int) error
 	AdminDelete(id string) error
+	Update(complaint Complaint) (Complaint, error)
 }
 
 type ComplaintUseCaseInterface interface {
@@ -39,4 +40,5 @@ type ComplaintUseCaseInterface interface {
 	GetByID(id string) (Complaint, error)
 	Create(complaint *Complaint) (Complaint, error)
 	Delete(id string, userId int, role string) error
+	Update(complaint Complaint) (Complaint, error)
 }

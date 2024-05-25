@@ -161,3 +161,68 @@ func (cc *ComplaintController) Delete(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Delete Report", nil))
 }
+
+func (cc *ComplaintController) Update(c echo.Context) error {
+	id := c.Param("id")
+
+	user_id, err := utils.GetIDFromJWT(c)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	var complaintRequest complaint_request.Update
+	c.Bind(&complaintRequest)
+	complaintRequest.ID = id
+	complaintRequest.UserID = user_id
+
+	form, err := c.MultipartForm()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
+	files := form.File["files"]
+	if len(files) != 0 {
+		if len(files) > 3 {
+			return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrMaxFileCountExceeded.Error()))
+		}
+
+		// Count total file size
+		totalFileSize := 0
+		for _, file := range files {
+			totalFileSize += int(file.Size)
+		}
+
+		if totalFileSize > 10*1024*1024 {
+			return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrMaxFileSizeExceeded.Error()))
+		}
+	}
+
+	complaint, err1 := cc.complaintUseCase.Update(*complaintRequest.ToEntities())
+	if err1 != nil {
+		return c.JSON(utils.ConvertResponseCode(err1), base.NewErrorResponse(err1.Error()))
+	}
+
+	complaintResponse := complaint_response.UpdateFromEntitiesToResponse(&complaint)
+
+	if len(files) != 0 {
+		err2 := cc.complaintFileUseCase.DeleteByComplaintID(id)
+		if err2 != nil {
+			return c.JSON(utils.ConvertResponseCode(err2), base.NewErrorResponse(err2.Error()))
+		}
+
+		complaintFile, err3 := cc.complaintFileUseCase.Create(files, id)
+		if err3 != nil {
+			return c.JSON(utils.ConvertResponseCode(err3), base.NewErrorResponse(err3.Error()))
+		}
+
+		complaintFileResponse := []*complaint_file_response.ComplaintFile{}
+		for _, file := range complaintFile {
+			complaintFileResponse = append(complaintFileResponse, complaint_file_response.FromEntitiesToResponse(&file))
+		}
+
+		complaintResponse.Files = complaintFileResponse
+	}
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update Report", complaintResponse))
+
+}

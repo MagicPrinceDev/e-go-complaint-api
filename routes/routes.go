@@ -35,6 +35,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	user.POST("/users/login", r.UserController.Login)
 	user.POST("/users/register", r.UserController.Register)
 	user.POST("/complaints", r.ComplaintController.Create)
+	user.PUT("/complaints/:id", r.ComplaintController.Update)
 
 	// Route For All Authenticated User
 	all_user := e.Group("/api/v1")
