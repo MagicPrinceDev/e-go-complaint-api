@@ -20,4 +20,5 @@ var (
 	ErrCategoryNotFound          = errors.New("category not found")
 	ErrMaxFileSizeExceeded       = errors.New("max file size exceeded")
 	ErrMaxFileCountExceeded      = errors.New("max file count exceeded")
+	ErrInvalidIDFormat           = errors.New("invalid id format")
 )

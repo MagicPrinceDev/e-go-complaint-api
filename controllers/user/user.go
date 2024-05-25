@@ -1,6 +1,7 @@
 package user
 
 import (
+	"e-complaint-api/constants"
 	"e-complaint-api/controllers/base"
 	"e-complaint-api/controllers/user/request"
 	"e-complaint-api/controllers/user/response"
@@ -62,7 +63,7 @@ func (uc *UserController) GetUserByID(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, base.NewErrorResponse("Invalid ID"))
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrInvalidIDFormat.Error()))
 	}
 
 	user, err := uc.userUseCase.GetUserByID(id)
@@ -78,7 +79,7 @@ func (uc *UserController) UpdateUser(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, base.NewErrorResponse("Invalid ID"))
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrInvalidIDFormat.Error()))
 	}
 
 	jwtID, err := utils.GetIDFromJWT(c)
@@ -87,7 +88,7 @@ func (uc *UserController) UpdateUser(c echo.Context) error {
 	}
 
 	if id != jwtID {
-		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse("Unauthorized"))
+		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
 	}
 
 	var userRequest request.UpdateUser
@@ -106,17 +107,24 @@ func (uc *UserController) DeleteUser(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, base.NewErrorResponse("Invalid ID"))
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrInvalidIDFormat.Error()))
 	}
 
-	jwtID, err := utils.GetIDFromJWT(c)
-
+	userRole, err := utils.GetRoleFromJWT(c)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
-	if id != jwtID {
-		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse("Unauthorized"))
+	if userRole == "user" {
+		jwtID, err := utils.GetIDFromJWT(c)
+
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+		}
+
+		if id != jwtID {
+			return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
+		}
 	}
 
 	err = uc.userUseCase.Delete(id)
@@ -124,14 +132,14 @@ func (uc *UserController) DeleteUser(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
-	return c.JSON(http.StatusOK, base.NewDeletedResponse("Success Delete User"))
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Delete User", nil))
 }
 
 func (uc *UserController) UpdatePassword(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, base.NewErrorResponse("Invalid ID"))
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrInvalidIDFormat.Error()))
 	}
 
 	jwtID, err := utils.GetIDFromJWT(c)
@@ -140,7 +148,7 @@ func (uc *UserController) UpdatePassword(c echo.Context) error {
 	}
 
 	if id != jwtID {
-		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse("Unauthorized"))
+		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
 	}
 
 	var passwordRequest request.UpdatePassword

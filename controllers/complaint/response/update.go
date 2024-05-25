@@ -1,9 +1,9 @@
 package response
 
 import (
-	regency_response "e-complaint-api/controllers/admin/regency/response"
 	category_response "e-complaint-api/controllers/category/response"
 	file_response "e-complaint-api/controllers/complaint_file/response"
+	regency_response "e-complaint-api/controllers/regency/response"
 	user_response "e-complaint-api/controllers/user/response"
 	"e-complaint-api/entities"
 )
