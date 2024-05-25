@@ -24,18 +24,18 @@ func (cc *ComplaintController) GetPaginated(c echo.Context) error {
 	limit, _ := strconv.Atoi(c.QueryParam("limit"))
 	page, _ := strconv.Atoi(c.QueryParam("page"))
 	search := c.QueryParam("search")
-	regency_filter := c.QueryParam("regency")
-	category_filter, _ := strconv.Atoi(c.QueryParam("category"))
+	regency_filter := c.QueryParam("regency_id")
+	category_filter, _ := strconv.Atoi(c.QueryParam("category_id"))
 	status_filter := c.QueryParam("status")
 	filter := map[string]interface{}{}
 	if regency_filter == "" && category_filter == 0 && status_filter == "" {
 		filter = nil
 	} else {
 		if regency_filter != "" {
-			filter["regency"] = regency_filter
+			filter["regency_id"] = regency_filter
 		}
 		if category_filter != 0 {
-			filter["category"] = category_filter
+			filter["category_id"] = category_filter
 		}
 		if status_filter != "" {
 			filter["status"] = status_filter

@@ -24,7 +24,7 @@ func (r *ComplaintRepo) GetPaginated(limit int, page int, search string, filter 
 	}
 
 	if search != "" {
-		query = query.Where("description LIKE ?", "%"+search+"% OR id LIKE ?", "%"+search+"% OR address LIKE ?", "%"+search+"%")
+		query = query.Where("description LIKE ? OR address LIKE ? OR id LIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%")
 	}
 
 	query = query.Order(sortBy + " " + sortType)
@@ -46,7 +46,7 @@ func (r *ComplaintRepo) GetMetaData(limit int, page int, search string, filter m
 	}
 
 	if search != "" {
-		query = query.Where("description LIKE ?", "%"+search+"% OR id LIKE ?", "%"+search+"% OR address LIKE ?", "%"+search+"%")
+		query = query.Where("description LIKE ? OR address LIKE ? OR id LIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%")
 	}
 
 	if err := query.Count(&totalData).Error; err != nil {
