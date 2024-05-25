@@ -15,11 +15,21 @@ type Complaint struct {
 	Address     string          `gorm:"not null"`
 	Status      string          `gorm:"enum('pending', 'verifikasi', 'on progress', 'selesai', 'ditolak')"`
 	Type        string          `gorm:"enum('public', 'private')"`
-	CreateAt    time.Time       `gorm:"autoCreateTime"`
-	UpdateAt    time.Time       `gorm:"autoUpdateTime"`
-	DeleteAt    gorm.DeletedAt  `gorm:"index"`
+	CreatedAt   time.Time       `gorm:"autoCreateTime"`
+	UpdatedAt   time.Time       `gorm:"autoUpdateTime"`
+	DeletedAt   gorm.DeletedAt  `gorm:"index"`
 	User        User            `gorm:"foreignKey:UserID;references:ID"`
 	Regency     Regency         `gorm:"foreignKey:RegencyID;references:ID"`
 	Files       []ComplaintFile `gorm:"foreignKey:ComplaintID;references:ID"`
 	Category    Category        `gorm:"foreignKey:CategoryID;references:ID"`
+}
+
+type ComplaintRepositoryInterface interface {
+	GetPaginated(limit int, page int, search string, filter map[string]interface{}, sortBy string, sortType string) ([]Complaint, error)
+	GetMetaData(limit int, page int, search string, filter map[string]interface{}) (Metadata, error)
+}
+
+type ComplaintUseCaseInterface interface {
+	GetPaginated(limit int, page int, search string, filter map[string]interface{}, sortBy string, sortType string) ([]Complaint, error)
+	GetMetaData(limit int, page int, search string, filter map[string]interface{}) (Metadata, error)
 }

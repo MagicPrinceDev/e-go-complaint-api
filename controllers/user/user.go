@@ -1,7 +1,7 @@
 package user
 
 import (
-	"e-complaint-api/controllers/admin/base"
+	"e-complaint-api/controllers/base"
 	"e-complaint-api/controllers/user/request"
 	"e-complaint-api/controllers/user/response"
 	"e-complaint-api/entities"

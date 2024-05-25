@@ -10,4 +10,5 @@ var (
 	ErrUsernameAlreadyExists     = errors.New("username already exists")
 	ErrUnauthorized              = errors.New("unauthorized")
 	ErrInvalidJWT                = errors.New("invalid jwt")
+	ErrLimitAndPageMustBeFilled  = errors.New("limit and page must be filled")
 )

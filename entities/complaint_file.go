@@ -8,9 +8,9 @@ import (
 
 type ComplaintFile struct {
 	ID          int            `gorm:"primaryKey"`
-	ComplaintID string         `gorm:"not null;type:varchar;size:15"`
+	ComplaintID string         `gorm:"not null;type:varchar;size:15;"`
 	Path        string         `gorm:"not null"`
-	CreateAt    time.Time      `gorm:"autoCreateTime"`
-	UpdateAt    time.Time      `gorm:"autoUpdateTime"`
-	DeleteAt    gorm.DeletedAt `gorm:"index"`
+	CreatedAt   time.Time      `gorm:"autoCreateTime"`
+	UpdatedAt   time.Time      `gorm:"autoUpdateTime"`
+	DeletedAt   gorm.DeletedAt `gorm:"index"`
 }
