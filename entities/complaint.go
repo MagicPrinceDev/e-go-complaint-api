@@ -20,7 +20,7 @@ type Complaint struct {
 	DeletedAt   gorm.DeletedAt  `gorm:"index"`
 	User        User            `gorm:"foreignKey:UserID;references:ID"`
 	Regency     Regency         `gorm:"foreignKey:RegencyID;references:ID"`
-	Files       []ComplaintFile `gorm:"foreignKey:ComplaintID;references:ID"`
+	Files       []ComplaintFile `gorm:"foreignKey:ComplaintID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Category    Category        `gorm:"foreignKey:CategoryID;references:ID"`
 }
 
@@ -28,10 +28,12 @@ type ComplaintRepositoryInterface interface {
 	GetPaginated(limit int, page int, search string, filter map[string]interface{}, sortBy string, sortType string) ([]Complaint, error)
 	GetMetaData(limit int, page int, search string, filter map[string]interface{}) (Metadata, error)
 	GetByID(id string) (Complaint, error)
+	Create(complaint *Complaint) error
 }
 
 type ComplaintUseCaseInterface interface {
 	GetPaginated(limit int, page int, search string, filter map[string]interface{}, sortBy string, sortType string) ([]Complaint, error)
 	GetMetaData(limit int, page int, search string, filter map[string]interface{}) (Metadata, error)
 	GetByID(id string) (Complaint, error)
+	Create(complaint *Complaint) (Complaint, error)
 }

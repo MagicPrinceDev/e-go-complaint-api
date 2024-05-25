@@ -1,22 +1,28 @@
 package complaint
 
 import (
+	"e-complaint-api/constants"
 	"e-complaint-api/controllers/base"
-	complaintResponse "e-complaint-api/controllers/complaint/response"
+	complaint_request "e-complaint-api/controllers/complaint/request"
+	complaint_response "e-complaint-api/controllers/complaint/response"
+	complaint_file_response "e-complaint-api/controllers/complaint_file/response"
 	"e-complaint-api/entities"
 	"e-complaint-api/utils"
+	"net/http"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
 type ComplaintController struct {
-	complaintUseCase entities.ComplaintUseCaseInterface
+	complaintUseCase     entities.ComplaintUseCaseInterface
+	complaintFileUseCase entities.ComplaintFileUseCaseInterface
 }
 
-func NewComplaintController(complaintUseCase entities.ComplaintUseCaseInterface) *ComplaintController {
+func NewComplaintController(complaintUseCase entities.ComplaintUseCaseInterface, complaintFileUseCase entities.ComplaintFileUseCaseInterface) *ComplaintController {
 	return &ComplaintController{
-		complaintUseCase: complaintUseCase,
+		complaintUseCase:     complaintUseCase,
+		complaintFileUseCase: complaintFileUseCase,
 	}
 }
 
@@ -50,9 +56,9 @@ func (cc *ComplaintController) GetPaginated(c echo.Context) error {
 		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
 
-	complaintResponses := []*complaintResponse.Get{}
+	complaintResponses := []*complaint_response.Get{}
 	for _, complaint := range complaints {
-		complaintResponses = append(complaintResponses, complaintResponse.GetFromEntitiesToResponse(&complaint))
+		complaintResponses = append(complaintResponses, complaint_response.GetFromEntitiesToResponse(&complaint))
 	}
 
 	metaData, err := cc.complaintUseCase.GetMetaData(limit, page, search, filter)
@@ -73,7 +79,59 @@ func (cc *ComplaintController) GetByID(c echo.Context) error {
 		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
 
-	complaintResponse := complaintResponse.GetFromEntitiesToResponse(&complaint)
+	complaintResponse := complaint_response.GetFromEntitiesToResponse(&complaint)
 
 	return c.JSON(200, base.NewSuccessResponse("Success Get Report", complaintResponse))
+}
+
+func (cc *ComplaintController) Create(c echo.Context) error {
+	user_id, err := utils.GetIDFromJWT(c)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	var complaintRequest complaint_request.Create
+	c.Bind(&complaintRequest)
+	complaintRequest.UserID = user_id
+
+	form, err := c.MultipartForm()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+	files := form.File["files"]
+
+	if len(files) > 3 {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrMaxFileCountExceeded.Error()))
+	}
+
+	// Count total file size
+	totalFileSize := 0
+	for _, file := range files {
+		totalFileSize += int(file.Size)
+	}
+
+	if totalFileSize > 10*1024*1024 {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrMaxFileSizeExceeded.Error()))
+	}
+
+	complaint, err1 := cc.complaintUseCase.Create(complaintRequest.ToEntities())
+	if err1 != nil {
+		return c.JSON(utils.ConvertResponseCode(err1), base.NewErrorResponse(err1.Error()))
+	}
+
+	complaintResponse := complaint_response.CreateFromEntitiesToResponse(&complaint)
+
+	complaintFile, err2 := cc.complaintFileUseCase.Create(files, complaint.ID)
+	if err2 != nil {
+		return c.JSON(utils.ConvertResponseCode(err2), base.NewErrorResponse(err2.Error()))
+	}
+
+	complaintFileResponse := []*complaint_file_response.ComplaintFile{}
+	for _, file := range complaintFile {
+		complaintFileResponse = append(complaintFileResponse, complaint_file_response.FromEntitiesToResponse(&file))
+	}
+
+	complaintResponse.Files = complaintFileResponse
+
+	return c.JSON(http.StatusCreated, base.NewSuccessResponse("Success Create Report", complaintResponse))
 }

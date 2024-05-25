@@ -69,3 +69,15 @@ func (r *ComplaintRepo) GetByID(id string) (entities.Complaint, error) {
 
 	return complaint, nil
 }
+
+func (r *ComplaintRepo) Create(complaint *entities.Complaint) error {
+	if err := r.DB.Create(complaint).Error; err != nil {
+		return err
+	}
+
+	if err := r.DB.Preload("User").Preload("Regency").Preload("Category").Preload("Files").Where("id = ?", complaint.ID).First(complaint).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -3,6 +3,8 @@ package complaint
 import (
 	"e-complaint-api/constants"
 	"e-complaint-api/entities"
+	"e-complaint-api/utils"
+	"strings"
 )
 
 type ComplaintUseCase struct {
@@ -77,4 +79,24 @@ func (u *ComplaintUseCase) GetByID(id string) (entities.Complaint, error) {
 	}
 
 	return complaint, nil
+}
+
+func (u *ComplaintUseCase) Create(complaint *entities.Complaint) (entities.Complaint, error) {
+	if complaint.CategoryID == 0 || complaint.UserID == 0 || complaint.RegencyID == "" || complaint.Description == "" || complaint.Address == "" || complaint.Type == "" {
+		return entities.Complaint{}, constants.ErrAllFieldsMustBeFilled
+	}
+	(*complaint).ID = utils.GenerateID("C-", 10)
+
+	err := u.repository.Create(complaint)
+	if err != nil {
+		if strings.HasSuffix(err.Error(), "REFERENCES `regencies` (`id`))") {
+			return entities.Complaint{}, constants.ErrRegencyNotFound
+		} else if strings.HasSuffix(err.Error(), "REFERENCES `categories` (`id`))") {
+			return entities.Complaint{}, constants.ErrCategoryNotFound
+		} else {
+			return entities.Complaint{}, constants.ErrInternalServerError
+		}
+	}
+
+	return *complaint, nil
 }

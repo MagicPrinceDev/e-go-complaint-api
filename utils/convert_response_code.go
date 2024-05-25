@@ -14,6 +14,8 @@ func ConvertResponseCode(err error) int {
 		constants.ErrInvalidJWT,
 		constants.ErrLimitAndPageMustBeFilled,
 		constants.ErrReportNotFound,
+		constants.ErrRegencyNotFound,
+		constants.ErrCategoryNotFound,
 	}
 
 	if contains(badRequestErrors, err) {
