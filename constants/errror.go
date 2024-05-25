@@ -10,6 +10,7 @@ var (
 	ErrUsernameAlreadyExists     = errors.New("username already exists")
 	ErrUnauthorized              = errors.New("unauthorized")
 	ErrInvalidJWT                = errors.New("invalid jwt")
+	ErrOldPasswordDoesntMatch    = errors.New("old password doesn't match")
 	ErrLimitAndPageMustBeFilled  = errors.New("limit and page must be filled")
 	ErrReportNotFound            = errors.New("report not found")
 	ErrFailedToCreateClientGCS   = errors.New("failed to create client gcs")

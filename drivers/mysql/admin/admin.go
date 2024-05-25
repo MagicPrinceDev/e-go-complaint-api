@@ -44,3 +44,39 @@ func (r *AdminRepo) Login(admin *entities.Admin) error {
 
 	return nil
 }
+
+func (r *AdminRepo) GetAllAdmins() ([]*entities.Admin, error) {
+	var admins []*entities.Admin
+	err := r.DB.Find(&admins).Error
+	if err != nil {
+		return nil, err
+	}
+	return admins, nil
+}
+
+func (r *AdminRepo) GetAdminByID(id int) (*entities.Admin, error) {
+	var admin entities.Admin
+	if err := r.DB.First(&admin, id).Error; err != nil {
+		return nil, err
+	}
+	return &admin, nil
+}
+
+func (r *AdminRepo) DeleteAdmin(id int) error {
+	if err := r.DB.Delete(&entities.Admin{}, id).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *AdminRepo) UpdateAdmin(id int, admin *entities.Admin) error {
+	if err := r.DB.Model(&entities.Admin{}).Where("id = ?", id).Updates(&admin).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *AdminRepo) UpdatePassword(id int, newPassword string) error {
+	return r.DB.Model(&entities.Admin{}).Where("id = ?", id).Updates(&entities.Admin{Password: newPassword}).Error
+}

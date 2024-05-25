@@ -12,6 +12,7 @@ func ConvertResponseCode(err error) int {
 		constants.ErrEmailAlreadyExists,
 		constants.ErrUsernameAlreadyExists,
 		constants.ErrInvalidJWT,
+		constants.ErrOldPasswordDoesntMatch,
 		constants.ErrLimitAndPageMustBeFilled,
 		constants.ErrReportNotFound,
 		constants.ErrRegencyNotFound,

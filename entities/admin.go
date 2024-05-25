@@ -24,9 +24,19 @@ type Admin struct {
 type AdminRepositoryInterface interface {
 	CreateAccount(admin *Admin) error
 	Login(admin *Admin) error
+	GetAllAdmins() ([]*Admin, error)
+	GetAdminByID(id int) (*Admin, error)
+	DeleteAdmin(id int) error
+	UpdateAdmin(id int, user *Admin) error
+	UpdatePassword(id int, newPassword string) error
 }
 
 type AdminUseCaseInterface interface {
 	CreateAccount(admin *Admin) (Admin, error)
 	Login(admin *Admin) (Admin, error)
+	GetAllAdmins() ([]Admin, error)
+	GetAdminByID(id int) (*Admin, error)
+	DeleteAdmin(id int) error
+	UpdateAdmin(id int, user *Admin) (Admin, error)
+	UpdatePassword(id int, oldPassword, newPassword string) error
 }
