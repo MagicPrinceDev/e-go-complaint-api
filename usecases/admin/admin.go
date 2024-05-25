@@ -101,24 +101,32 @@ func (u *AdminUseCase) UpdateAdmin(id int, admin *entities.Admin) (entities.Admi
 	if admin.Email != "" {
 		existingAdmin.Email = admin.Email
 	}
-	if admin.Password != "" {
-		hash, _ := utils.HashPassword(admin.Password)
-		existingAdmin.Password = hash
-	}
+
 	if admin.Username != "" {
 		existingAdmin.Username = admin.Username
 	}
 	if admin.TelephoneNumber != "" {
 		existingAdmin.TelephoneNumber = admin.TelephoneNumber
 	}
-	if admin.ProfilePhoto != "" {
-		existingAdmin.ProfilePhoto = admin.ProfilePhoto
-	}
 
-	err = u.repository.UpdateAdmin(existingAdmin)
+	err = u.repository.UpdateAdmin(id, existingAdmin)
 	if err != nil {
 		return entities.Admin{}, constants.ErrInternalServerError
 	}
 
 	return *existingAdmin, nil
+}
+
+func (u *AdminUseCase) UpdatePassword(id int, oldPassword, newPassword string) error {
+	existingAdmin, err := u.repository.GetAdminByID(id)
+	if err != nil {
+		return constants.ErrInternalServerError
+	}
+
+	if !utils.CheckPasswordHash(oldPassword, existingAdmin.Password) {
+		return constants.ErrOldPasswordDoesntMatch
+	}
+
+	hash, _ := utils.HashPassword(newPassword)
+	return u.repository.UpdatePassword(id, hash)
 }
