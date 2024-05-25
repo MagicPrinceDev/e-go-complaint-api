@@ -69,3 +69,12 @@ func (u *ComplaintUseCase) GetMetaData(limit int, page int, search string, filte
 
 	return metaData, nil
 }
+
+func (u *ComplaintUseCase) GetByID(id string) (entities.Complaint, error) {
+	complaint, err := u.repository.GetByID(id)
+	if err != nil {
+		return entities.Complaint{}, err
+	}
+
+	return complaint, nil
+}

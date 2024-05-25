@@ -13,6 +13,7 @@ func ConvertResponseCode(err error) int {
 		constants.ErrUsernameAlreadyExists,
 		constants.ErrInvalidJWT,
 		constants.ErrLimitAndPageMustBeFilled,
+		constants.ErrReportNotFound,
 	}
 
 	if contains(badRequestErrors, err) {

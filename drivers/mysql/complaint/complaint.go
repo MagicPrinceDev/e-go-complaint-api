@@ -1,6 +1,7 @@
 package complaint
 
 import (
+	"e-complaint-api/constants"
 	"e-complaint-api/entities"
 
 	"gorm.io/gorm"
@@ -57,4 +58,14 @@ func (r *ComplaintRepo) GetMetaData(limit int, page int, search string, filter m
 	}
 
 	return metadata, nil
+}
+
+func (r *ComplaintRepo) GetByID(id string) (entities.Complaint, error) {
+	var complaint entities.Complaint
+
+	if err := r.DB.Preload("User").Preload("Regency").Preload("Category").Preload("Files").Where("id = ?", id).First(&complaint).Error; err != nil {
+		return entities.Complaint{}, constants.ErrReportNotFound
+	}
+
+	return complaint, nil
 }

@@ -39,6 +39,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	all_user := e.Group("/api/v1")
 	all_user.Use(jwt)
 	all_user.GET("/complaints", r.ComplaintController.GetPaginated)
+	all_user.GET("/complaints/:id", r.ComplaintController.GetByID)
 
 	// Route For Public
 }

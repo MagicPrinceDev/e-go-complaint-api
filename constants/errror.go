@@ -11,4 +11,5 @@ var (
 	ErrUnauthorized              = errors.New("unauthorized")
 	ErrInvalidJWT                = errors.New("invalid jwt")
 	ErrLimitAndPageMustBeFilled  = errors.New("limit and page must be filled")
+	ErrReportNotFound            = errors.New("report not found")
 )

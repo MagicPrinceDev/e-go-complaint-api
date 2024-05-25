@@ -27,9 +27,11 @@ type Complaint struct {
 type ComplaintRepositoryInterface interface {
 	GetPaginated(limit int, page int, search string, filter map[string]interface{}, sortBy string, sortType string) ([]Complaint, error)
 	GetMetaData(limit int, page int, search string, filter map[string]interface{}) (Metadata, error)
+	GetByID(id string) (Complaint, error)
 }
 
 type ComplaintUseCaseInterface interface {
 	GetPaginated(limit int, page int, search string, filter map[string]interface{}, sortBy string, sortType string) ([]Complaint, error)
 	GetMetaData(limit int, page int, search string, filter map[string]interface{}) (Metadata, error)
+	GetByID(id string) (Complaint, error)
 }

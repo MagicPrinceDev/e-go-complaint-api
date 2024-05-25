@@ -64,3 +64,16 @@ func (cc *ComplaintController) GetPaginated(c echo.Context) error {
 
 	return c.JSON(200, base.NewSuccessResponseWithMetadata("Success Get Reports", complaintResponses, *metaDataResponse))
 }
+
+func (cc *ComplaintController) GetByID(c echo.Context) error {
+	id := c.Param("id")
+
+	complaint, err := cc.complaintUseCase.GetByID(id)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	complaintResponse := complaintResponse.GetFromEntitiesToResponse(&complaint)
+
+	return c.JSON(200, base.NewSuccessResponse("Success Get Report", complaintResponse))
+}
