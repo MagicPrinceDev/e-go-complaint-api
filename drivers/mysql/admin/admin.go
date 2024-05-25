@@ -69,9 +69,14 @@ func (r *AdminRepo) DeleteAdmin(id int) error {
 	return nil
 }
 
-func (r *AdminRepo) UpdateAdmin(admin *entities.Admin) error {
-	if err := r.DB.Save(admin).Error; err != nil {
+func (r *AdminRepo) UpdateAdmin(id int, admin *entities.Admin) error {
+	if err := r.DB.Model(&entities.Admin{}).Where("id = ?", id).Updates(&admin).Error; err != nil {
 		return err
 	}
+
 	return nil
+}
+
+func (r *AdminRepo) UpdatePassword(id int, newPassword string) error {
+	return r.DB.Model(&entities.Admin{}).Where("id = ?", id).Updates(&entities.Admin{Password: newPassword}).Error
 }

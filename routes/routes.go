@@ -28,6 +28,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	superAdmin.GET("/admins/:id", r.AdminController.GetAdminByID)
 	superAdmin.DELETE("/admins/:id", r.AdminController.DeleteAdmin)
 	superAdmin.PUT("/admins/:id", r.AdminController.UpdateAdmin)
+	superAdmin.PUT("/admins/:id/change-password", r.AdminController.UpdatePassword)
 
 	// Route For Admin
 	admin := e.Group("/api/v1")
@@ -36,6 +37,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	admin.GET("/users", r.UserController.GetAllUsers)
 	admin.POST("/admins/login", r.AdminController.Login)
 	admin.PUT("/admins/:id", r.AdminController.UpdateAdmin)
+	admin.PUT("/admins/:id/change-password", r.AdminController.UpdatePassword)
 
 	// Route For User
 	user := e.Group("/api/v1")
