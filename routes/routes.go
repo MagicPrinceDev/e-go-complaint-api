@@ -41,6 +41,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	all_user.Use(jwt)
 	all_user.GET("/complaints", r.ComplaintController.GetPaginated)
 	all_user.GET("/complaints/:id", r.ComplaintController.GetByID)
+	all_user.DELETE("/complaints/:id", r.ComplaintController.Delete)
 
 	// Route For Public
 }

@@ -44,3 +44,12 @@ func (u *ComplaintFileUseCase) Create(files []*multipart.FileHeader, complaintID
 
 	return convertedComplaintFiles, nil
 }
+
+func (u *ComplaintFileUseCase) DeleteByComplaintID(complaintID string) error {
+	err_delete := u.repository.DeleteByComplaintID(complaintID)
+	if err_delete != nil {
+		return err_delete
+	}
+
+	return nil
+}

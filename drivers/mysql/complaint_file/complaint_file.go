@@ -21,3 +21,19 @@ func (r *ComplaintFileRepo) Create(complaintFiles []*entities.ComplaintFile) err
 
 	return nil
 }
+
+func (r *ComplaintFileRepo) DeleteByComplaintID(complaintID string) error {
+	var complaintFiles []entities.ComplaintFile
+	if err := r.DB.Where("complaint_id = ?", complaintID).Find(&complaintFiles).Error; err != nil {
+		return err
+	}
+
+	for _, cf := range complaintFiles {
+		cf.DeletedAt = gorm.DeletedAt{Time: cf.UpdatedAt, Valid: true}
+		if err := r.DB.Save(&cf).Error; err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

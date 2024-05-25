@@ -13,7 +13,7 @@ type Complaint struct {
 	Description string          `gorm:"not null"`
 	RegencyID   string          `gorm:"not null;type:varchar;size:4"`
 	Address     string          `gorm:"not null"`
-	Status      string          `gorm:"enum('pending', 'verifikasi', 'on progress', 'selesai', 'ditolak')"`
+	Status      string          `gorm:"enum('pending', 'verifikasi', 'on progress', 'selesai', 'ditolak');default:'pending'"`
 	Type        string          `gorm:"enum('public', 'private')"`
 	CreatedAt   time.Time       `gorm:"autoCreateTime"`
 	UpdatedAt   time.Time       `gorm:"autoUpdateTime"`
@@ -29,6 +29,8 @@ type ComplaintRepositoryInterface interface {
 	GetMetaData(limit int, page int, search string, filter map[string]interface{}) (Metadata, error)
 	GetByID(id string) (Complaint, error)
 	Create(complaint *Complaint) error
+	Delete(id string, userId int) error
+	AdminDelete(id string) error
 }
 
 type ComplaintUseCaseInterface interface {
@@ -36,4 +38,5 @@ type ComplaintUseCaseInterface interface {
 	GetMetaData(limit int, page int, search string, filter map[string]interface{}) (Metadata, error)
 	GetByID(id string) (Complaint, error)
 	Create(complaint *Complaint) (Complaint, error)
+	Delete(id string, userId int, role string) error
 }

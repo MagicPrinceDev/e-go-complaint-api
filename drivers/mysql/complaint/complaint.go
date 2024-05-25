@@ -3,6 +3,7 @@ package complaint
 import (
 	"e-complaint-api/constants"
 	"e-complaint-api/entities"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -77,6 +78,40 @@ func (r *ComplaintRepo) Create(complaint *entities.Complaint) error {
 
 	if err := r.DB.Preload("User").Preload("Regency").Preload("Category").Preload("Files").Where("id = ?", complaint.ID).First(complaint).Error; err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (r *ComplaintRepo) Delete(id string, userId int) error {
+	var complaint entities.Complaint
+
+	if err := r.DB.Where("id = ?", id).First(&complaint).Error; err != nil {
+		return constants.ErrReportNotFound
+	}
+
+	if complaint.UserID != userId {
+		return constants.ErrUnauthorized
+	}
+
+	complaint.DeletedAt = gorm.DeletedAt{Time: time.Now(), Valid: true}
+	if err := r.DB.Save(&complaint).Error; err != nil {
+		return constants.ErrInternalServerError
+	}
+
+	return nil
+}
+
+func (r *ComplaintRepo) AdminDelete(id string) error {
+	var complaint entities.Complaint
+
+	if err := r.DB.Where("id = ?", id).First(&complaint).Error; err != nil {
+		return constants.ErrReportNotFound
+	}
+
+	complaint.DeletedAt = gorm.DeletedAt{Time: time.Now(), Valid: true}
+	if err := r.DB.Save(&complaint).Error; err != nil {
+		return constants.ErrInternalServerError
 	}
 
 	return nil

@@ -135,3 +135,29 @@ func (cc *ComplaintController) Create(c echo.Context) error {
 
 	return c.JSON(http.StatusCreated, base.NewSuccessResponse("Success Create Report", complaintResponse))
 }
+
+func (cc *ComplaintController) Delete(c echo.Context) error {
+	id := c.Param("id")
+
+	user_id, err := utils.GetIDFromJWT(c)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	role, err := utils.GetRoleFromJWT(c)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	err = cc.complaintUseCase.Delete(id, user_id, role)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	err = cc.complaintFileUseCase.DeleteByComplaintID(id)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Delete Report", nil))
+}

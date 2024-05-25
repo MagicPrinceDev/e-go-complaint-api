@@ -18,12 +18,15 @@ type ComplaintFile struct {
 
 type ComplaintFileRepositoryInterface interface {
 	Create(complaintFiles []*ComplaintFile) error
+	DeleteByComplaintID(complaintID string) error
 }
 
 type ComplaintFileGCSAPIInterface interface {
 	Upload(files []*multipart.FileHeader) ([]string, error)
+	Delete(filePaths []string) error
 }
 
 type ComplaintFileUseCaseInterface interface {
 	Create(files []*multipart.FileHeader, complaintID string) ([]ComplaintFile, error)
+	DeleteByComplaintID(complaintID string) error
 }

@@ -100,3 +100,19 @@ func (u *ComplaintUseCase) Create(complaint *entities.Complaint) (entities.Compl
 
 	return *complaint, nil
 }
+
+func (u *ComplaintUseCase) Delete(id string, userId int, role string) error {
+	if role == "admin" || role == "super_admin" {
+		err := u.repository.AdminDelete(id)
+		if err != nil {
+			return err
+		}
+	} else {
+		err := u.repository.Delete(id, userId)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
