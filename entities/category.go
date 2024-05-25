@@ -5,3 +5,11 @@ type Category struct {
 	Name        string `gorm:"not null"`
 	Description string `gorm:"not null"`
 }
+
+type CategoryRepositoryInterface interface {
+	GetAll() ([]Category, error)
+}
+
+type CategoryUseCaseInterface interface {
+	GetAll() ([]Category, error)
+}

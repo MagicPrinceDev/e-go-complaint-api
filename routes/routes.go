@@ -2,6 +2,8 @@ package routes
 
 import (
 	"e-complaint-api/controllers/admin"
+	"e-complaint-api/controllers/category"
+	"e-complaint-api/controllers/complaint"
 	"e-complaint-api/controllers/user"
 	"e-complaint-api/middlewares"
 	"os"
@@ -12,8 +14,10 @@ import (
 )
 
 type RouteController struct {
-	AdminController *admin.AdminController
-	UserController  *user.UserController
+	AdminController     *admin.AdminController
+	UserController      *user.UserController
+	ComplaintController *complaint.ComplaintController
+	CategoryController  *category.CategoryController
 }
 
 func (r *RouteController) InitRoute(e *echo.Echo) {
@@ -32,6 +36,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 
 	// Route For Admin
 	admin := e.Group("/api/v1")
+  admin.Use(jwt, middlewares.IsAdmin)
 	admin.GET("/admins", r.AdminController.GetAllAdmins)
 	admin.GET("/admins/:id", r.AdminController.GetAdminByID)
 	admin.GET("/users", r.UserController.GetAllUsers)
@@ -41,16 +46,24 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 
 	// Route For User
 	user := e.Group("/api/v1")
+  user.Use(jwt, middlewares.IsUser)
 	user.POST("/users/login", r.UserController.Login)
 	user.POST("/users/register", r.UserController.Register)
-	user.Use(jwt, middlewares.IsUser)
+  user.POST("/complaints", r.ComplaintController.Create)
+	user.PUT("/complaints/:id", r.ComplaintController.Update)
 	user.PUT("/users/:id", r.UserController.UpdateUser)
+  user.PUT("/users/:id/change-password", r.UserController.UpdatePassword)
 
-	// Route For Admin and User
-	au := e.Group("/api/v1")
-	au.GET("/users/:id", r.UserController.GetUserByID)
-	au.PUT("/user/:id/change-password", r.UserController.UpdatePassword)
-	au.DELETE("/users/:id", r.UserController.DeleteUser)
+	// Route For All Authenticated User
+	auth_user := e.Group("/api/v1")
+  auth_user.Use(jwt)
+	auth_user.GET("/users/:id", r.UserController.GetUserByID)
+	auth_user.DELETE("/users/:id", r.UserController.DeleteUser)
+	auth_user.GET("/complaints", r.ComplaintController.GetPaginated)
+	auth_user.GET("/complaints/:id", r.ComplaintController.GetByID)
+	auth_user.DELETE("/complaints/:id", r.ComplaintController.Delete)
+	auth_user.GET("/categories", r.CategoryController.GetAll)
+
 
 	// Route For Public
 }
