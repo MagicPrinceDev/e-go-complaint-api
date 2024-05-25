@@ -93,10 +93,10 @@ func (ac *AdminController) DeleteAdmin(c echo.Context) error {
 }
 
 func (ac *AdminController) UpdateAdmin(c echo.Context) error {
-	idParam := c.Param("id")
-	id, err := strconv.Atoi(idParam)
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, base.NewErrorResponse("Invalid ID format"))
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse("Invalid ID"))
 	}
 
 	var adminRequest request.UpdateAccount
@@ -106,6 +106,35 @@ func (ac *AdminController) UpdateAdmin(c echo.Context) error {
 	if err != nil {
 		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
-	adminResponse := response.GetAdminsFromEntitiesToResponse(&admin)
-	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update Admin", adminResponse))
+
+	userResponse := response.UpdateUserFromEntitiesToResponse(&admin)
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update User", userResponse))
+}
+
+func (ac *AdminController) UpdatePassword(c echo.Context) error {
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse("Invalid ID"))
+	}
+
+	jwtID, err := utils.GetIDFromJWT(c)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
+	if id != jwtID {
+		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse("Unauthorized"))
+	}
+
+	var passwordRequest request.UpdatePassword
+	c.Bind(&passwordRequest)
+
+	oldPassword, newPassword := passwordRequest.ToEntities()
+	err = ac.adminUseCase.UpdatePassword(id, oldPassword, newPassword)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update Password", nil))
 }
