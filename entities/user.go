@@ -13,7 +13,7 @@ type User struct {
 	Password        string `gorm:"not null"`
 	Email           string `gorm:"unique"`
 	TelephoneNumber string
-	ProfilePhoto    string         `gorm:"default:profiles/default.jpg"`
+	ProfilePhoto    string         `gorm:"default:profile_photos/default.jpg"`
 	Token           string         `gorm:"-"`
 	CreatedAt       time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt       time.Time      `gorm:"autoUpdateTime"`

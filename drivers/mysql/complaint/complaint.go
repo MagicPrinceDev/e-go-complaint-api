@@ -131,15 +131,15 @@ func (r *ComplaintRepo) Update(complaint entities.Complaint) (entities.Complaint
 
 	oldComplaint.Description = complaint.Description
 	oldComplaint.Type = complaint.Type
-	oldComplaint.CategoryID = 1
-	oldComplaint.RegencyID = "3603"
+	oldComplaint.CategoryID = complaint.CategoryID
+	oldComplaint.RegencyID = complaint.RegencyID
 	oldComplaint.Address = complaint.Address
 
 	fmt.Println(oldComplaint.CategoryID)
 	fmt.Println(complaint.CategoryID)
 
 	if err := r.DB.Save(&oldComplaint).Error; err != nil {
-		return entities.Complaint{}, constants.ErrInternalServerError
+		return entities.Complaint{}, err
 	}
 
 	if err := r.DB.Preload("User").Preload("Regency").Preload("Category").Preload("Files").Where("id = ?", oldComplaint.ID).First(&complaint).Error; err != nil {
