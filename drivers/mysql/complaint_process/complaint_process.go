@@ -18,6 +18,11 @@ func (repo *ComplaintProcessRepo) Create(complaintProcesses *entities.ComplaintP
 	if err := repo.DB.Create(complaintProcesses).Error; err != nil {
 		return err
 	}
+
+	if err := repo.DB.Preload("Admin").First(complaintProcesses).Error; err != nil {
+		return err
+	}
+
 	return nil
 }
 
