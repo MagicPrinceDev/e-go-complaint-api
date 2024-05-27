@@ -152,26 +152,27 @@ func (uc *UserController) DeleteUser(c echo.Context) error {
 }
 
 func (uc *UserController) UpdatePassword(c echo.Context) error {
-	idStr := c.Param("id")
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrInvalidIDFormat.Error()))
-	}
-
 	jwtID, err := utils.GetIDFromJWT(c)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
-	if id != jwtID {
+	userRole, err := utils.GetRoleFromJWT(c)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
+	if userRole != "user" {
 		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
 	}
 
 	var passwordRequest request.UpdatePassword
-	c.Bind(&passwordRequest)
+	if err := c.Bind(&passwordRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+	}
 
 	oldPassword, newPassword := passwordRequest.ToEntities()
-	err = uc.userUseCase.UpdatePassword(id, oldPassword, newPassword)
+	err = uc.userUseCase.UpdatePassword(jwtID, oldPassword, newPassword)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
 	}
