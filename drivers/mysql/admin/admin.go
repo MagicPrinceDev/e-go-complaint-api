@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"e-complaint-api/constants"
 	"e-complaint-api/entities"
 	"e-complaint-api/utils"
 	"errors"
@@ -55,11 +56,15 @@ func (r *AdminRepo) GetAllAdmins() ([]*entities.Admin, error) {
 }
 
 func (r *AdminRepo) GetAdminByID(id int) (*entities.Admin, error) {
-	var admin entities.Admin
-	if err := r.DB.First(&admin, id).Error; err != nil {
-		return nil, err
+	admin := &entities.Admin{}
+	result := r.DB.First(admin, id)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, constants.ErrAdminNotFound
+		}
+		return nil, result.Error
 	}
-	return &admin, nil
+	return admin, nil
 }
 
 func (r *AdminRepo) DeleteAdmin(id int) error {

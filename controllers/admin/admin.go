@@ -146,16 +146,8 @@ func (ac *AdminController) UpdateAdmin(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
-	if userRole == "admin" {
-		jwtId, err := utils.GetIDFromJWT(c)
-
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
-		}
-
-		if id != jwtId {
-			return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
-		}
+	if userRole != "super_admin" {
+		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
 	}
 
 	admin, err := ac.adminUseCase.UpdateAdmin(id, adminRequest.ToEntities())
