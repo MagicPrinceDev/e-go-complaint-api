@@ -30,6 +30,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	superAdmin.GET("/admins", r.AdminController.GetAllAdmins)
 	superAdmin.GET("/admins/:id", r.AdminController.GetAdminByID)
 	superAdmin.DELETE("/admins/:id", r.AdminController.DeleteAdmin)
+
 	superAdmin.PUT("/admins/:id/change-password", r.AdminController.UpdatePassword)
 
 	// Route For Admin
