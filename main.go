@@ -20,6 +20,10 @@ import (
 	complaint_file_rp "e-complaint-api/drivers/mysql/complaint_file"
 	complaint_file_uc "e-complaint-api/usecases/complaint_file"
 
+	complaint_process_cl "e-complaint-api/controllers/complaint_process"
+	complaint_process_rp "e-complaint-api/drivers/mysql/complaint_process"
+	complaint_process_uc "e-complaint-api/usecases/complaint_process"
+
 	user_cl "e-complaint-api/controllers/user"
 	user_rp "e-complaint-api/drivers/mysql/user"
 	user_uc "e-complaint-api/usecases/user"
@@ -33,7 +37,7 @@ import (
 
 func main() {
 	// For local development only
-	config.LoadEnv()
+	// config.LoadEnv()
 
 	config.InitConfigMySQL()
 	DB := mysql.ConnectDB(config.InitConfigMySQL())
@@ -63,15 +67,20 @@ func main() {
 	complaintUsecase := complaint_uc.NewComplaintUseCase(complaintRepo)
 	ComplaintController := complaint_cl.NewComplaintController(complaintUsecase, complaintFileUsecase)
 
+	complaintProcessRepo := complaint_process_rp.NewComplaintProcessRepo(DB)
+	complaintProcessUsecase := complaint_process_uc.NewComplaintProcessUseCase(complaintProcessRepo)
+	ComplaintProcessController := complaint_process_cl.NewComplaintProcessController(complaintUsecase, complaintProcessUsecase)
+
 	categoryRepo := category_rp.NewCategoryRepo(DB)
 	categoryUsecase := category_uc.NewCategoryUseCase(categoryRepo)
 	CategoryController := category_cl.NewCategoryController(categoryUsecase)
 
 	routes := routes.RouteController{
-		AdminController:     AdminController,
-		UserController:      UserController,
-		ComplaintController: ComplaintController,
-		CategoryController:  CategoryController,
+		AdminController:            AdminController,
+		UserController:             UserController,
+		ComplaintController:        ComplaintController,
+		CategoryController:         CategoryController,
+		ComplaintProcessController: ComplaintProcessController,
 	}
 
 	routes.InitRoute(e)

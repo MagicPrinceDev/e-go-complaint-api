@@ -135,3 +135,20 @@ func (u *ComplaintUseCase) Update(complaint entities.Complaint) (entities.Compla
 
 	return complaint, nil
 }
+
+func (u *ComplaintUseCase) UpdateStatus(id string, status string) error {
+	if status != "verifikasi" && status != "on progress" && status != "selesai" && status != "ditolak" {
+		return constants.ErrInvalidStatus
+	}
+
+	if id == "" {
+		return constants.ErrIDMustBeFilled
+	}
+
+	err := u.repository.UpdateStatus(id, status)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

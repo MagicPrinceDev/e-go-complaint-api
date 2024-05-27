@@ -2,7 +2,7 @@ package response
 
 import "e-complaint-api/entities"
 
-type GetAllAdmins struct {
+type Get struct {
 	ID              int    `json:"id"`
 	Name            string `json:"name"`
 	Username        string `json:"username"`
@@ -12,8 +12,8 @@ type GetAllAdmins struct {
 	ProfilePhoto    string `json:"profile_photo"`
 }
 
-func GetAdminsFromEntitiesToResponse(admin *entities.Admin) *GetAllAdmins {
-	return &GetAllAdmins{
+func GetFromEntitiesToResponse(admin *entities.Admin) *Get {
+	return &Get{
 		ID:              admin.ID,
 		Name:            admin.Name,
 		Username:        admin.Username,

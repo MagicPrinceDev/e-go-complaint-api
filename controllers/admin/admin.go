@@ -55,9 +55,9 @@ func (ac *AdminController) GetAllAdmins(c echo.Context) error {
 		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
 
-	var adminsResponse []*response.GetAllAdmins
+	var adminsResponse []*response.Get
 	for _, admin := range admins {
-		adminsResponse = append(adminsResponse, response.GetAdminsFromEntitiesToResponse(&admin))
+		adminsResponse = append(adminsResponse, response.GetFromEntitiesToResponse(&admin))
 	}
 
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Get All Admins", adminsResponse))
@@ -74,7 +74,7 @@ func (ac *AdminController) GetAdminByID(c echo.Context) error {
 	if err != nil {
 		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
-	adminResponse := response.GetAdminsFromEntitiesToResponse(admin)
+	adminResponse := response.GetFromEntitiesToResponse(admin)
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Get Admin By ID", adminResponse))
 }
 

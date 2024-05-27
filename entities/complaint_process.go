@@ -17,3 +17,11 @@ type ComplaintProcess struct {
 	DeletedAt   gorm.DeletedAt `gorm:"index"`
 	Admin       Admin          `gorm:"foreignKey:AdminID;references:ID"`
 }
+
+type ComplaintProcessRepositoryInterface interface {
+	Create(complaintProcesses *ComplaintProcess) error
+}
+
+type ComplaintProcessUseCaseInterface interface {
+	Create(complaintProcesses *ComplaintProcess) (ComplaintProcess, error)
+}

@@ -4,6 +4,7 @@ import (
 	"e-complaint-api/controllers/admin"
 	"e-complaint-api/controllers/category"
 	"e-complaint-api/controllers/complaint"
+	"e-complaint-api/controllers/complaint_process"
 	"e-complaint-api/controllers/user"
 	"e-complaint-api/middlewares"
 	"os"
@@ -14,10 +15,11 @@ import (
 )
 
 type RouteController struct {
-	AdminController     *admin.AdminController
-	UserController      *user.UserController
-	ComplaintController *complaint.ComplaintController
-	CategoryController  *category.CategoryController
+	AdminController            *admin.AdminController
+	UserController             *user.UserController
+	ComplaintController        *complaint.ComplaintController
+	CategoryController         *category.CategoryController
+	ComplaintProcessController *complaint_process.ComplaintProcessController
 }
 
 func (r *RouteController) InitRoute(e *echo.Echo) {
@@ -41,6 +43,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	admin.GET("/users", r.UserController.GetAllUsers)
 	admin.PUT("/admins/:id", r.AdminController.UpdateAdmin)
 	admin.PUT("/admins/:id/change-password", r.AdminController.UpdatePassword)
+	admin.POST("/complaints/:complaint_id/process", r.ComplaintProcessController.Create)
 
 	// Route For User
 	user := e.Group("/api/v1")

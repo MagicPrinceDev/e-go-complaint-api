@@ -33,6 +33,7 @@ type ComplaintRepositoryInterface interface {
 	Delete(id string, userId int) error
 	AdminDelete(id string) error
 	Update(complaint Complaint) (Complaint, error)
+	UpdateStatus(id string, status string) error
 }
 
 type ComplaintUseCaseInterface interface {
@@ -42,4 +43,5 @@ type ComplaintUseCaseInterface interface {
 	Create(complaint *Complaint) (Complaint, error)
 	Delete(id string, userId int, role string) error
 	Update(complaint Complaint) (Complaint, error)
+	UpdateStatus(id string, status string) error
 }

@@ -66,7 +66,7 @@ func (r *ComplaintRepo) GetByID(id string) (entities.Complaint, error) {
 	var complaint entities.Complaint
 
 	if err := r.DB.Preload("User").Preload("Regency").Preload("Category").Preload("Files").Where("id = ?", id).First(&complaint).Error; err != nil {
-		return entities.Complaint{}, constants.ErrReportNotFound
+		return entities.Complaint{}, constants.ErrComplaintNotFound
 	}
 
 	return complaint, nil
@@ -88,7 +88,7 @@ func (r *ComplaintRepo) Delete(id string, userId int) error {
 	var complaint entities.Complaint
 
 	if err := r.DB.Where("id = ?", id).First(&complaint).Error; err != nil {
-		return constants.ErrReportNotFound
+		return constants.ErrComplaintNotFound
 	}
 
 	if complaint.UserID != userId {
@@ -107,7 +107,7 @@ func (r *ComplaintRepo) AdminDelete(id string) error {
 	var complaint entities.Complaint
 
 	if err := r.DB.Where("id = ?", id).First(&complaint).Error; err != nil {
-		return constants.ErrReportNotFound
+		return constants.ErrComplaintNotFound
 	}
 
 	complaint.DeletedAt = gorm.DeletedAt{Time: time.Now(), Valid: true}
@@ -122,7 +122,7 @@ func (r *ComplaintRepo) Update(complaint entities.Complaint) (entities.Complaint
 	var oldComplaint entities.Complaint
 
 	if err := r.DB.Where("id = ?", complaint.ID).First(&oldComplaint).Error; err != nil {
-		return entities.Complaint{}, constants.ErrReportNotFound
+		return entities.Complaint{}, constants.ErrComplaintNotFound
 	}
 
 	if oldComplaint.UserID != complaint.UserID {
@@ -147,4 +147,61 @@ func (r *ComplaintRepo) Update(complaint entities.Complaint) (entities.Complaint
 	}
 
 	return complaint, nil
+}
+
+func (r *ComplaintRepo) UpdateStatus(id string, status string) error {
+	var complaint entities.Complaint
+
+	if err := r.DB.Where("id = ?", id).First(&complaint).Error; err != nil {
+		return constants.ErrComplaintNotFound
+	}
+
+	if status == "verifikasi" {
+		if complaint.Status == "verifikasi" {
+			return constants.ErrComplaintAlreadyVerified
+		} else if complaint.Status == "ditolak" {
+			return constants.ErrComplaintAlreadyRejected
+		} else if complaint.Status == "selesai" {
+			return constants.ErrComplaintAlreadyFinished
+		} else if complaint.Status == "on progress" {
+			return constants.ErrComplaintAlreadyOnProgress
+		}
+	} else if status == "on progress" {
+		if complaint.Status == "on progress" {
+			return constants.ErrComplaintAlreadyOnProgress
+		} else if complaint.Status == "ditolak" {
+			return constants.ErrComplaintAlreadyRejected
+		} else if complaint.Status == "selesai" {
+			return constants.ErrComplaintAlreadyFinished
+		} else if complaint.Status == "pending" {
+			return constants.ErrComplaintNotVerified
+		}
+	} else if status == "selesai" {
+		if complaint.Status == "selesai" {
+			return constants.ErrComplaintAlreadyFinished
+		} else if complaint.Status == "ditolak" {
+			return constants.ErrComplaintAlreadyRejected
+		} else if complaint.Status == "pending" {
+			return constants.ErrComplaintNotVerified
+		} else if complaint.Status == "verifikasi" {
+			return constants.ErrComplaintNotOnProgress
+		}
+	} else if status == "ditolak" {
+		if complaint.Status == "ditolak" {
+			return constants.ErrComplaintAlreadyRejected
+		} else if complaint.Status == "selesai" {
+			return constants.ErrComplaintAlreadyFinished
+		} else if complaint.Status == "verifikasi" {
+			return constants.ErrComplaintAlreadyVerified
+		} else if complaint.Status == "on progress" {
+			return constants.ErrComplaintAlreadyOnProgress
+		}
+	}
+
+	complaint.Status = status
+	if err := r.DB.Save(&complaint).Error; err != nil {
+		return err
+	}
+
+	return nil
 }

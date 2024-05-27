@@ -14,9 +14,20 @@ func ConvertResponseCode(err error) int {
 		constants.ErrInvalidJWT,
 		constants.ErrOldPasswordDoesntMatch,
 		constants.ErrLimitAndPageMustBeFilled,
-		constants.ErrReportNotFound,
+		constants.ErrComplaintNotFound,
 		constants.ErrRegencyNotFound,
 		constants.ErrCategoryNotFound,
+		constants.ErrMaxFileSizeExceeded,
+		constants.ErrMaxFileCountExceeded,
+		constants.ErrInvalidIDFormat,
+		constants.ErrComplaintAlreadyVerified,
+		constants.ErrComplaintAlreadyRejected,
+		constants.ErrComplaintAlreadyOnProgress,
+		constants.ErrComplaintAlreadyFinished,
+		constants.ErrComplaintNotVerified,
+		constants.ErrComplaintNotOnProgress,
+		constants.ErrInvalidStatus,
+		constants.ErrIDMustBeFilled,
 	}
 
 	if contains(badRequestErrors, err) {
