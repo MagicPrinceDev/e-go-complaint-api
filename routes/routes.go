@@ -49,7 +49,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	user.Use(jwt, middlewares.IsUser)
 	user.POST("/complaints", r.ComplaintController.Create)
 	user.PUT("/complaints/:id", r.ComplaintController.Update)
-	user.PUT("/users/:id", r.UserController.UpdateUser)
+	user.PUT("/users/update-profile", r.UserController.UpdateUser)
 	user.PUT("/users/change-password", r.UserController.UpdatePassword)
 	// Route For All Authenticated User
 	auth_user := e.Group("/api/v1")

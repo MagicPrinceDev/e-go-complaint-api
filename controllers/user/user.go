@@ -91,25 +91,17 @@ func (uc *UserController) GetUserByID(c echo.Context) error {
 }
 
 func (uc *UserController) UpdateUser(c echo.Context) error {
-	idStr := c.Param("id")
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrInvalidIDFormat.Error()))
-	}
-
 	jwtID, err := utils.GetIDFromJWT(c)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
-	if id != jwtID {
-		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
+	var userRequest request.UpdateUser
+	if err := c.Bind(&userRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
 	}
 
-	var userRequest request.UpdateUser
-	c.Bind(&userRequest)
-
-	user, err := uc.userUseCase.UpdateUser(id, userRequest.ToEntities())
+	user, err := uc.userUseCase.UpdateUser(jwtID, userRequest.ToEntities())
 	if err != nil {
 		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
