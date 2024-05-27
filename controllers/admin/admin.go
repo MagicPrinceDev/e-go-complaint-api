@@ -7,6 +7,7 @@ import (
 	"e-complaint-api/controllers/base"
 	"e-complaint-api/entities"
 	"e-complaint-api/utils"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -51,6 +52,7 @@ func (ac *AdminController) Login(c echo.Context) error {
 
 func (ac *AdminController) GetAllAdmins(c echo.Context) error {
 	admins, err := ac.adminUseCase.GetAllAdmins()
+
 	if err != nil {
 		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
@@ -66,14 +68,28 @@ func (ac *AdminController) GetAllAdmins(c echo.Context) error {
 func (ac *AdminController) GetAdminByID(c echo.Context) error {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
+
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrInvalidIDFormat.Error()))
 	}
 
+	jwtID, err := utils.GetIDFromJWT(c)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
+	if id != jwtID {
+		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
+	}
+
 	admin, err := ac.adminUseCase.GetAdminByID(id)
 	if err != nil {
-		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+		if errors.Is(err, constants.ErrAdminNotFound) {
+			return c.JSON(http.StatusNotFound, base.NewErrorResponse(err.Error()))
+		}
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
+
 	adminResponse := response.GetAdminsFromEntitiesToResponse(admin)
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Get Admin By ID", adminResponse))
 }
@@ -82,12 +98,32 @@ func (ac *AdminController) DeleteAdmin(c echo.Context) error {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrInvalidIDFormat.Error()))
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse("Invalid ID format"))
 	}
 
+	jwtID, err := utils.GetIDFromJWT(c)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
+	// Get user role and ID from JWT
+	userRole, err := utils.GetRoleFromJWT(c)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
+	// Check if super admin tries to delete themselves
+	if userRole == "super_admin" && id == jwtID {
+		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrSuperAdminCannotDeleteThemselves.Error()))
+	}
+
+	// Delete admin
 	err = ac.adminUseCase.DeleteAdmin(id)
 	if err != nil {
-		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+		if errors.Is(err, constants.ErrAdminNotFound) {
+			return c.JSON(http.StatusNotFound, base.NewErrorResponse(err.Error()))
+		}
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Delete Admin", nil))
@@ -101,7 +137,9 @@ func (ac *AdminController) UpdateAdmin(c echo.Context) error {
 	}
 
 	var adminRequest request.UpdateAccount
-	c.Bind(&adminRequest)
+	if err := c.Bind(&adminRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+	}
 
 	userRole, err := utils.GetRoleFromJWT(c)
 	if err != nil {
@@ -110,6 +148,7 @@ func (ac *AdminController) UpdateAdmin(c echo.Context) error {
 
 	if userRole == "admin" {
 		jwtId, err := utils.GetIDFromJWT(c)
+
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 		}
@@ -121,11 +160,20 @@ func (ac *AdminController) UpdateAdmin(c echo.Context) error {
 
 	admin, err := ac.adminUseCase.UpdateAdmin(id, adminRequest.ToEntities())
 	if err != nil {
-		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+		if errors.Is(err, constants.ErrAdminNotFound) {
+			return c.JSON(http.StatusNotFound, base.NewErrorResponse("Admin account does not exist"))
+		}
+		if errors.Is(err, constants.ErrEmailAlreadyExists) || errors.Is(err, constants.ErrUsernameAlreadyExists) {
+			return c.JSON(http.StatusConflict, base.NewErrorResponse(err.Error()))
+		}
+		if errors.Is(err, constants.ErrNoChangesDetected) {
+			return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+		}
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
-	userResponse := response.UpdateUserFromEntitiesToResponse(&admin)
-	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update User", userResponse))
+	adminResponse := response.UpdateUserFromEntitiesToResponse(&admin)
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update Admin", adminResponse))
 }
 
 func (ac *AdminController) UpdatePassword(c echo.Context) error {
@@ -145,12 +193,14 @@ func (ac *AdminController) UpdatePassword(c echo.Context) error {
 	}
 
 	var passwordRequest request.UpdatePassword
-	c.Bind(&passwordRequest)
+	if err := c.Bind(&passwordRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+	}
 
 	oldPassword, newPassword := passwordRequest.ToEntities()
 	err = ac.adminUseCase.UpdatePassword(id, oldPassword, newPassword)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
 	}
 
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update Password", nil))

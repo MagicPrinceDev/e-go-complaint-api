@@ -55,6 +55,12 @@ func (uc *UserController) GetAllUsers(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
+	userRole, err := utils.GetRoleFromJWT(c)
+	if userRole != "admin" {
+		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
+
+	}
+
 	usersResponse := response.GetAllUsersFromEntitiesToResponse(users)
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Get All Users", usersResponse))
 }
@@ -64,6 +70,15 @@ func (uc *UserController) GetUserByID(c echo.Context) error {
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrInvalidIDFormat.Error()))
+	}
+
+	jwtID, err := utils.GetIDFromJWT(c)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
+	if id != jwtID {
+		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
 	}
 
 	user, err := uc.userUseCase.GetUserByID(id)
@@ -107,6 +122,7 @@ func (uc *UserController) DeleteUser(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
+
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrInvalidIDFormat.Error()))
 	}
 
@@ -157,7 +173,7 @@ func (uc *UserController) UpdatePassword(c echo.Context) error {
 	oldPassword, newPassword := passwordRequest.ToEntities()
 	err = uc.userUseCase.UpdatePassword(id, oldPassword, newPassword)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
 	}
 
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update Password", nil))

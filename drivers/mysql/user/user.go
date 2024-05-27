@@ -1,6 +1,7 @@
 package user
 
 import (
+	"e-complaint-api/constants"
 	"e-complaint-api/entities"
 	"e-complaint-api/utils"
 	"errors"
@@ -59,6 +60,9 @@ func (r *UserRepo) GetUserByID(id int) (*entities.User, error) {
 	var user entities.User
 
 	if err := r.DB.First(&user, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, constants.ErrNotFound
+		}
 		return nil, err
 	}
 
