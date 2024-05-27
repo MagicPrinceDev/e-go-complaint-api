@@ -183,17 +183,12 @@ func (ac *AdminController) UpdatePassword(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrInvalidIDFormat.Error()))
 	}
 
-	jwtID, err := utils.GetIDFromJWT(c)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
-	}
-
 	userRole, err := utils.GetRoleFromJWT(c)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
-	if userRole != "super_admin" && id != jwtID {
+	if userRole != "super_admin" {
 		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
 	}
 
