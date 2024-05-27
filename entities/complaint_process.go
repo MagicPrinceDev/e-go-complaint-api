@@ -20,8 +20,10 @@ type ComplaintProcess struct {
 
 type ComplaintProcessRepositoryInterface interface {
 	Create(complaintProcesses *ComplaintProcess) error
+	GetByComplaintID(complaintID string) ([]ComplaintProcess, error)
 }
 
 type ComplaintProcessUseCaseInterface interface {
 	Create(complaintProcesses *ComplaintProcess) (ComplaintProcess, error)
+	GetByComplaintID(complaintID string) ([]ComplaintProcess, error)
 }

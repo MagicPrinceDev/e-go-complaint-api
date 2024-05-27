@@ -50,3 +50,19 @@ func (cp *ComplaintProcessController) Create(c echo.Context) error {
 
 	return c.JSON(http.StatusCreated, base.NewSuccessResponse("Success Create Complaint Process", complaintProcessResponse))
 }
+
+func (cp *ComplaintProcessController) GetByComplaintID(c echo.Context) error {
+	complaint_id := c.Param("complaint_id")
+
+	complaintProcesses, err := cp.complaintProcessUseCase.GetByComplaintID(complaint_id)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	var complaintProcessesResponse []*response.Get
+	for _, complaintProcess := range complaintProcesses {
+		complaintProcessesResponse = append(complaintProcessesResponse, response.GetFromEntitiesToResponse(&complaintProcess))
+	}
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Get Complaint Process", complaintProcessesResponse))
+}

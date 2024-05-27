@@ -20,3 +20,12 @@ func (repo *ComplaintProcessRepo) Create(complaintProcesses *entities.ComplaintP
 	}
 	return nil
 }
+
+func (repo *ComplaintProcessRepo) GetByComplaintID(complaintID string) ([]entities.ComplaintProcess, error) {
+	var complaintProcesses []entities.ComplaintProcess
+	if err := repo.DB.Where("complaint_id = ?", complaintID).Preload("Admin").Find(&complaintProcesses).Error; err != nil {
+		return nil, err
+	}
+
+	return complaintProcesses, nil
+}

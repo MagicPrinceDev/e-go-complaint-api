@@ -20,3 +20,12 @@ func (u *ComplaintProcessUseCase) Create(complaintProcess *entities.ComplaintPro
 
 	return *complaintProcess, nil
 }
+
+func (u *ComplaintProcessUseCase) GetByComplaintID(complaintID string) ([]entities.ComplaintProcess, error) {
+	complaintProcesses, err := u.repository.GetByComplaintID(complaintID)
+	if err != nil {
+		return nil, err
+	}
+
+	return complaintProcesses, nil
+}
