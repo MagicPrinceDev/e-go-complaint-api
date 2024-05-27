@@ -73,12 +73,13 @@ func (ac *AdminController) GetAdminByID(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrInvalidIDFormat.Error()))
 	}
 
-	jwtID, err := utils.GetIDFromJWT(c)
+	userRole, err := utils.GetRoleFromJWT(c)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
-	if id != jwtID {
+	// Only allow super admin to get admin by ID
+	if userRole != "super_admin" {
 		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
 	}
 
