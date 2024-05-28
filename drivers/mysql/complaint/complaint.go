@@ -66,7 +66,7 @@ func (r *ComplaintRepo) GetByID(id string) (entities.Complaint, error) {
 	var complaint entities.Complaint
 
 	if err := r.DB.Preload("User").Preload("Regency").Preload("Category").Preload("Files").Where("id = ?", id).First(&complaint).Error; err != nil {
-		return entities.Complaint{}, constants.ErrReportNotFound
+		return entities.Complaint{}, constants.ErrComplaintNotFound
 	}
 
 	return complaint, nil
@@ -88,7 +88,7 @@ func (r *ComplaintRepo) Delete(id string, userId int) error {
 	var complaint entities.Complaint
 
 	if err := r.DB.Where("id = ?", id).First(&complaint).Error; err != nil {
-		return constants.ErrReportNotFound
+		return constants.ErrComplaintNotFound
 	}
 
 	if complaint.UserID != userId {
@@ -107,7 +107,7 @@ func (r *ComplaintRepo) AdminDelete(id string) error {
 	var complaint entities.Complaint
 
 	if err := r.DB.Where("id = ?", id).First(&complaint).Error; err != nil {
-		return constants.ErrReportNotFound
+		return constants.ErrComplaintNotFound
 	}
 
 	complaint.DeletedAt = gorm.DeletedAt{Time: time.Now(), Valid: true}
@@ -122,7 +122,7 @@ func (r *ComplaintRepo) Update(complaint entities.Complaint) (entities.Complaint
 	var oldComplaint entities.Complaint
 
 	if err := r.DB.Where("id = ?", complaint.ID).First(&oldComplaint).Error; err != nil {
-		return entities.Complaint{}, constants.ErrReportNotFound
+		return entities.Complaint{}, constants.ErrComplaintNotFound
 	}
 
 	if oldComplaint.UserID != complaint.UserID {
@@ -147,4 +147,29 @@ func (r *ComplaintRepo) Update(complaint entities.Complaint) (entities.Complaint
 	}
 
 	return complaint, nil
+}
+
+func (r *ComplaintRepo) UpdateStatus(id string, status string) error {
+	var complaint entities.Complaint
+
+	if err := r.DB.Where("id = ?", id).First(&complaint).Error; err != nil {
+		return constants.ErrComplaintNotFound
+	}
+
+	complaint.Status = status
+	if err := r.DB.Save(&complaint).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *ComplaintRepo) GetStatus(id string) (string, error) {
+	var status string
+
+	if err := r.DB.Model(&entities.Complaint{}).Select("status").Where("id = ?", id).Scan(&status).Error; err != nil {
+		return "", constants.ErrComplaintNotFound
+	}
+
+	return status, nil
 }

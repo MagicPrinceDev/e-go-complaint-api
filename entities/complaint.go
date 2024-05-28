@@ -7,21 +7,22 @@ import (
 )
 
 type Complaint struct {
-	ID          string          `gorm:"primaryKey;length:15"`
-	UserID      int             `gorm:"not null"`
-	CategoryID  int             `gorm:"not null"`
-	Description string          `gorm:"not null"`
-	RegencyID   string          `gorm:"not null;type:varchar;size:4"`
-	Address     string          `gorm:"not null"`
-	Status      string          `gorm:"enum('pending', 'verifikasi', 'on progress', 'selesai', 'ditolak');default:'pending'"`
-	Type        string          `gorm:"enum('public', 'private')"`
-	CreatedAt   time.Time       `gorm:"autoCreateTime"`
-	UpdatedAt   time.Time       `gorm:"autoUpdateTime"`
-	DeletedAt   gorm.DeletedAt  `gorm:"index"`
-	User        User            `gorm:"foreignKey:UserID;references:ID"`
-	Regency     Regency         `gorm:"foreignKey:RegencyID;references:ID"`
-	Files       []ComplaintFile `gorm:"foreignKey:ComplaintID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Category    Category        `gorm:"foreignKey:CategoryID;references:ID"`
+	ID          string             `gorm:"primaryKey;length:15"`
+	UserID      int                `gorm:"not null"`
+	CategoryID  int                `gorm:"not null"`
+	Description string             `gorm:"not null"`
+	RegencyID   string             `gorm:"not null;type:varchar;size:4"`
+	Address     string             `gorm:"not null"`
+	Status      string             `gorm:"enum('pending', 'verifikasi', 'on progress', 'selesai', 'ditolak');default:'pending'"`
+	Type        string             `gorm:"enum('public', 'private')"`
+	CreatedAt   time.Time          `gorm:"autoCreateTime"`
+	UpdatedAt   time.Time          `gorm:"autoUpdateTime"`
+	DeletedAt   gorm.DeletedAt     `gorm:"index"`
+	User        User               `gorm:"foreignKey:UserID;references:ID"`
+	Regency     Regency            `gorm:"foreignKey:RegencyID;references:ID"`
+	Files       []ComplaintFile    `gorm:"foreignKey:ComplaintID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Category    Category           `gorm:"foreignKey:CategoryID;references:ID"`
+	Process     []ComplaintProcess `gorm:"foreignKey:ComplaintID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type ComplaintRepositoryInterface interface {
@@ -32,6 +33,8 @@ type ComplaintRepositoryInterface interface {
 	Delete(id string, userId int) error
 	AdminDelete(id string) error
 	Update(complaint Complaint) (Complaint, error)
+	UpdateStatus(id string, status string) error
+	GetStatus(id string) (string, error)
 }
 
 type ComplaintUseCaseInterface interface {
@@ -41,4 +44,5 @@ type ComplaintUseCaseInterface interface {
 	Create(complaint *Complaint) (Complaint, error)
 	Delete(id string, userId int, role string) error
 	Update(complaint Complaint) (Complaint, error)
+	UpdateStatus(id string, status string) error
 }
