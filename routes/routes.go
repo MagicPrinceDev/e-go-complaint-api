@@ -32,6 +32,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	superAdmin.GET("/admins", r.AdminController.GetAllAdmins)
 	superAdmin.GET("/admins/:id", r.AdminController.GetAdminByID)
 	superAdmin.DELETE("/admins/:id", r.AdminController.DeleteAdmin)
+
 	superAdmin.PUT("/admins/:id/change-password", r.AdminController.UpdatePassword)
 
 	// Route For Admin
@@ -55,9 +56,8 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	user.Use(jwt, middlewares.IsUser)
 	user.POST("/complaints", r.ComplaintController.Create)
 	user.PUT("/complaints/:id", r.ComplaintController.Update)
-	user.PUT("/users/:id", r.UserController.UpdateUser)
-	user.PUT("/users/:id/change-password", r.UserController.UpdatePassword)
-
+	user.PUT("/users/update-profile", r.UserController.UpdateUser)
+	user.PUT("/users/change-password", r.UserController.UpdatePassword)
 	// Route For All Authenticated User
 	auth_user := e.Group("/api/v1")
 	auth_user.Use(jwt)

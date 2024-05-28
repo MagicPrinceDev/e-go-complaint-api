@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"e-complaint-api/constants"
 	"e-complaint-api/entities"
 	"e-complaint-api/utils"
 	"errors"
@@ -55,11 +56,15 @@ func (r *AdminRepo) GetAllAdmins() ([]*entities.Admin, error) {
 }
 
 func (r *AdminRepo) GetAdminByID(id int) (*entities.Admin, error) {
-	var admin entities.Admin
-	if err := r.DB.First(&admin, id).Error; err != nil {
-		return nil, err
+	admin := &entities.Admin{}
+	result := r.DB.First(admin, id)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, constants.ErrAdminNotFound
+		}
+		return nil, result.Error
 	}
-	return &admin, nil
+	return admin, nil
 }
 
 func (r *AdminRepo) DeleteAdmin(id int) error {
@@ -79,4 +84,26 @@ func (r *AdminRepo) UpdateAdmin(id int, admin *entities.Admin) error {
 
 func (r *AdminRepo) UpdatePassword(id int, newPassword string) error {
 	return r.DB.Model(&entities.Admin{}).Where("id = ?", id).Updates(&entities.Admin{Password: newPassword}).Error
+}
+
+func (r *AdminRepo) GetAdminByEmail(email string) (*entities.Admin, error) {
+	var admin entities.Admin
+	if err := r.DB.Where("email = ?", email).First(&admin).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &admin, nil
+}
+
+func (r *AdminRepo) GetAdminByUsername(username string) (*entities.Admin, error) {
+	var admin entities.Admin
+	if err := r.DB.Where("username = ?", username).First(&admin).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &admin, nil
 }

@@ -55,27 +55,17 @@ func (uc *UserController) GetAllUsers(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
+	userRole, err := utils.GetRoleFromJWT(c)
+	if userRole != "admin" {
+		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
+
+	}
+
 	usersResponse := response.GetAllUsersFromEntitiesToResponse(users)
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Get All Users", usersResponse))
 }
 
 func (uc *UserController) GetUserByID(c echo.Context) error {
-	idStr := c.Param("id")
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrInvalidIDFormat.Error()))
-	}
-
-	user, err := uc.userUseCase.GetUserByID(id)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
-	}
-
-	userResponse := response.GetUsersFromEntitiesToResponse(user)
-	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Get User By ID", userResponse))
-}
-
-func (uc *UserController) UpdateUser(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -91,10 +81,27 @@ func (uc *UserController) UpdateUser(c echo.Context) error {
 		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
 	}
 
-	var userRequest request.UpdateUser
-	c.Bind(&userRequest)
+	user, err := uc.userUseCase.GetUserByID(id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
 
-	user, err := uc.userUseCase.UpdateUser(id, userRequest.ToEntities())
+	userResponse := response.GetUsersFromEntitiesToResponse(user)
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Get User By ID", userResponse))
+}
+
+func (uc *UserController) UpdateUser(c echo.Context) error {
+	jwtID, err := utils.GetIDFromJWT(c)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
+	var userRequest request.UpdateUser
+	if err := c.Bind(&userRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+	}
+
+	user, err := uc.userUseCase.UpdateUser(jwtID, userRequest.ToEntities())
 	if err != nil {
 		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
@@ -107,6 +114,7 @@ func (uc *UserController) DeleteUser(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
+
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrInvalidIDFormat.Error()))
 	}
 
@@ -136,28 +144,29 @@ func (uc *UserController) DeleteUser(c echo.Context) error {
 }
 
 func (uc *UserController) UpdatePassword(c echo.Context) error {
-	idStr := c.Param("id")
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrInvalidIDFormat.Error()))
-	}
-
 	jwtID, err := utils.GetIDFromJWT(c)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
-	if id != jwtID {
+	userRole, err := utils.GetRoleFromJWT(c)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
+	if userRole != "user" {
 		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
 	}
 
 	var passwordRequest request.UpdatePassword
-	c.Bind(&passwordRequest)
+	if err := c.Bind(&passwordRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+	}
 
 	oldPassword, newPassword := passwordRequest.ToEntities()
-	err = uc.userUseCase.UpdatePassword(id, oldPassword, newPassword)
+	err = uc.userUseCase.UpdatePassword(jwtID, oldPassword, newPassword)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
 	}
 
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update Password", nil))

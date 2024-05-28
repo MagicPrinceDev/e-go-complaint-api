@@ -30,6 +30,10 @@ func ConvertResponseCode(err error) int {
 		constants.ErrIDMustBeFilled,
 		constants.ErrComplaintProcessNotFound,
 		constants.ErrComplaintProcessCannotBeDeleted,
+		constants.ErrEmailOrUsernameAlreadyExists,
+		constants.ErrNoChangesDetected,
+		constants.ErrNotFound,
+		constants.ErrAdminNotFound,
 	}
 
 	if contains(badRequestErrors, err) {

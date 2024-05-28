@@ -5,6 +5,7 @@ import (
 	"e-complaint-api/entities"
 	"e-complaint-api/middlewares"
 	"e-complaint-api/utils"
+	"errors"
 	"strings"
 )
 
@@ -121,8 +122,19 @@ func (u *UserUseCase) UpdateUser(id int, user *entities.User) (entities.User, er
 }
 
 func (u *UserUseCase) Delete(id int) error {
-	err := u.repository.Delete(id)
+	existingUser, err := u.repository.GetUserByID(id)
+	if err != nil {
+		if errors.Is(err, constants.ErrNotFound) {
+			return constants.ErrNotFound
+		}
+		return constants.ErrInternalServerError
+	}
 
+	if existingUser == nil {
+		return constants.ErrNotFound
+	}
+
+	err = u.repository.Delete(id)
 	if err != nil {
 		return constants.ErrInternalServerError
 	}
@@ -134,6 +146,10 @@ func (u *UserUseCase) UpdatePassword(id int, oldPassword, newPassword string) er
 	existingUser, err := u.repository.GetUserByID(id)
 	if err != nil {
 		return constants.ErrInternalServerError
+	}
+
+	if oldPassword == "" || newPassword == "" {
+		return constants.ErrAllFieldsMustBeFilled
 	}
 
 	if !utils.CheckPasswordHash(oldPassword, existingUser.Password) {
