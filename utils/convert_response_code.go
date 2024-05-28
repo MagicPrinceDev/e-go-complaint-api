@@ -17,6 +17,10 @@ func ConvertResponseCode(err error) int {
 		constants.ErrReportNotFound,
 		constants.ErrRegencyNotFound,
 		constants.ErrCategoryNotFound,
+		constants.ErrEmailOrUsernameAlreadyExists,
+		constants.ErrNoChangesDetected,
+		constants.ErrNotFound,
+		constants.ErrAdminNotFound,
 	}
 
 	if contains(badRequestErrors, err) {

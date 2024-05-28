@@ -29,6 +29,8 @@ type AdminRepositoryInterface interface {
 	DeleteAdmin(id int) error
 	UpdateAdmin(id int, user *Admin) error
 	UpdatePassword(id int, newPassword string) error
+	GetAdminByEmail(email string) (*Admin, error)
+	GetAdminByUsername(username string) (*Admin, error)
 }
 
 type AdminUseCaseInterface interface {
