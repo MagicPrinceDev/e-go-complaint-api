@@ -156,52 +156,20 @@ func (r *ComplaintRepo) UpdateStatus(id string, status string) error {
 		return constants.ErrComplaintNotFound
 	}
 
-	if status == "verifikasi" {
-		if complaint.Status == "verifikasi" {
-			return constants.ErrComplaintAlreadyVerified
-		} else if complaint.Status == "ditolak" {
-			return constants.ErrComplaintAlreadyRejected
-		} else if complaint.Status == "selesai" {
-			return constants.ErrComplaintAlreadyFinished
-		} else if complaint.Status == "on progress" {
-			return constants.ErrComplaintAlreadyOnProgress
-		}
-	} else if status == "on progress" {
-		if complaint.Status == "on progress" {
-			return constants.ErrComplaintAlreadyOnProgress
-		} else if complaint.Status == "ditolak" {
-			return constants.ErrComplaintAlreadyRejected
-		} else if complaint.Status == "selesai" {
-			return constants.ErrComplaintAlreadyFinished
-		} else if complaint.Status == "pending" {
-			return constants.ErrComplaintNotVerified
-		}
-	} else if status == "selesai" {
-		if complaint.Status == "selesai" {
-			return constants.ErrComplaintAlreadyFinished
-		} else if complaint.Status == "ditolak" {
-			return constants.ErrComplaintAlreadyRejected
-		} else if complaint.Status == "pending" {
-			return constants.ErrComplaintNotVerified
-		} else if complaint.Status == "verifikasi" {
-			return constants.ErrComplaintNotOnProgress
-		}
-	} else if status == "ditolak" {
-		if complaint.Status == "ditolak" {
-			return constants.ErrComplaintAlreadyRejected
-		} else if complaint.Status == "selesai" {
-			return constants.ErrComplaintAlreadyFinished
-		} else if complaint.Status == "verifikasi" {
-			return constants.ErrComplaintAlreadyVerified
-		} else if complaint.Status == "on progress" {
-			return constants.ErrComplaintAlreadyOnProgress
-		}
-	}
-
 	complaint.Status = status
 	if err := r.DB.Save(&complaint).Error; err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (r *ComplaintRepo) GetStatus(id string) (string, error) {
+	var status string
+
+	if err := r.DB.Model(&entities.Complaint{}).Select("status").Where("id = ?", id).Scan(&status).Error; err != nil {
+		return "", constants.ErrComplaintNotFound
+	}
+
+	return status, nil
 }

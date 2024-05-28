@@ -137,7 +137,7 @@ func (u *ComplaintUseCase) Update(complaint entities.Complaint) (entities.Compla
 }
 
 func (u *ComplaintUseCase) UpdateStatus(id string, status string) error {
-	if status != "verifikasi" && status != "on progress" && status != "selesai" && status != "ditolak" {
+	if status != "pending" && status != "verifikasi" && status != "on progress" && status != "selesai" && status != "ditolak" {
 		return constants.ErrInvalidStatus
 	}
 

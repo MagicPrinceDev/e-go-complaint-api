@@ -22,10 +22,12 @@ type ComplaintProcessRepositoryInterface interface {
 	Create(complaintProcesses *ComplaintProcess) error
 	GetByComplaintID(complaintID string) ([]ComplaintProcess, error)
 	Update(complaintProcesses *ComplaintProcess) error
+	Delete(complaintID string, complaintProcessID int) (string, error)
 }
 
 type ComplaintProcessUseCaseInterface interface {
 	Create(complaintProcesses *ComplaintProcess) (ComplaintProcess, error)
 	GetByComplaintID(complaintID string) ([]ComplaintProcess, error)
 	Update(complaintProcesses *ComplaintProcess) (ComplaintProcess, error)
+	Delete(complaintID string, complaintProcessID int) (string, error)
 }

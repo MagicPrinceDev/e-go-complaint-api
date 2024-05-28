@@ -1,6 +1,7 @@
 package complaint_process
 
 import (
+	"e-complaint-api/constants"
 	"e-complaint-api/entities"
 
 	"gorm.io/gorm"
@@ -29,7 +30,7 @@ func (repo *ComplaintProcessRepo) Create(complaintProcesses *entities.ComplaintP
 func (repo *ComplaintProcessRepo) GetByComplaintID(complaintID string) ([]entities.ComplaintProcess, error) {
 	var complaintProcesses []entities.ComplaintProcess
 	if err := repo.DB.Where("complaint_id = ?", complaintID).Preload("Admin").Find(&complaintProcesses).Error; err != nil {
-		return nil, err
+		return nil, constants.ErrComplaintProcessNotFound
 	}
 
 	return complaintProcesses, nil
@@ -38,18 +39,36 @@ func (repo *ComplaintProcessRepo) GetByComplaintID(complaintID string) ([]entiti
 func (repo *ComplaintProcessRepo) Update(complaintProcesses *entities.ComplaintProcess) error {
 	var oldComplaintProcess entities.ComplaintProcess
 	if err := repo.DB.First(&oldComplaintProcess, complaintProcesses.ID).Error; err != nil {
-		return err
+		return constants.ErrComplaintProcessNotFound
 	}
 
 	oldComplaintProcess.Message = complaintProcesses.Message
 	oldComplaintProcess.AdminID = complaintProcesses.AdminID
 	if err := repo.DB.Save(&oldComplaintProcess).Error; err != nil {
-		return err
+		return constants.ErrInternalServerError
 	}
 
 	if err := repo.DB.Preload("Admin").First(complaintProcesses).Error; err != nil {
-		return err
+		return constants.ErrInternalServerError
 	}
 
 	return nil
+}
+
+func (repo *ComplaintProcessRepo) Delete(complaintID string, complaintProcessID int) (string, error) {
+	var complaintProcess entities.ComplaintProcess
+	if err := repo.DB.Where("complaint_id = ?", complaintID).Order("created_at desc").First(&complaintProcess).Error; err != nil {
+		return "", constants.ErrComplaintProcessNotFound
+	}
+
+	if complaintProcess.ID != complaintProcessID {
+		return "", constants.ErrComplaintProcessCannotBeDeleted
+	}
+
+	complaintProcess.DeletedAt = gorm.DeletedAt{Time: complaintProcess.CreatedAt, Valid: true}
+	if err := repo.DB.Save(&complaintProcess).Error; err != nil {
+		return "", constants.ErrInternalServerError
+	}
+
+	return complaintProcess.Status, nil
 }

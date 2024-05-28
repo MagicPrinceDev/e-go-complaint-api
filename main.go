@@ -68,7 +68,7 @@ func main() {
 	ComplaintController := complaint_cl.NewComplaintController(complaintUsecase, complaintFileUsecase)
 
 	complaintProcessRepo := complaint_process_rp.NewComplaintProcessRepo(DB)
-	complaintProcessUsecase := complaint_process_uc.NewComplaintProcessUseCase(complaintProcessRepo)
+	complaintProcessUsecase := complaint_process_uc.NewComplaintProcessUseCase(complaintProcessRepo, complaintRepo)
 	ComplaintProcessController := complaint_process_cl.NewComplaintProcessController(complaintUsecase, complaintProcessUsecase)
 
 	categoryRepo := category_rp.NewCategoryRepo(DB)

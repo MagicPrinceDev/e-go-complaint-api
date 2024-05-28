@@ -34,6 +34,7 @@ type ComplaintRepositoryInterface interface {
 	AdminDelete(id string) error
 	Update(complaint Complaint) (Complaint, error)
 	UpdateStatus(id string, status string) error
+	GetStatus(id string) (string, error)
 }
 
 type ComplaintUseCaseInterface interface {

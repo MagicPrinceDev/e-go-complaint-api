@@ -28,6 +28,8 @@ func ConvertResponseCode(err error) int {
 		constants.ErrComplaintNotOnProgress,
 		constants.ErrInvalidStatus,
 		constants.ErrIDMustBeFilled,
+		constants.ErrComplaintProcessNotFound,
+		constants.ErrComplaintProcessCannotBeDeleted,
 	}
 
 	if contains(badRequestErrors, err) {

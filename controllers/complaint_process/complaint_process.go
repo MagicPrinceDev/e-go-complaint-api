@@ -34,15 +34,15 @@ func (cp *ComplaintProcessController) Create(c echo.Context) error {
 	c.Bind(&complaintProcessRequest)
 
 	complaintProcessRequest.AdminID = admin_id
-	complaint_id := c.Param("complaint_id")
+	complaint_id := c.Param("complaint-id")
 	complaintProcessRequest.ComplaintID = complaint_id
 
-	err = cp.complaintUseCase.UpdateStatus(complaint_id, complaintProcessRequest.Status)
+	complaintProcess, err := cp.complaintProcessUseCase.Create(complaintProcessRequest.ToEntities())
 	if err != nil {
 		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
 
-	complaintProcess, err := cp.complaintProcessUseCase.Create(complaintProcessRequest.ToEntities())
+	err = cp.complaintUseCase.UpdateStatus(complaint_id, complaintProcessRequest.Status)
 	if err != nil {
 		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
@@ -53,7 +53,7 @@ func (cp *ComplaintProcessController) Create(c echo.Context) error {
 }
 
 func (cp *ComplaintProcessController) GetByComplaintID(c echo.Context) error {
-	complaint_id := c.Param("complaint_id")
+	complaint_id := c.Param("complaint-id")
 
 	complaintProcesses, err := cp.complaintProcessUseCase.GetByComplaintID(complaint_id)
 	if err != nil {
@@ -74,8 +74,8 @@ func (cp *ComplaintProcessController) Update(c echo.Context) error {
 		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
 
-	complaintID := c.Param("complaint_id")
-	complaintProcessID, _ := strconv.Atoi(c.Param("process_id"))
+	complaintID := c.Param("complaint-id")
+	complaintProcessID, _ := strconv.Atoi(c.Param("process-id"))
 
 	var complaintProcessRequest request.Update
 	c.Bind(&complaintProcessRequest)
@@ -91,4 +91,21 @@ func (cp *ComplaintProcessController) Update(c echo.Context) error {
 	complaintProcessResponse := response.UpdateFromEntitiesToResponse(&complaintProcess)
 
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update Complaint Process", complaintProcessResponse))
+}
+
+func (cp *ComplaintProcessController) Delete(c echo.Context) error {
+	complaintID := c.Param("complaint-id")
+	complaintProcessID, _ := strconv.Atoi(c.Param("process-id"))
+
+	status, err := cp.complaintProcessUseCase.Delete(complaintID, complaintProcessID)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	err = cp.complaintUseCase.UpdateStatus(complaintID, status)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Delete Complaint Process", nil))
 }

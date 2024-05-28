@@ -43,9 +43,10 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	admin.GET("/users", r.UserController.GetAllUsers)
 	admin.PUT("/admins/:id", r.AdminController.UpdateAdmin)
 	admin.PUT("/admins/:id/change-password", r.AdminController.UpdatePassword)
-	admin.POST("/complaints/:complaint_id/processes", r.ComplaintProcessController.Create)
-	admin.GET("/complaints/:complaint_id/processes", r.ComplaintProcessController.GetByComplaintID)
-	admin.PUT("/complaints/:complaint_id/processes/:process_id", r.ComplaintProcessController.Update)
+	admin.POST("/complaints/:complaint-id/processes", r.ComplaintProcessController.Create)
+	admin.GET("/complaints/:complaint-id/processes", r.ComplaintProcessController.GetByComplaintID)
+	admin.PUT("/complaints/:complaint-id/processes/:process-id", r.ComplaintProcessController.Update)
+	admin.DELETE("/complaints/:complaint-id/processes/:process-id", r.ComplaintProcessController.Delete)
 
 	// Route For User
 	user := e.Group("/api/v1")
