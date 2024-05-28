@@ -8,8 +8,14 @@ type Category struct {
 
 type CategoryRepositoryInterface interface {
 	GetAll() ([]Category, error)
+	GetByID(id int) (Category, error)
+	CreateCategory(category *Category) (*Category, error)
+	UpdateCategory(id int, category *Category) (*Category, error)
 }
 
 type CategoryUseCaseInterface interface {
 	GetAll() ([]Category, error)
+	GetByID(id int) (Category, error)
+	CreateCategory(category *Category) (*Category, error)
+	UpdateCategory(id int, category *Category) (*Category, error)
 }
