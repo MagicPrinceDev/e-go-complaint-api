@@ -45,6 +45,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	admin.PUT("/admins/:id/change-password", r.AdminController.UpdatePassword)
 	admin.POST("/complaints/:complaint_id/processes", r.ComplaintProcessController.Create)
 	admin.GET("/complaints/:complaint_id/processes", r.ComplaintProcessController.GetByComplaintID)
+	admin.PUT("/complaints/:complaint_id/processes/:process_id", r.ComplaintProcessController.Update)
 
 	// Route For User
 	user := e.Group("/api/v1")

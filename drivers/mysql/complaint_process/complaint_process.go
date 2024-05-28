@@ -34,3 +34,22 @@ func (repo *ComplaintProcessRepo) GetByComplaintID(complaintID string) ([]entiti
 
 	return complaintProcesses, nil
 }
+
+func (repo *ComplaintProcessRepo) Update(complaintProcesses *entities.ComplaintProcess) error {
+	var oldComplaintProcess entities.ComplaintProcess
+	if err := repo.DB.First(&oldComplaintProcess, complaintProcesses.ID).Error; err != nil {
+		return err
+	}
+
+	oldComplaintProcess.Message = complaintProcesses.Message
+	oldComplaintProcess.AdminID = complaintProcesses.AdminID
+	if err := repo.DB.Save(&oldComplaintProcess).Error; err != nil {
+		return err
+	}
+
+	if err := repo.DB.Preload("Admin").First(complaintProcesses).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

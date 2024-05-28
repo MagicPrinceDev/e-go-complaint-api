@@ -7,6 +7,7 @@ import (
 	"e-complaint-api/entities"
 	"e-complaint-api/utils"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -65,4 +66,29 @@ func (cp *ComplaintProcessController) GetByComplaintID(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Get Complaint Process", complaintProcessesResponse))
+}
+
+func (cp *ComplaintProcessController) Update(c echo.Context) error {
+	admin_id, err := utils.GetIDFromJWT(c)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	complaintID := c.Param("complaint_id")
+	complaintProcessID, _ := strconv.Atoi(c.Param("process_id"))
+
+	var complaintProcessRequest request.Update
+	c.Bind(&complaintProcessRequest)
+	complaintProcessRequest.ID = complaintProcessID
+	complaintProcessRequest.AdminID = admin_id
+	complaintProcessRequest.ComplaintID = complaintID
+
+	complaintProcess, err := cp.complaintProcessUseCase.Update(complaintProcessRequest.ToEntities())
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	complaintProcessResponse := response.UpdateFromEntitiesToResponse(&complaintProcess)
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update Complaint Process", complaintProcessResponse))
 }

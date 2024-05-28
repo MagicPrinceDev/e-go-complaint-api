@@ -1,6 +1,9 @@
 package complaint_process
 
-import "e-complaint-api/entities"
+import (
+	"e-complaint-api/constants"
+	"e-complaint-api/entities"
+)
 
 type ComplaintProcessUseCase struct {
 	repository entities.ComplaintProcessRepositoryInterface
@@ -28,4 +31,17 @@ func (u *ComplaintProcessUseCase) GetByComplaintID(complaintID string) ([]entiti
 	}
 
 	return complaintProcesses, nil
+}
+
+func (u *ComplaintProcessUseCase) Update(complaintProcess *entities.ComplaintProcess) (entities.ComplaintProcess, error) {
+	if complaintProcess.Message == "" {
+		return entities.ComplaintProcess{}, constants.ErrAllFieldsMustBeFilled
+	}
+
+	err := u.repository.Update(complaintProcess)
+	if err != nil {
+		return entities.ComplaintProcess{}, err
+	}
+
+	return *complaintProcess, nil
 }
