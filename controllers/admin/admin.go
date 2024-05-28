@@ -143,15 +143,6 @@ func (ac *AdminController) UpdateAdmin(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
 	}
 
-	userRole, err := utils.GetRoleFromJWT(c)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
-	}
-
-	if userRole != "super_admin" {
-		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
-	}
-
 	admin, err := ac.adminUseCase.UpdateAdmin(id, adminRequest.ToEntities())
 	if err != nil {
 		if errors.Is(err, constants.ErrAdminNotFound) {
@@ -175,15 +166,6 @@ func (ac *AdminController) UpdatePassword(c echo.Context) error {
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrInvalidIDFormat.Error()))
-	}
-
-	userRole, err := utils.GetRoleFromJWT(c)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
-	}
-
-	if userRole != "super_admin" {
-		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
 	}
 
 	var passwordRequest request.UpdatePassword

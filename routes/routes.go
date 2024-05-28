@@ -29,21 +29,17 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	superAdmin := e.Group("/api/v1")
 	superAdmin.Use(jwt, middlewares.IsSuperAdmin)
 	superAdmin.POST("/admins", r.AdminController.CreateAccount)
-	superAdmin.GET("/admins", r.AdminController.GetAllAdmins)
-	superAdmin.GET("/admins/:id", r.AdminController.GetAdminByID)
 	superAdmin.DELETE("/admins/:id", r.AdminController.DeleteAdmin)
-
+	superAdmin.PUT("/admins/:id", r.AdminController.UpdateAdmin)
 	superAdmin.PUT("/admins/:id/change-password", r.AdminController.UpdatePassword)
 
-	// Route For Admin
+	// Route For Admin & Super Admin
 	admin := e.Group("/api/v1")
 	admin.POST("/admins/login", r.AdminController.Login)
 	admin.Use(jwt, middlewares.IsAdmin)
 	admin.GET("/admins", r.AdminController.GetAllAdmins)
 	admin.GET("/admins/:id", r.AdminController.GetAdminByID)
 	admin.GET("/users", r.UserController.GetAllUsers)
-	admin.PUT("/admins/:id", r.AdminController.UpdateAdmin)
-	admin.PUT("/admins/:id/change-password", r.AdminController.UpdatePassword)
 	admin.POST("/complaints/:complaint-id/processes", r.ComplaintProcessController.Create)
 	admin.GET("/complaints/:complaint-id/processes", r.ComplaintProcessController.GetByComplaintID)
 	admin.PUT("/complaints/:complaint-id/processes/:process-id", r.ComplaintProcessController.Update)
@@ -58,6 +54,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	user.PUT("/complaints/:id", r.ComplaintController.Update)
 	user.PUT("/users/update-profile", r.UserController.UpdateUser)
 	user.PUT("/users/change-password", r.UserController.UpdatePassword)
+
 	// Route For All Authenticated User
 	auth_user := e.Group("/api/v1")
 	auth_user.Use(jwt)
