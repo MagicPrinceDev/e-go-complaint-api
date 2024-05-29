@@ -1,0 +1,180 @@
+package admin
+
+import (
+	"e-complaint-api/constants"
+	"e-complaint-api/entities"
+	"e-complaint-api/middlewares"
+	"e-complaint-api/utils"
+	"errors"
+	"strings"
+)
+
+type AdminUseCase struct {
+	repository entities.AdminRepositoryInterface
+}
+
+func NewAdminUseCase(repository entities.AdminRepositoryInterface) *AdminUseCase {
+	return &AdminUseCase{
+		repository: repository,
+	}
+}
+
+func (u *AdminUseCase) CreateAccount(admin *entities.Admin) (entities.Admin, error) {
+	if admin.Name == "" || admin.Email == "" || admin.Password == "" || admin.Username == "" || admin.TelephoneNumber == "" {
+		return entities.Admin{}, constants.ErrAllFieldsMustBeFilled
+	}
+
+	err := u.repository.CreateAccount(admin)
+
+	if err != nil {
+		if strings.HasSuffix(err.Error(), "email'") {
+			return entities.Admin{}, constants.ErrEmailAlreadyExists
+		} else if strings.HasSuffix(err.Error(), "username'") {
+			return entities.Admin{}, constants.ErrUsernameAlreadyExists
+		} else {
+			return entities.Admin{}, constants.ErrInternalServerError
+		}
+	}
+
+	return *admin, nil
+}
+
+func (u *AdminUseCase) Login(admin *entities.Admin) (entities.Admin, error) {
+	if admin.Username == "" || admin.Password == "" {
+		return entities.Admin{}, constants.ErrAllFieldsMustBeFilled
+	}
+
+	err := u.repository.Login(admin)
+	if err != nil {
+		return entities.Admin{}, constants.ErrInvalidUsernameOrPassword
+	}
+
+	if admin.IsSuperAdmin {
+		(*admin).Token = middlewares.GenerateTokenJWT(admin.ID, admin.Username, "super_admin")
+	} else {
+		(*admin).Token = middlewares.GenerateTokenJWT(admin.ID, admin.Username, "admin")
+	}
+
+	return *admin, nil
+}
+
+func (u *AdminUseCase) GetAllAdmins() ([]entities.Admin, error) {
+	adminPtrs, err := u.repository.GetAllAdmins()
+	if err != nil {
+		return nil, constants.ErrInternalServerError
+	}
+
+	adminValues := make([]entities.Admin, len(adminPtrs))
+	for i, admin := range adminPtrs {
+		adminValues[i] = *admin
+	}
+
+	return adminValues, nil
+}
+
+func (u *AdminUseCase) GetAdminByID(id int) (*entities.Admin, error) {
+	admin, err := u.repository.GetAdminByID(id)
+	if admin == nil {
+		return nil, constants.ErrAdminNotFound
+	}
+
+	if err != nil {
+		return nil, constants.ErrInternalServerError
+	}
+
+	return admin, nil
+}
+
+func (u *AdminUseCase) DeleteAdmin(id int) error {
+	admin, err := u.repository.GetAdminByID(id)
+
+	if admin == nil {
+		return constants.ErrAdminNotFound
+	}
+
+	err = u.repository.DeleteAdmin(id)
+	if err != nil {
+		return constants.ErrInternalServerError
+	}
+
+	return nil
+}
+
+func (u *AdminUseCase) UpdateAdmin(id int, admin *entities.Admin) (entities.Admin, error) {
+	existingAdmin, err := u.repository.GetAdminByID(id)
+	if err != nil {
+		if errors.Is(err, constants.ErrAdminNotFound) {
+			return entities.Admin{}, constants.ErrAdminNotFound
+		}
+		return entities.Admin{}, constants.ErrInternalServerError
+	}
+
+	if admin == nil {
+		return entities.Admin{}, constants.ErrAdminNotFound
+	}
+
+	// Check if the email is already taken by another admin
+	if admin.Email != "" && admin.Email != existingAdmin.Email {
+		conflictingAdmin, err := u.repository.GetAdminByEmail(admin.Email)
+		if err == nil && conflictingAdmin != nil && conflictingAdmin.ID != id {
+			return entities.Admin{}, constants.ErrEmailAlreadyExists
+		}
+	}
+
+	// Check if the username is already taken by another admin
+	if admin.Username != "" && admin.Username != existingAdmin.Username {
+		conflictingAdmin, err := u.repository.GetAdminByUsername(admin.Username)
+		if err == nil && conflictingAdmin != nil && conflictingAdmin.ID != id {
+			return entities.Admin{}, constants.ErrUsernameAlreadyExists
+		}
+	}
+
+	isUpdated := false
+
+	// Ensure existing data remains if no new data is provided
+	if admin.Name != "" && admin.Name != existingAdmin.Name {
+		existingAdmin.Name = admin.Name
+		isUpdated = true
+	}
+	if admin.Email != "" && admin.Email != existingAdmin.Email {
+		existingAdmin.Email = admin.Email
+		isUpdated = true
+	}
+	if admin.Username != "" && admin.Username != existingAdmin.Username {
+		existingAdmin.Username = admin.Username
+		isUpdated = true
+	}
+	if admin.TelephoneNumber != "" && admin.TelephoneNumber != existingAdmin.TelephoneNumber {
+		existingAdmin.TelephoneNumber = admin.TelephoneNumber
+		isUpdated = true
+	}
+
+	if !isUpdated {
+		return *existingAdmin, constants.ErrNoChangesDetected
+	}
+
+	err = u.repository.UpdateAdmin(id, existingAdmin)
+	if err != nil {
+		return entities.Admin{}, constants.ErrInternalServerError
+	}
+
+	return *existingAdmin, nil
+}
+
+func (u *AdminUseCase) UpdatePassword(id int, oldPassword, newPassword string) error {
+	existingAdmin, err := u.repository.GetAdminByID(id)
+	if err != nil {
+		return constants.ErrInternalServerError
+	}
+
+	if oldPassword == "" || newPassword == "" {
+		return constants.ErrAllFieldsMustBeFilled
+	}
+
+	if !utils.CheckPasswordHash(oldPassword, existingAdmin.Password) {
+		return constants.ErrOldPasswordDoesntMatch
+	}
+
+	hash, _ := utils.HashPassword(newPassword)
+	return u.repository.UpdatePassword(id, hash)
+}

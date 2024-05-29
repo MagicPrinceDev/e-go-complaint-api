@@ -14,6 +14,6 @@ WORKDIR /
 
 COPY --from=build-stage /goapp /goapp
 
-EXPOSE 8080
+EXPOSE 8000
 
 ENTRYPOINT ["./goapp"]
