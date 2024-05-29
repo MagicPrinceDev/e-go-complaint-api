@@ -11,6 +11,7 @@ type CategoryRepositoryInterface interface {
 	GetByID(id int) (Category, error)
 	CreateCategory(category *Category) (*Category, error)
 	UpdateCategory(id int, category *Category) (*Category, error)
+	DeleteCategory(id int) error
 }
 
 type CategoryUseCaseInterface interface {
@@ -18,4 +19,5 @@ type CategoryUseCaseInterface interface {
 	GetByID(id int) (Category, error)
 	CreateCategory(category *Category) (*Category, error)
 	UpdateCategory(id int, category *Category) (*Category, error)
+	DeleteCategory(id int) error
 }

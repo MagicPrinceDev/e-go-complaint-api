@@ -54,3 +54,11 @@ func (r *CategoryRepo) UpdateCategory(id int, category *entities.Category) (*ent
 
 	return category, nil
 }
+
+func (r *CategoryRepo) DeleteCategory(id int) error {
+	if err := r.DB.Delete(&entities.Category{}, id).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

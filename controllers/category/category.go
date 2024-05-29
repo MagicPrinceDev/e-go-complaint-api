@@ -85,3 +85,19 @@ func (cc *CategoryController) UpdateCategory(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success update category", responseCategory))
 }
+
+func (cc *CategoryController) DeleteCategory(c echo.Context) error {
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+	}
+
+	err = cc.useCase.DeleteCategory(id)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success delete category", nil))
+}

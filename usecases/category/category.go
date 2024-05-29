@@ -68,3 +68,20 @@ func (uc *CategoryUseCase) UpdateCategory(id int, newCategory *entities.Category
 
 	return updatedCategory, nil
 }
+
+func (uc *CategoryUseCase) DeleteCategory(id int) error {
+	_, err := uc.repository.GetByID(id)
+	if err != nil {
+		if errors.Is(err, constants.ErrNotFound) {
+			return constants.ErrNotFound
+		}
+		return constants.ErrInternalServerError
+	}
+
+	err = uc.repository.DeleteCategory(id)
+	if err != nil {
+		return constants.ErrInternalServerError
+	}
+
+	return nil
+}
