@@ -78,8 +78,12 @@ func (ac *AdminController) GetAdminByID(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
-	// Only allow super admin to get admin by ID
-	if userRole != "super_admin" {
+	userID, err := utils.GetIDFromJWT(c)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
+	if userRole != "super_admin" && userID != id {
 		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
 	}
 
@@ -159,25 +163,4 @@ func (ac *AdminController) UpdateAdmin(c echo.Context) error {
 
 	adminResponse := response.UpdateUserFromEntitiesToResponse(&admin)
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update Admin", adminResponse))
-}
-
-func (ac *AdminController) UpdatePassword(c echo.Context) error {
-	idStr := c.Param("id")
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrInvalidIDFormat.Error()))
-	}
-
-	var passwordRequest request.UpdatePassword
-	if err := c.Bind(&passwordRequest); err != nil {
-		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
-	}
-
-	oldPassword, newPassword := passwordRequest.ToEntities()
-	err = ac.adminUseCase.UpdatePassword(id, oldPassword, newPassword)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
-	}
-
-	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update Password", nil))
 }

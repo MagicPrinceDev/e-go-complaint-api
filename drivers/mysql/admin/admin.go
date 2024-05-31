@@ -75,6 +75,11 @@ func (r *AdminRepo) DeleteAdmin(id int) error {
 }
 
 func (r *AdminRepo) UpdateAdmin(id int, admin *entities.Admin) error {
+	if admin.Password != "" {
+		hash, _ := utils.HashPassword(admin.Password)
+		admin.Password = hash
+	}
+
 	if err := r.DB.Model(&entities.Admin{}).Where("id = ?", id).Updates(&admin).Error; err != nil {
 		return err
 	}
@@ -82,24 +87,9 @@ func (r *AdminRepo) UpdateAdmin(id int, admin *entities.Admin) error {
 	return nil
 }
 
-func (r *AdminRepo) UpdatePassword(id int, newPassword string) error {
-	return r.DB.Model(&entities.Admin{}).Where("id = ?", id).Updates(&entities.Admin{Password: newPassword}).Error
-}
-
 func (r *AdminRepo) GetAdminByEmail(email string) (*entities.Admin, error) {
 	var admin entities.Admin
 	if err := r.DB.Where("email = ?", email).First(&admin).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return &admin, nil
-}
-
-func (r *AdminRepo) GetAdminByUsername(username string) (*entities.Admin, error) {
-	var admin entities.Admin
-	if err := r.DB.Where("username = ?", username).First(&admin).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}

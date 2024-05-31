@@ -33,7 +33,6 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	superAdmin.POST("/admins", r.AdminController.CreateAccount)
 	superAdmin.DELETE("/admins/:id", r.AdminController.DeleteAdmin)
 	superAdmin.PUT("/admins/:id", r.AdminController.UpdateAdmin)
-	superAdmin.PUT("/admins/:id/change-password", r.AdminController.UpdatePassword)
 
 	// Route For Admin & Super Admin
 	admin := e.Group("/api/v1")
@@ -42,9 +41,13 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	admin.GET("/admins", r.AdminController.GetAllAdmins)
 	admin.GET("/admins/:id", r.AdminController.GetAdminByID)
 	admin.GET("/users", r.UserController.GetAllUsers)
+	admin.GET("/categories/:id", r.CategoryController.GetByID)
 	admin.POST("/complaints/:complaint-id/processes", r.ComplaintProcessController.Create)
 	admin.GET("/complaints/:complaint-id/processes", r.ComplaintProcessController.GetByComplaintID)
 	admin.PUT("/complaints/:complaint-id/processes/:process-id", r.ComplaintProcessController.Update)
+	admin.POST("/categories", r.CategoryController.CreateCategory)
+	admin.PUT("/categories/:id", r.CategoryController.UpdateCategory)
+  admin.DELETE("/categories/:id", r.CategoryController.DeleteCategory)
 	admin.DELETE("/complaints/:complaint-id/processes/:process-id", r.ComplaintProcessController.Delete)
 	admin.POST("/news", r.NewsController.Create)
 	admin.DELETE("/news/:id", r.NewsController.Delete)
@@ -69,6 +72,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	auth_user.GET("/complaints/:id", r.ComplaintController.GetByID)
 	auth_user.DELETE("/complaints/:id", r.ComplaintController.Delete)
 	auth_user.GET("/categories", r.CategoryController.GetAll)
+  auth_user.GET("/categories/:id", r.CategoryController.GetByID)
 	auth_user.GET("/news", r.NewsController.GetPaginated)
 	auth_user.GET("/news/:id", r.NewsController.GetByID)
 
