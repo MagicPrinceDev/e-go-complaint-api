@@ -14,8 +14,8 @@ type Get struct {
 	Title      string                   `json:"title"`
 	Content    string                   `json:"content"`
 	TotalLikes int                      `json:"total_likes"`
-	UpdatedAt  string                   `json:"update_at"`
 	Files      []file_response.NewsFile `json:"files"`
+	UpdatedAt  string                   `json:"updated_at"`
 }
 
 func GetFromEntitiesToResponse(data *entities.News) *Get {
@@ -35,7 +35,7 @@ func GetFromEntitiesToResponse(data *entities.News) *Get {
 		Title:      data.Title,
 		Content:    data.Content,
 		TotalLikes: data.TotalLikes,
-		UpdatedAt:  data.UpdatedAt.Format("2006-01-02 15:04:05"),
 		Files:      files,
+		UpdatedAt:  data.UpdatedAt.Format("3 January 2006 15:04:05"),
 	}
 }

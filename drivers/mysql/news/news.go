@@ -1,6 +1,7 @@
 package news
 
 import (
+	"e-complaint-api/constants"
 	"e-complaint-api/entities"
 
 	"gorm.io/gorm"
@@ -57,4 +58,14 @@ func (r *NewsRepo) GetMetaData(limit int, page int, search string, filter map[st
 	}
 
 	return metadata, nil
+}
+
+func (r *NewsRepo) GetByID(id int) (entities.News, error) {
+	var news entities.News
+
+	if err := r.DB.Preload("Admin").Preload("Category").Preload("Files").First(&news, id).Error; err != nil {
+		return entities.News{}, constants.ErrNewsNotFound
+	}
+
+	return news, nil
 }

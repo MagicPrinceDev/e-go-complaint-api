@@ -69,3 +69,12 @@ func (u *NewsUseCase) GetMetaData(limit int, page int, search string, filter map
 
 	return metaData, nil
 }
+
+func (u *NewsUseCase) GetByID(id int) (entities.News, error) {
+	news, err := u.repository.GetByID(id)
+	if err != nil {
+		return entities.News{}, err
+	}
+
+	return news, nil
+}

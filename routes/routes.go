@@ -67,6 +67,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	auth_user.DELETE("/complaints/:id", r.ComplaintController.Delete)
 	auth_user.GET("/categories", r.CategoryController.GetAll)
 	auth_user.GET("/news", r.NewsController.GetPaginated)
+	auth_user.GET("/news/:id", r.NewsController.GetByID)
 
 	// Route For Public
 }

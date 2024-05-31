@@ -58,3 +58,16 @@ func (nc *NewsController) GetPaginated(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, base.NewSuccessResponseWithMetadata("Success Get News", newsResponses, *metaDataResponse))
 }
+
+func (nc *NewsController) GetByID(c echo.Context) error {
+	id, _ := strconv.Atoi(c.Param("id"))
+
+	news, err := nc.newsUseCase.GetByID(id)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	newsResponse := news_response.GetFromEntitiesToResponse(&news)
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Get News By ID", newsResponse))
+}
