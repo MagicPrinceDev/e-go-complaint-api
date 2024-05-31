@@ -15,6 +15,7 @@ type User struct {
 	TelephoneNumber string
 	ProfilePhoto    string         `gorm:"default:profile_photos/default.jpg"`
 	Token           string         `gorm:"-"`
+	Discussion      []Discussion   `gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	CreatedAt       time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt       time.Time      `gorm:"autoUpdateTime"`
 	DeletedAt       gorm.DeletedAt `gorm:"index"`
