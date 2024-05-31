@@ -36,6 +36,9 @@ import (
 	news_rp "e-complaint-api/drivers/mysql/news"
 	news_uc "e-complaint-api/usecases/news"
 
+	news_file_rp "e-complaint-api/drivers/mysql/news_file"
+	news_file_uc "e-complaint-api/usecases/news_file"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -79,9 +82,13 @@ func main() {
 	categoryUsecase := category_uc.NewCategoryUseCase(categoryRepo)
 	CategoryController := category_cl.NewCategoryController(categoryUsecase)
 
+	NewsFileGCSAPIInterface := gcs_api.NewFileHandlingAPI(os.Getenv("GCS_CREDENTIALS"), "news_files/")
+	NewsFileRepo := news_file_rp.NewNewsFileRepo(DB)
+	NewsFileUsecase := news_file_uc.NewNewsFileUseCase(NewsFileRepo, NewsFileGCSAPIInterface)
+
 	newsRepo := news_rp.NewNewsRepo(DB)
 	newsUsecase := news_uc.NewNewsUseCase(newsRepo)
-	NewsController := news_cl.NewNewsController(newsUsecase)
+	NewsController := news_cl.NewNewsController(newsUsecase, NewsFileUsecase)
 
 	routes := routes.RouteController{
 		AdminController:            AdminController,

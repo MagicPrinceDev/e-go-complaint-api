@@ -25,10 +25,12 @@ type NewsRepositoryInterface interface {
 	GetPaginated(limit int, page int, search string, filter map[string]interface{}, sortBy string, sortType string) ([]News, error)
 	GetMetaData(limit int, page int, search string, filter map[string]interface{}) (Metadata, error)
 	GetByID(id int) (News, error)
+	Create(news *News) error
 }
 
 type NewsUseCaseInterface interface {
 	GetPaginated(limit int, page int, search string, filter map[string]interface{}, sortBy string, sortType string) ([]News, error)
 	GetMetaData(limit int, page int, search string, filter map[string]interface{}) (Metadata, error)
 	GetByID(id int) (News, error)
+	Create(news *News) (News, error)
 }

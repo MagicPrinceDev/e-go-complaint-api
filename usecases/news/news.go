@@ -3,6 +3,7 @@ package news
 import (
 	"e-complaint-api/constants"
 	"e-complaint-api/entities"
+	"strings"
 )
 
 type NewsUseCase struct {
@@ -77,4 +78,23 @@ func (u *NewsUseCase) GetByID(id int) (entities.News, error) {
 	}
 
 	return news, nil
+}
+
+func (u *NewsUseCase) Create(news *entities.News) (entities.News, error) {
+	if news.Title == "" || news.Content == "" || news.CategoryID == 0 {
+		return entities.News{}, constants.ErrAllFieldsMustBeFilled
+	}
+
+	err := u.repository.Create(news)
+	if err != nil {
+		if strings.HasSuffix(err.Error(), "REFERENCES `regencies` (`id`))") {
+			return entities.News{}, constants.ErrRegencyNotFound
+		} else if strings.HasSuffix(err.Error(), "REFERENCES `categories` (`id`))") {
+			return entities.News{}, constants.ErrCategoryNotFound
+		} else {
+			return entities.News{}, constants.ErrInternalServerError
+		}
+	}
+
+	return *news, nil
 }

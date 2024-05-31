@@ -69,3 +69,15 @@ func (r *NewsRepo) GetByID(id int) (entities.News, error) {
 
 	return news, nil
 }
+
+func (r *NewsRepo) Create(news *entities.News) error {
+	if err := r.DB.Create(news).Error; err != nil {
+		return err
+	}
+
+	if err := r.DB.Preload("Admin").Preload("Category").Preload("Files").First(news, news.ID).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
