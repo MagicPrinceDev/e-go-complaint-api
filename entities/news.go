@@ -20,3 +20,13 @@ type News struct {
 	Category   Category       `gorm:"foreignKey:CategoryID;references:ID"`
 	Files      []NewsFile     `gorm:"foreignKey:NewsID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
+
+type NewsRepositoryInterface interface {
+	GetPaginated(limit int, page int, search string, filter map[string]interface{}, sortBy string, sortType string) ([]News, error)
+	GetMetaData(limit int, page int, search string, filter map[string]interface{}) (Metadata, error)
+}
+
+type NewsUseCaseInterface interface {
+	GetPaginated(limit int, page int, search string, filter map[string]interface{}, sortBy string, sortType string) ([]News, error)
+	GetMetaData(limit int, page int, search string, filter map[string]interface{}) (Metadata, error)
+}
