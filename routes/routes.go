@@ -31,7 +31,6 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	superAdmin.POST("/admins", r.AdminController.CreateAccount)
 	superAdmin.DELETE("/admins/:id", r.AdminController.DeleteAdmin)
 	superAdmin.PUT("/admins/:id", r.AdminController.UpdateAdmin)
-	superAdmin.PUT("/admins/:id/change-password", r.AdminController.UpdatePassword)
 
 	// Route For Admin & Super Admin
 	admin := e.Group("/api/v1")

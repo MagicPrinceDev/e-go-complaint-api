@@ -4,7 +4,6 @@ import (
 	"e-complaint-api/constants"
 	"e-complaint-api/entities"
 	"e-complaint-api/middlewares"
-	"e-complaint-api/utils"
 	"errors"
 	"strings"
 )
@@ -121,14 +120,6 @@ func (u *AdminUseCase) UpdateAdmin(id int, admin *entities.Admin) (entities.Admi
 		}
 	}
 
-	// Check if the username is already taken by another admin
-	if admin.Username != "" && admin.Username != existingAdmin.Username {
-		conflictingAdmin, err := u.repository.GetAdminByUsername(admin.Username)
-		if err == nil && conflictingAdmin != nil && conflictingAdmin.ID != id {
-			return entities.Admin{}, constants.ErrUsernameAlreadyExists
-		}
-	}
-
 	isUpdated := false
 
 	// Ensure existing data remains if no new data is provided
@@ -140,12 +131,12 @@ func (u *AdminUseCase) UpdateAdmin(id int, admin *entities.Admin) (entities.Admi
 		existingAdmin.Email = admin.Email
 		isUpdated = true
 	}
-	if admin.Username != "" && admin.Username != existingAdmin.Username {
-		existingAdmin.Username = admin.Username
-		isUpdated = true
-	}
 	if admin.TelephoneNumber != "" && admin.TelephoneNumber != existingAdmin.TelephoneNumber {
 		existingAdmin.TelephoneNumber = admin.TelephoneNumber
+		isUpdated = true
+	}
+	if admin.Password != "" {
+		existingAdmin.Password = admin.Password
 		isUpdated = true
 	}
 
@@ -159,22 +150,4 @@ func (u *AdminUseCase) UpdateAdmin(id int, admin *entities.Admin) (entities.Admi
 	}
 
 	return *existingAdmin, nil
-}
-
-func (u *AdminUseCase) UpdatePassword(id int, oldPassword, newPassword string) error {
-	existingAdmin, err := u.repository.GetAdminByID(id)
-	if err != nil {
-		return constants.ErrInternalServerError
-	}
-
-	if oldPassword == "" || newPassword == "" {
-		return constants.ErrAllFieldsMustBeFilled
-	}
-
-	if !utils.CheckPasswordHash(oldPassword, existingAdmin.Password) {
-		return constants.ErrOldPasswordDoesntMatch
-	}
-
-	hash, _ := utils.HashPassword(newPassword)
-	return u.repository.UpdatePassword(id, hash)
 }
