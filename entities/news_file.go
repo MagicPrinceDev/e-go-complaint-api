@@ -18,15 +18,15 @@ type NewsFile struct {
 
 type NewsFileRepositoryInterface interface {
 	Create(newsFiles []*NewsFile) error
-	// DeleteByNewsID(newsID int) error
+	DeleteByNewsID(newsID int) error
 }
 
 type NewsFileGCSAPIInterface interface {
 	Upload(files []*multipart.FileHeader) ([]string, error)
-	// Delete(filePaths []string) error
+	Delete(filePaths []string) error
 }
 
 type NewsFileUseCaseInterface interface {
 	Create(files []*multipart.FileHeader, newsID int) ([]NewsFile, error)
-	// DeleteByNewsID(newsID int) error
+	DeleteByNewsID(newsID int) error
 }

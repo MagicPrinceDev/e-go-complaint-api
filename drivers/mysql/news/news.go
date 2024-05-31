@@ -3,6 +3,7 @@ package news
 import (
 	"e-complaint-api/constants"
 	"e-complaint-api/entities"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -77,6 +78,20 @@ func (r *NewsRepo) Create(news *entities.News) error {
 
 	if err := r.DB.Preload("Admin").Preload("Category").Preload("Files").First(news, news.ID).Error; err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (r *NewsRepo) Delete(id int) error {
+	var news entities.News
+	if err := r.DB.First(&news, id).Error; err != nil {
+		return constants.ErrNewsNotFound
+	}
+
+	news.DeletedAt = gorm.DeletedAt{Time: time.Now(), Valid: true}
+	if err := r.DB.Save(&news).Error; err != nil {
+		return constants.ErrInternalServerError
 	}
 
 	return nil

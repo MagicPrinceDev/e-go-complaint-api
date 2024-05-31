@@ -127,3 +127,19 @@ func (nc *NewsController) Create(c echo.Context) error {
 
 	return c.JSON(http.StatusCreated, base.NewSuccessResponse("Success Create News", newsResponse))
 }
+
+func (nc *NewsController) Delete(c echo.Context) error {
+	id, _ := strconv.Atoi(c.Param("id"))
+
+	err := nc.newsUseCase.Delete(id)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	err = nc.newsFileUseCase.DeleteByNewsID(id)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Delete News", nil))
+}

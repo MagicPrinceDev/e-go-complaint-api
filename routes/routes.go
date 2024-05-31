@@ -47,6 +47,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	admin.PUT("/complaints/:complaint-id/processes/:process-id", r.ComplaintProcessController.Update)
 	admin.DELETE("/complaints/:complaint-id/processes/:process-id", r.ComplaintProcessController.Delete)
 	admin.POST("/news", r.NewsController.Create)
+	admin.DELETE("/news/:id", r.NewsController.Delete)
 
 	// Route For User
 	user := e.Group("/api/v1")

@@ -44,3 +44,12 @@ func (u *NewsFileUseCase) Create(files []*multipart.FileHeader, newsID int) ([]e
 
 	return convertedNewsFiles, nil
 }
+
+func (u *NewsFileUseCase) DeleteByNewsID(newsID int) error {
+	err_delete := u.repository.DeleteByNewsID(newsID)
+	if err_delete != nil {
+		return err_delete
+	}
+
+	return nil
+}

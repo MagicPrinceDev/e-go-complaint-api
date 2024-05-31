@@ -98,3 +98,12 @@ func (u *NewsUseCase) Create(news *entities.News) (entities.News, error) {
 
 	return *news, nil
 }
+
+func (u *NewsUseCase) Delete(id int) error {
+	err := u.repository.Delete(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -21,3 +21,19 @@ func (r *NewsFileRepo) Create(newsFiles []*entities.NewsFile) error {
 
 	return nil
 }
+
+func (r *NewsFileRepo) DeleteByNewsID(newsID int) error {
+	var newsFiles []entities.NewsFile
+	if err := r.DB.Where("news_id = ?", newsID).Find(&newsFiles).Error; err != nil {
+		return err
+	}
+
+	for _, nf := range newsFiles {
+		nf.DeletedAt = gorm.DeletedAt{Time: nf.UpdatedAt, Valid: true}
+		if err := r.DB.Save(&nf).Error; err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

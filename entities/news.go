@@ -26,6 +26,7 @@ type NewsRepositoryInterface interface {
 	GetMetaData(limit int, page int, search string, filter map[string]interface{}) (Metadata, error)
 	GetByID(id int) (News, error)
 	Create(news *News) error
+	Delete(id int) error
 }
 
 type NewsUseCaseInterface interface {
@@ -33,4 +34,5 @@ type NewsUseCaseInterface interface {
 	GetMetaData(limit int, page int, search string, filter map[string]interface{}) (Metadata, error)
 	GetByID(id int) (News, error)
 	Create(news *News) (News, error)
+	Delete(id int) error
 }
