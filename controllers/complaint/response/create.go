@@ -18,6 +18,7 @@ type Create struct {
 	Status      string                         `json:"status"`
 	Type        string                         `json:"type"`
 	Files       []*file_response.ComplaintFile `json:"files"`
+	CreatedAt   string                         `json:"created_at"`
 }
 
 func CreateFromEntitiesToResponse(data *entities.Complaint) *Create {
@@ -38,5 +39,6 @@ func CreateFromEntitiesToResponse(data *entities.Complaint) *Create {
 		Description: data.Description,
 		Status:      data.Status,
 		Type:        data.Type,
+		CreatedAt:   data.CreatedAt.Format("3 January 2006 15:04:05"),
 	}
 }

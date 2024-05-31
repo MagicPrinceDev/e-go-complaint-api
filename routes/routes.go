@@ -5,6 +5,7 @@ import (
 	"e-complaint-api/controllers/category"
 	"e-complaint-api/controllers/complaint"
 	"e-complaint-api/controllers/complaint_process"
+	"e-complaint-api/controllers/news"
 	"e-complaint-api/controllers/user"
 	"e-complaint-api/middlewares"
 	"os"
@@ -20,6 +21,7 @@ type RouteController struct {
 	ComplaintController        *complaint.ComplaintController
 	CategoryController         *category.CategoryController
 	ComplaintProcessController *complaint_process.ComplaintProcessController
+	NewsController             *news.NewsController
 }
 
 func (r *RouteController) InitRoute(e *echo.Echo) {
@@ -45,8 +47,11 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	admin.PUT("/complaints/:complaint-id/processes/:process-id", r.ComplaintProcessController.Update)
 	admin.POST("/categories", r.CategoryController.CreateCategory)
 	admin.PUT("/categories/:id", r.CategoryController.UpdateCategory)
+  admin.DELETE("/categories/:id", r.CategoryController.DeleteCategory)
 	admin.DELETE("/complaints/:complaint-id/processes/:process-id", r.ComplaintProcessController.Delete)
-	admin.DELETE("/categories/:id", r.CategoryController.DeleteCategory)
+	admin.POST("/news", r.NewsController.Create)
+	admin.DELETE("/news/:id", r.NewsController.Delete)
+	admin.PUT("/news/:id", r.NewsController.Update)
 
 	// Route For User
 	user := e.Group("/api/v1")
@@ -67,7 +72,9 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	auth_user.GET("/complaints/:id", r.ComplaintController.GetByID)
 	auth_user.DELETE("/complaints/:id", r.ComplaintController.Delete)
 	auth_user.GET("/categories", r.CategoryController.GetAll)
-	auth_user.GET("/categories/:id", r.CategoryController.GetByID)
+  auth_user.GET("/categories/:id", r.CategoryController.GetByID)
+	auth_user.GET("/news", r.NewsController.GetPaginated)
+	auth_user.GET("/news/:id", r.NewsController.GetByID)
 
 	// Route For Public
 }

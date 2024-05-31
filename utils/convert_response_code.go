@@ -34,6 +34,7 @@ func ConvertResponseCode(err error) int {
 		constants.ErrNoChangesDetected,
 		constants.ErrNotFound,
 		constants.ErrAdminNotFound,
+		constants.ErrNewsNotFound,
 	}
 
 	if contains(badRequestErrors, err) {
