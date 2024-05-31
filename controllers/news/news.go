@@ -143,3 +143,71 @@ func (nc *NewsController) Delete(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Delete News", nil))
 }
+
+func (nc *NewsController) Update(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrInvalidIDFormat.Error()))
+	}
+
+	admin_id, err := utils.GetIDFromJWT(c)
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(err.Error()))
+	}
+
+	var newsRequest news_request.Update
+	if err := c.Bind(&newsRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+	}
+	newsRequest.ID = id
+	newsRequest.AdminID = admin_id
+
+	form, err := c.MultipartForm()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+	}
+
+	files := form.File["files"]
+	if len(files) != 0 {
+		if len(files) > 3 {
+			return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrMaxFileCountExceeded.Error()))
+		}
+
+		totalFileSize := 0
+		for _, file := range files {
+			totalFileSize += int(file.Size)
+		}
+
+		if totalFileSize > 10*1024*1024 {
+			return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrMaxFileSizeExceeded.Error()))
+		}
+	}
+
+	news, err := nc.newsUseCase.Update(*newsRequest.ToEntities())
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	newsResponse := news_response.UpdateFromEntitiesToResponse(&news)
+
+	if len(files) != 0 {
+		err = nc.newsFileUseCase.DeleteByNewsID(news.ID)
+		if err != nil {
+			return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+		}
+
+		newsFile, err := nc.newsFileUseCase.Create(files, news.ID)
+		if err != nil {
+			return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+		}
+
+		newsFileResponse := []*news_file_response.NewsFile{}
+		for _, file := range newsFile {
+			newsFileResponse = append(newsFileResponse, news_file_response.FromEntitiesToResponse(&file))
+		}
+
+		newsResponse.Files = newsFileResponse
+	}
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update News", newsResponse))
+}

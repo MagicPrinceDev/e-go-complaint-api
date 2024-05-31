@@ -27,6 +27,7 @@ type NewsRepositoryInterface interface {
 	GetByID(id int) (News, error)
 	Create(news *News) error
 	Delete(id int) error
+	Update(news News) (News, error)
 }
 
 type NewsUseCaseInterface interface {
@@ -35,4 +36,5 @@ type NewsUseCaseInterface interface {
 	GetByID(id int) (News, error)
 	Create(news *News) (News, error)
 	Delete(id int) error
+	Update(news News) (News, error)
 }

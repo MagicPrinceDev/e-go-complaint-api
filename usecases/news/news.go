@@ -87,9 +87,7 @@ func (u *NewsUseCase) Create(news *entities.News) (entities.News, error) {
 
 	err := u.repository.Create(news)
 	if err != nil {
-		if strings.HasSuffix(err.Error(), "REFERENCES `regencies` (`id`))") {
-			return entities.News{}, constants.ErrRegencyNotFound
-		} else if strings.HasSuffix(err.Error(), "REFERENCES `categories` (`id`))") {
+		if strings.HasSuffix(err.Error(), "REFERENCES `categories` (`id`))") {
 			return entities.News{}, constants.ErrCategoryNotFound
 		} else {
 			return entities.News{}, constants.ErrInternalServerError
@@ -106,4 +104,21 @@ func (u *NewsUseCase) Delete(id int) error {
 	}
 
 	return nil
+}
+
+func (u *NewsUseCase) Update(news entities.News) (entities.News, error) {
+	if news.Title == "" || news.Content == "" || news.CategoryID == 0 {
+		return entities.News{}, constants.ErrAllFieldsMustBeFilled
+	}
+
+	news, err := u.repository.Update(news)
+	if err != nil {
+		if strings.HasSuffix(err.Error(), "REFERENCES `categories` (`id`))") {
+			return entities.News{}, constants.ErrCategoryNotFound
+		} else {
+			return entities.News{}, constants.ErrInternalServerError
+		}
+	}
+
+	return news, nil
 }

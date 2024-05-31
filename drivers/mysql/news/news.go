@@ -96,3 +96,25 @@ func (r *NewsRepo) Delete(id int) error {
 
 	return nil
 }
+
+func (r *NewsRepo) Update(news entities.News) (entities.News, error) {
+	var oldNews entities.News
+
+	if err := r.DB.First(&oldNews, news.ID).Error; err != nil {
+		return entities.News{}, constants.ErrNewsNotFound
+	}
+
+	oldNews.Title = news.Title
+	oldNews.Content = news.Content
+	oldNews.CategoryID = news.CategoryID
+
+	if err := r.DB.Save(&oldNews).Error; err != nil {
+		return entities.News{}, constants.ErrInternalServerError
+	}
+
+	if err := r.DB.Preload("Admin").Preload("Category").Preload("Files").First(&news, oldNews.ID).Error; err != nil {
+		return entities.News{}, constants.ErrInternalServerError
+	}
+
+	return news, nil
+}

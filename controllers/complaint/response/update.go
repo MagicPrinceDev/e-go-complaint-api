@@ -18,6 +18,7 @@ type Update struct {
 	Status      string                         `json:"status"`
 	Type        string                         `json:"type"`
 	Files       []*file_response.ComplaintFile `json:"files"`
+	UpdatedAt   string                         `json:"updated_at"`
 }
 
 func UpdateFromEntitiesToResponse(data *entities.Complaint) *Update {
@@ -29,6 +30,15 @@ func UpdateFromEntitiesToResponse(data *entities.Complaint) *Update {
 		}
 	}
 
+	var files []*file_response.ComplaintFile
+	for _, file := range data.Files {
+		files = append(files, &file_response.ComplaintFile{
+			ID:          file.ID,
+			ComplaintID: file.ComplaintID,
+			Path:        file.Path,
+		})
+	}
+
 	return &Update{
 		ID:          data.ID,
 		User:        user_response.GetFromEntitiesToResponse(&data.User),
@@ -38,5 +48,7 @@ func UpdateFromEntitiesToResponse(data *entities.Complaint) *Update {
 		Description: data.Description,
 		Status:      data.Status,
 		Type:        data.Type,
+		Files:       files,
+		UpdatedAt:   data.UpdatedAt.Format("3 January 2006 15:04:05"),
 	}
 }

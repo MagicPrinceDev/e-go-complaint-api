@@ -3,7 +3,6 @@ package complaint
 import (
 	"e-complaint-api/constants"
 	"e-complaint-api/entities"
-	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -134,9 +133,6 @@ func (r *ComplaintRepo) Update(complaint entities.Complaint) (entities.Complaint
 	oldComplaint.CategoryID = complaint.CategoryID
 	oldComplaint.RegencyID = complaint.RegencyID
 	oldComplaint.Address = complaint.Address
-
-	fmt.Println(oldComplaint.CategoryID)
-	fmt.Println(complaint.CategoryID)
 
 	if err := r.DB.Save(&oldComplaint).Error; err != nil {
 		return entities.Complaint{}, err
