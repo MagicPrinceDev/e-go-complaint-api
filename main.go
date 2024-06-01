@@ -32,6 +32,10 @@ import (
 	category_rp "e-complaint-api/drivers/mysql/category"
 	category_uc "e-complaint-api/usecases/category"
 
+	regency_cl "e-complaint-api/controllers/regency"
+	regency_rp "e-complaint-api/drivers/mysql/regency"
+	regency_uc "e-complaint-api/usecases/regency"
+
 	news_cl "e-complaint-api/controllers/news"
 	news_rp "e-complaint-api/drivers/mysql/news"
 	news_uc "e-complaint-api/usecases/news"
@@ -82,6 +86,10 @@ func main() {
 	categoryUsecase := category_uc.NewCategoryUseCase(categoryRepo)
 	CategoryController := category_cl.NewCategoryController(categoryUsecase)
 
+	regencyRepo := regency_rp.NewRegencyRepo(DB)
+	regencyUsecase := regency_uc.NewRegencyUseCase(regencyRepo)
+	RegencyController := regency_cl.NewRegencyController(regencyUsecase)
+
 	NewsFileGCSAPIInterface := gcs_api.NewFileHandlingAPI(os.Getenv("GCS_CREDENTIALS"), "news-files/")
 	NewsFileRepo := news_file_rp.NewNewsFileRepo(DB)
 	NewsFileUsecase := news_file_uc.NewNewsFileUseCase(NewsFileRepo, NewsFileGCSAPIInterface)
@@ -97,6 +105,7 @@ func main() {
 		CategoryController:         CategoryController,
 		ComplaintProcessController: ComplaintProcessController,
 		NewsController:             NewsController,
+		RegencyController:          RegencyController,
 	}
 
 	routes.InitRoute(e)
