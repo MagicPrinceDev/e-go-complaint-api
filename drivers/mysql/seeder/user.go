@@ -17,18 +17,21 @@ func SeedUser(db *gorm.DB) {
 				Password:        hash,
 				Email:           "user1@gmail.com",
 				TelephoneNumber: "081234567890",
+				EmailVerified:   true,
 			},
 			{
 				Name:            "User 2",
 				Password:        hash,
 				Email:           "user2@gmail.com",
 				TelephoneNumber: "081234567890",
+				EmailVerified:   true,
 			},
 			{
 				Name:            "User 3",
 				Password:        hash,
 				Email:           "user3@gmail.com",
 				TelephoneNumber: "081234567890",
+				EmailVerified:   true,
 			},
 		}
 

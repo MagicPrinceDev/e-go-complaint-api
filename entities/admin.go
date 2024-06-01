@@ -14,7 +14,7 @@ type Admin struct {
 	Email           string `gorm:"unique"`
 	TelephoneNumber string
 	IsSuperAdmin    bool           `gorm:"default:false"`
-	ProfilePhoto    string         `gorm:"default:profile_photos/default.jpg"`
+	ProfilePhoto    string         `gorm:"default:profile-photos/admin-default.jpg"`
 	CreatedAt       time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt       time.Time      `gorm:"autoUpdateTime"`
 	DeletedAt       gorm.DeletedAt `gorm:"index"`

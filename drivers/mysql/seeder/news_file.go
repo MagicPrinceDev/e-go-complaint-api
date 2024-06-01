@@ -12,23 +12,23 @@ func SeedNewsFile(db *gorm.DB) {
 		newsFiles := []entities.NewsFile{
 			{
 				NewsID: 1,
-				Path:   "news_files/example1.jpg",
+				Path:   "news-files/example1.jpg",
 			},
 			{
 				NewsID: 1,
-				Path:   "news_files/example2.jpg",
+				Path:   "news-files/example2.jpg",
 			},
 			{
 				NewsID: 2,
-				Path:   "news_files/example3.jpg",
+				Path:   "news-files/example3.jpg",
 			},
 			{
 				NewsID: 3,
-				Path:   "news_files/example1.jpg",
+				Path:   "news-files/example1.jpg",
 			},
 			{
 				NewsID: 3,
-				Path:   "news_files/example3.jpg",
+				Path:   "news-files/example3.jpg",
 			},
 		}
 
