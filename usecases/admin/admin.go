@@ -19,7 +19,7 @@ func NewAdminUseCase(repository entities.AdminRepositoryInterface) *AdminUseCase
 }
 
 func (u *AdminUseCase) CreateAccount(admin *entities.Admin) (entities.Admin, error) {
-	if admin.Name == "" || admin.Email == "" || admin.Password == "" || admin.Username == "" || admin.TelephoneNumber == "" {
+	if admin.Name == "" || admin.Email == "" || admin.Password == "" || admin.TelephoneNumber == "" {
 		return entities.Admin{}, constants.ErrAllFieldsMustBeFilled
 	}
 
@@ -39,7 +39,7 @@ func (u *AdminUseCase) CreateAccount(admin *entities.Admin) (entities.Admin, err
 }
 
 func (u *AdminUseCase) Login(admin *entities.Admin) (entities.Admin, error) {
-	if admin.Username == "" || admin.Password == "" {
+	if admin.Email == "" || admin.Password == "" {
 		return entities.Admin{}, constants.ErrAllFieldsMustBeFilled
 	}
 
@@ -49,9 +49,9 @@ func (u *AdminUseCase) Login(admin *entities.Admin) (entities.Admin, error) {
 	}
 
 	if admin.IsSuperAdmin {
-		(*admin).Token = middlewares.GenerateTokenJWT(admin.ID, admin.Username, "super_admin")
+		(*admin).Token = middlewares.GenerateTokenJWT(admin.ID, admin.Name, "super_admin")
 	} else {
-		(*admin).Token = middlewares.GenerateTokenJWT(admin.ID, admin.Username, "admin")
+		(*admin).Token = middlewares.GenerateTokenJWT(admin.ID, admin.Name, "admin")
 	}
 
 	return *admin, nil
@@ -85,13 +85,13 @@ func (u *AdminUseCase) GetAdminByID(id int) (*entities.Admin, error) {
 }
 
 func (u *AdminUseCase) DeleteAdmin(id int) error {
-	admin, err := u.repository.GetAdminByID(id)
+	admin, _ := u.repository.GetAdminByID(id)
 
 	if admin == nil {
 		return constants.ErrAdminNotFound
 	}
 
-	err = u.repository.DeleteAdmin(id)
+	err := u.repository.DeleteAdmin(id)
 	if err != nil {
 		return constants.ErrInternalServerError
 	}

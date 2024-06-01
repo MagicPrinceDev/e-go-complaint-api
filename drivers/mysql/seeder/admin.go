@@ -14,7 +14,6 @@ func SeedAdmin(db *gorm.DB) {
 		admins := []entities.Admin{
 			{
 				Name:            "Super Admin",
-				Username:        "super_admin",
 				Password:        hash,
 				Email:           "super_admin@gmail.com",
 				TelephoneNumber: "081234567890",
@@ -22,7 +21,6 @@ func SeedAdmin(db *gorm.DB) {
 			},
 			{
 				Name:            "Admin Pandeglang",
-				Username:        "admin_pandeglang",
 				Password:        hash,
 				Email:           "admin_pandeglang@gmail.com",
 				TelephoneNumber: "081234567890",
@@ -30,7 +28,6 @@ func SeedAdmin(db *gorm.DB) {
 			},
 			{
 				Name:            "Admin Lebak",
-				Username:        "admin_lebak",
 				Password:        hash,
 				Email:           "admin_lebak@gmail.com",
 				TelephoneNumber: "081234567890",
@@ -38,7 +35,6 @@ func SeedAdmin(db *gorm.DB) {
 			},
 			{
 				Name:            "Admin Serang",
-				Username:        "admin_serang",
 				Password:        hash,
 				Email:           "admin_serang@gmail.com",
 				TelephoneNumber: "081234567890",
