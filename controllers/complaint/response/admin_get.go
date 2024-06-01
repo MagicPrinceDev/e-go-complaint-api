@@ -8,7 +8,7 @@ import (
 	"e-complaint-api/entities"
 )
 
-type Get struct {
+type AdminGet struct {
 	ID          string                        `json:"id"`
 	User        user_response.GetUser         `json:"user"`
 	Category    category_response.Get         `json:"category"`
@@ -20,7 +20,7 @@ type Get struct {
 	Files       []file_response.ComplaintFile `json:"files"`
 }
 
-func GetFromEntitiesToResponse(data *entities.Complaint) *Get {
+func AdminGetFromEntitiesToResponse(data *entities.Complaint) *AdminGet {
 	var files []file_response.ComplaintFile
 	for _, file := range data.Files {
 		files = append(files, file_response.ComplaintFile{
@@ -30,17 +30,7 @@ func GetFromEntitiesToResponse(data *entities.Complaint) *Get {
 		})
 	}
 
-	if data.Type == "private" {
-		(*data).User = entities.User{
-			ID:              0,
-			Name:            "Anonymous",
-			Email:           "anonymous@anonymous.com",
-			TelephoneNumber: "000000000000",
-			ProfilePhoto:    "profile_photos/default.jpg",
-		}
-	}
-
-	return &Get{
+	return &AdminGet{
 		ID:          data.ID,
 		User:        *user_response.GetUsersFromEntitiesToResponse(&data.User),
 		Category:    *category_response.GetFromEntitiesToResponse(&data.Category),

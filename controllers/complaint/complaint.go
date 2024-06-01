@@ -56,9 +56,20 @@ func (cc *ComplaintController) GetPaginated(c echo.Context) error {
 		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
 
-	complaintResponses := []*complaint_response.Get{}
-	for _, complaint := range complaints {
-		complaintResponses = append(complaintResponses, complaint_response.GetFromEntitiesToResponse(&complaint))
+	var complaintResponses interface{}
+	role, _ := utils.GetRoleFromJWT(c)
+	if role == "user" {
+		userResponses := []*complaint_response.Get{}
+		for _, complaint := range complaints {
+			userResponses = append(userResponses, complaint_response.GetFromEntitiesToResponse(&complaint))
+		}
+		complaintResponses = userResponses
+	} else {
+		adminResponses := []*complaint_response.AdminGet{}
+		for _, complaint := range complaints {
+			adminResponses = append(adminResponses, complaint_response.AdminGetFromEntitiesToResponse(&complaint))
+		}
+		complaintResponses = adminResponses
 	}
 
 	metaData, err := cc.complaintUseCase.GetMetaData(limit, page, search, filter)
