@@ -37,4 +37,8 @@ var (
 	ErrComplaintProcessNotFound         = errors.New("complaint process not found")
 	ErrComplaintProcessCannotBeDeleted  = errors.New("complaint process cannot be deleted")
 	ErrNewsNotFound                     = errors.New("news not found")
+	ErrUserNotFound                     = errors.New("user not found")
+	ErrInvalidOTP                       = errors.New("invalid otp")
+	ErrExpiredOTP                       = errors.New("expired otp")
+	ErrEmailNotVerified                 = errors.New("email not verified")
 )

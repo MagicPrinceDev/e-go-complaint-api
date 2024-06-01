@@ -171,3 +171,31 @@ func (uc *UserController) UpdatePassword(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update Password", nil))
 }
+
+func (uc *UserController) SendOTP(c echo.Context) error {
+	var emailRequest request.SendOTP
+	if err := c.Bind(&emailRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+	}
+
+	err := uc.userUseCase.SendOTP(emailRequest.Email)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Send OTP", nil))
+}
+
+func (uc *UserController) VerifyOTP(c echo.Context) error {
+	var otpRequest request.VerifyOTP
+	if err := c.Bind(&otpRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+	}
+
+	err := uc.userUseCase.VerifyOTP(otpRequest.Email, otpRequest.OTP)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Verify OTP", nil))
+}

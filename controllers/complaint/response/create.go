@@ -24,9 +24,9 @@ type Create struct {
 func CreateFromEntitiesToResponse(data *entities.Complaint) *Create {
 	if data.Type == "private" {
 		(*data).User = entities.User{
-			ID:       0,
-			Name:     "Anonymous",
-			Username: "Anonymous",
+			ID:    0,
+			Name:  "Anonymous",
+			Email: "anonymous@anonymous.com",
 		}
 	}
 

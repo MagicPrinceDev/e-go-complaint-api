@@ -3,13 +3,13 @@ package request
 import "e-complaint-api/entities"
 
 type Login struct {
-	Username string `form:"username"`
+	Email    string `form:"email"`
 	Password string `form:"password"`
 }
 
 func (r *Login) ToEntities() *entities.User {
 	return &entities.User{
-		Username: r.Username,
+		Email:    r.Email,
 		Password: r.Password,
 	}
 }
