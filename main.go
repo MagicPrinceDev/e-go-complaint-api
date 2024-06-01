@@ -66,7 +66,7 @@ func main() {
 	userUsecase := user_uc.NewUserUseCase(userRepo, mailTrapApi)
 	UserController := user_cl.NewUserController(userUsecase)
 
-	complaintFileGCSAPI := gcs_api.NewFileHandlingAPI(os.Getenv("GCS_CREDENTIALS"), "complaint_files/")
+	complaintFileGCSAPI := gcs_api.NewFileHandlingAPI(os.Getenv("GCS_CREDENTIALS"), "complaint-files/")
 	complaintFileRepo := complaint_file_rp.NewComplaintFileRepo(DB)
 	complaintFileUsecase := complaint_file_uc.NewComplaintFileUseCase(complaintFileRepo, complaintFileGCSAPI)
 
@@ -82,7 +82,7 @@ func main() {
 	categoryUsecase := category_uc.NewCategoryUseCase(categoryRepo)
 	CategoryController := category_cl.NewCategoryController(categoryUsecase)
 
-	NewsFileGCSAPIInterface := gcs_api.NewFileHandlingAPI(os.Getenv("GCS_CREDENTIALS"), "news_files/")
+	NewsFileGCSAPIInterface := gcs_api.NewFileHandlingAPI(os.Getenv("GCS_CREDENTIALS"), "news-files/")
 	NewsFileRepo := news_file_rp.NewNewsFileRepo(DB)
 	NewsFileUsecase := news_file_uc.NewNewsFileUseCase(NewsFileRepo, NewsFileGCSAPIInterface)
 

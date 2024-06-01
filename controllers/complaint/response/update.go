@@ -24,9 +24,9 @@ type Update struct {
 func UpdateFromEntitiesToResponse(data *entities.Complaint) *Update {
 	if data.Type == "private" {
 		(*data).User = entities.User{
-			ID:       0,
-			Name:     "Anonymous",
-			Username: "Anonymous",
+			ID:    0,
+			Name:  "Anonymous",
+			Email: "anonymous@anonymous.com",
 		}
 	}
 
