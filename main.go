@@ -44,6 +44,7 @@ import (
 	news_file_uc "e-complaint-api/usecases/news_file"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
@@ -54,6 +55,7 @@ func main() {
 	DB := mysql.ConnectDB(config.InitConfigMySQL())
 
 	e := echo.New()
+	e.Use(middleware.CORS())
 
 	adminRepo := admin_rp.NewAdminRepo(DB)
 	adminUsecase := admin_uc.NewAdminUseCase(adminRepo)
