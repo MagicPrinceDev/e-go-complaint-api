@@ -55,12 +55,6 @@ func (uc *UserController) GetAllUsers(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
-	userRole, err := utils.GetRoleFromJWT(c)
-	if userRole != "admin" {
-		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
-
-	}
-
 	usersResponse := response.GetAllUsersFromEntitiesToResponse(users)
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Get All Users", usersResponse))
 }

@@ -43,7 +43,6 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	admin.GET("/admins", r.AdminController.GetAllAdmins)
 	admin.GET("/admins/:id", r.AdminController.GetAdminByID)
 	admin.GET("/users", r.UserController.GetAllUsers)
-	admin.GET("/categories/:id", r.CategoryController.GetByID)
 	admin.POST("/complaints/:complaint-id/processes", r.ComplaintProcessController.Create)
 	admin.GET("/complaints/:complaint-id/processes", r.ComplaintProcessController.GetByComplaintID)
 	admin.PUT("/complaints/:complaint-id/processes/:process-id", r.ComplaintProcessController.Update)
