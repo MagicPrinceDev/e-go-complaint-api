@@ -8,21 +8,27 @@ import (
 
 func SeedDiscussion(db *gorm.DB) {
 	if err := db.First(&entities.Discussion{}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+		UserId := 1
+		AdminID := 1
 		discussions := []entities.Discussion{
 			{
-				ID:      1,
-				User:    entities.User{},
-				Comment: "Min kenapa progressnya lama sekali ya",
+				UserID:      &UserId,
+				ComplaintID: "C-271j9ak280",
+				Comment:     "Min kenapa progressnya lama sekali ya",
 			},
 			{
-				ID:      2,
-				Admin:   entities.Admin{},
-				Comment: "Halo, untuk progress memang memakan waktu yang cukup lama ya. Dikarenakan proses yang kompleks",
+				UserID:      &UserId,
+				ComplaintID: "C-81jas92581",
+				Comment:     "Min kenapa progressnya lama sekali ya",
+			},
+			{
+				AdminID:     &AdminID,
+				ComplaintID: "C-81jas92581",
+				Comment:     "Mohon bersabar ya, sedang dalam proses",
 			},
 		}
 		if err := db.CreateInBatches(&discussions, len(discussions)).Error; err != nil {
 			panic(err)
 		}
-
 	}
 }

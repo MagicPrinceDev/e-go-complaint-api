@@ -36,4 +36,5 @@ var (
 	ErrIDMustBeFilled                   = errors.New("id must be filled")
 	ErrComplaintProcessNotFound         = errors.New("complaint process not found")
 	ErrComplaintProcessCannotBeDeleted  = errors.New("complaint process cannot be deleted")
+	ErrCommentCannotBeEmpty             = errors.New("comment cannot be empty")
 )

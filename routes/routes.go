@@ -5,6 +5,7 @@ import (
 	"e-complaint-api/controllers/category"
 	"e-complaint-api/controllers/complaint"
 	"e-complaint-api/controllers/complaint_process"
+	"e-complaint-api/controllers/discussion"
 	"e-complaint-api/controllers/user"
 	"e-complaint-api/middlewares"
 	"os"
@@ -20,6 +21,7 @@ type RouteController struct {
 	ComplaintController        *complaint.ComplaintController
 	CategoryController         *category.CategoryController
 	ComplaintProcessController *complaint_process.ComplaintProcessController
+	DiscussionController       *discussion.DiscussionController
 }
 
 func (r *RouteController) InitRoute(e *echo.Echo) {
@@ -69,6 +71,9 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	auth_user.DELETE("/complaints/:id", r.ComplaintController.Delete)
 	auth_user.GET("/categories", r.CategoryController.GetAll)
 	auth_user.GET("/categories/:id", r.CategoryController.GetByID)
-
+	auth_user.DELETE("/complaints/:complaint-id/discussions/:discussion-id", r.DiscussionController.DeleteDiscussion)
+	auth_user.GET("/complaints/:complaint-id/discussions", r.DiscussionController.GetDiscussionByComplaintID)
+	auth_user.POST("/complaints/:complaint-id/discussions", r.DiscussionController.CreateDiscussion)
+	auth_user.PUT("/complaints/:complaint-id/discussions/:discussion-id", r.DiscussionController.UpdateDiscussion)
 	// Route For Public
 }
