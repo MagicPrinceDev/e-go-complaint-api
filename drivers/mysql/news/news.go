@@ -30,7 +30,11 @@ func (r *NewsRepo) GetPaginated(limit int, page int, search string, filter map[s
 
 	query = query.Order(sortBy + " " + sortType)
 
-	if err := query.Limit(limit).Offset((page - 1) * limit).Preload("Admin").Preload("Category").Preload("Files").Find(&news).Error; err != nil {
+	if limit != 0 && page != 0 {
+		query = query.Limit(limit).Offset((page - 1) * limit)
+	}
+
+	if err := query.Preload("Admin").Preload("Category").Preload("Files").Find(&news).Error; err != nil {
 		return nil, err
 	}
 
