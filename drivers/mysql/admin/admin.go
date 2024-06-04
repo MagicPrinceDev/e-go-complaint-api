@@ -31,16 +31,17 @@ func (r *AdminRepo) CreateAccount(admin *entities.Admin) error {
 func (r *AdminRepo) Login(admin *entities.Admin) error {
 	var adminDB entities.Admin
 
-	if err := r.DB.Where("username = ?", admin.Username).First(&adminDB).Error; err != nil {
-		return errors.New("username or password is incorrect")
+	if err := r.DB.Where("email = ?", admin.Email).First(&adminDB).Error; err != nil {
+		return errors.New("email or password is incorrect")
 	}
 
 	if !utils.CheckPasswordHash(admin.Password, adminDB.Password) {
-		return errors.New("username or password is incorrect")
+		return errors.New("email or password is incorrect")
 	}
 
 	(*admin).ID = adminDB.ID
-	(*admin).Username = adminDB.Username
+	(*admin).Name = adminDB.Name
+	(*admin).Email = adminDB.Email
 	(*admin).IsSuperAdmin = adminDB.IsSuperAdmin
 
 	return nil

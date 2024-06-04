@@ -3,7 +3,6 @@ package complaint
 import (
 	"e-complaint-api/constants"
 	"e-complaint-api/entities"
-	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -31,7 +30,11 @@ func (r *ComplaintRepo) GetPaginated(limit int, page int, search string, filter 
 
 	query = query.Order(sortBy + " " + sortType)
 
-	if err := query.Limit(limit).Offset((page - 1) * limit).Preload("User").Preload("Regency").Preload("Category").Preload("Files").Find(&complaints).Error; err != nil {
+	if limit != 0 && page != 0 {
+		query = query.Limit(limit).Offset((page - 1) * limit)
+	}
+
+	if err := query.Preload("User").Preload("Regency").Preload("Category").Preload("Files").Find(&complaints).Error; err != nil {
 		return nil, err
 	}
 
@@ -70,6 +73,16 @@ func (r *ComplaintRepo) GetByID(id string) (entities.Complaint, error) {
 	}
 
 	return complaint, nil
+}
+
+func (r *ComplaintRepo) GetByUserID(userId int) ([]entities.Complaint, error) {
+	var complaints []entities.Complaint
+
+	if err := r.DB.Preload("User").Preload("Regency").Preload("Category").Preload("Files").Where("user_id = ?", userId).Find(&complaints).Error; err != nil {
+		return nil, err
+	}
+
+	return complaints, nil
 }
 
 func (r *ComplaintRepo) Create(complaint *entities.Complaint) error {
@@ -135,9 +148,6 @@ func (r *ComplaintRepo) Update(complaint entities.Complaint) (entities.Complaint
 	oldComplaint.RegencyID = complaint.RegencyID
 	oldComplaint.Address = complaint.Address
 
-	fmt.Println(oldComplaint.CategoryID)
-	fmt.Println(complaint.CategoryID)
-
 	if err := r.DB.Save(&oldComplaint).Error; err != nil {
 		return entities.Complaint{}, err
 	}
@@ -172,4 +182,12 @@ func (r *ComplaintRepo) GetStatus(id string) (string, error) {
 	}
 
 	return status, nil
+}
+
+func (r *ComplaintRepo) Import(complaints []entities.Complaint) error {
+	if err := r.DB.CreateInBatches(complaints, len(complaints)).Error; err != nil {
+		return err
+	}
+
+	return nil
 }

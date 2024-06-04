@@ -1,13 +1,12 @@
 package entities
 
 type Regency struct {
-	ID   string `json:"id" gorm:"primaryKey"`
-	Name string `json:"name"`
+	ID   string `gorm:"primaryKey"`
+	Name string `gorm:"not null"`
 }
 
 type RegencyRepositoryInterface interface {
-	GetByRegencyID(regencyID string) ([]Regency, error)
-	GetByID(id string) (Regency, error)
+	GetAll() ([]Regency, error)
 }
 
 type RegencyIndonesiaAreaAPIInterface interface {
@@ -15,6 +14,5 @@ type RegencyIndonesiaAreaAPIInterface interface {
 }
 
 type RegencyUseCaseInterface interface {
-	GetByRegencyID(regencyID string) ([]Regency, error)
-	GetByID(id string) (Regency, error)
+	GetAll() ([]Regency, error)
 }

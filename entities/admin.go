@@ -9,12 +9,11 @@ import (
 type Admin struct {
 	ID              int    `gorm:"primaryKey"`
 	Name            string `gorm:"not null"`
-	Username        string `gorm:"unique;not null"`
-	Password        string `gorm:"not null"`
 	Email           string `gorm:"unique"`
+	Password        string `gorm:"not null"`
 	TelephoneNumber string
 	IsSuperAdmin    bool           `gorm:"default:false"`
-	ProfilePhoto    string         `gorm:"default:profile_photos/default.jpg"`
+	ProfilePhoto    string         `gorm:"default:profile-photos/admin-default.jpg"`
 	CreatedAt       time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt       time.Time      `gorm:"autoUpdateTime"`
 	DeletedAt       gorm.DeletedAt `gorm:"index"`

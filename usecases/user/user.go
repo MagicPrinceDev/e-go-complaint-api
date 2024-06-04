@@ -22,7 +22,7 @@ func NewUserUseCase(repository entities.UserRepositoryInterface, emailTrapApi en
 }
 
 func (u *UserUseCase) Register(user *entities.User) (entities.User, error) {
-	if user.Email == "" || user.Password == "" || user.Username == "" || user.Name == "" || user.TelephoneNumber == "" {
+	if user.Email == "" || user.Password == "" || user.Name == "" || user.TelephoneNumber == "" {
 		return entities.User{}, constants.ErrAllFieldsMustBeFilled
 	}
 
@@ -36,29 +36,24 @@ func (u *UserUseCase) Register(user *entities.User) (entities.User, error) {
 				return entities.User{}, constants.ErrUsernameAlreadyExists
 			}
 		} else {
-			return entities.User{}, constants.ErrInternalServerError
+			return entities.User{}, err
 		}
-	}
-
-	err2 := u.emailTrapApi.SendEmail(user.Email)
-	if err2 != nil {
-		return entities.User{}, constants.ErrInternalServerError
 	}
 
 	return *user, nil
 }
 
 func (u *UserUseCase) Login(user *entities.User) (entities.User, error) {
-	if user.Username == "" || user.Password == "" {
+	if user.Email == "" || user.Password == "" {
 		return entities.User{}, constants.ErrAllFieldsMustBeFilled
 	}
 
 	err := u.repository.Login(user)
 
-	(*user).Token = middlewares.GenerateTokenJWT(user.ID, user.Username, "user")
+	(*user).Token = middlewares.GenerateTokenJWT(user.ID, user.Name, "user")
 
 	if err != nil {
-		return entities.User{}, constants.ErrInvalidUsernameOrPassword
+		return entities.User{}, err
 	}
 
 	return *user, nil
@@ -98,9 +93,6 @@ func (u *UserUseCase) UpdateUser(id int, user *entities.User) (entities.User, er
 		existingUser.Email = user.Email
 	}
 
-	if user.Username != "" {
-		existingUser.Username = user.Username
-	}
 	if user.TelephoneNumber != "" {
 		existingUser.TelephoneNumber = user.TelephoneNumber
 	}
@@ -158,4 +150,37 @@ func (u *UserUseCase) UpdatePassword(id int, oldPassword, newPassword string) er
 
 	hash, _ := utils.HashPassword(newPassword)
 	return u.repository.UpdatePassword(id, hash)
+}
+
+func (u *UserUseCase) SendOTP(email string) error {
+	if email == "" {
+		return constants.ErrAllFieldsMustBeFilled
+	}
+
+	otp := utils.GenerateOTP(5)
+
+	err := u.repository.SendOTP(email, otp)
+	if err != nil {
+		return err
+	}
+
+	err = u.emailTrapApi.SendOTP(email, otp)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *UserUseCase) VerifyOTP(email, otp string) error {
+	if email == "" || otp == "" {
+		return constants.ErrAllFieldsMustBeFilled
+	}
+
+	err := u.repository.VerifyOTP(email, otp)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
