@@ -39,6 +39,8 @@ func ConvertResponseCode(err error) int {
 		constants.ErrInvalidOTP,
 		constants.ErrExpiredOTP,
 		constants.ErrEmailNotVerified,
+		constants.ErrPageMustBeFilled,
+		constants.ErrLimitMustBeFilled,
 	}
 
 	if contains(badRequestErrors, err) {

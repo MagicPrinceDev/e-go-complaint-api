@@ -27,8 +27,10 @@ func NewComplaintUseCase(complaintRepo entities.ComplaintRepositoryInterface, co
 }
 
 func (u *ComplaintUseCase) GetPaginated(limit int, page int, search string, filter map[string]interface{}, sortBy string, sortType string) ([]entities.Complaint, error) {
-	if limit == 0 || page == 0 {
-		return nil, constants.ErrLimitAndPageMustBeFilled
+	if limit != 0 && page == 0 {
+		return nil, constants.ErrPageMustBeFilled
+	} else if limit == 0 && page != 0 {
+		return nil, constants.ErrLimitMustBeFilled
 	}
 
 	if sortBy == "" {
@@ -55,27 +57,35 @@ func (u *ComplaintUseCase) GetMetaData(limit int, page int, search string, filte
 		return entities.Metadata{}, constants.ErrInternalServerError
 	}
 
-	pagination.FirstPage = 1
-	pagination.LastPage = (metaData.TotalData + limit - 1) / limit
-	pagination.CurrentPage = page
-	if pagination.CurrentPage == pagination.LastPage {
-		pagination.TotalDataPerPage = metaData.TotalData - (pagination.LastPage-1)*limit
-	} else {
-		pagination.TotalDataPerPage = limit
-	}
+	if limit != 0 && page != 0 {
+		pagination.FirstPage = 1
+		pagination.LastPage = (metaData.TotalData + limit - 1) / limit
+		pagination.CurrentPage = page
+		if pagination.CurrentPage == pagination.LastPage {
+			pagination.TotalDataPerPage = metaData.TotalData - (pagination.LastPage-1)*limit
+		} else {
+			pagination.TotalDataPerPage = limit
+		}
 
-	if page > 1 {
-		pagination.PrevPage = page - 1
+		if page > 1 {
+			pagination.PrevPage = page - 1
+		} else {
+			pagination.PrevPage = 0
+		}
+
+		if page < pagination.LastPage {
+			pagination.NextPage = page + 1
+		} else {
+			pagination.NextPage = 0
+		}
 	} else {
+		pagination.FirstPage = 1
+		pagination.LastPage = 1
+		pagination.CurrentPage = 1
+		pagination.TotalDataPerPage = metaData.TotalData
 		pagination.PrevPage = 0
-	}
-
-	if page < pagination.LastPage {
-		pagination.NextPage = page + 1
-	} else {
 		pagination.NextPage = 0
 	}
-
 	metaData.Pagination = pagination
 
 	return metaData, nil
