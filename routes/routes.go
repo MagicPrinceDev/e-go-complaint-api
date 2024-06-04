@@ -43,7 +43,6 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	admin.GET("/users", r.UserController.GetAllUsers)
 	admin.GET("/categories/:id", r.CategoryController.GetByID)
 	admin.POST("/complaints/:complaint-id/processes", r.ComplaintProcessController.Create)
-	admin.GET("/complaints/:complaint-id/processes", r.ComplaintProcessController.GetByComplaintID)
 	admin.PUT("/complaints/:complaint-id/processes/:process-id", r.ComplaintProcessController.Update)
 	admin.POST("/categories", r.CategoryController.CreateCategory)
 	admin.PUT("/categories/:id", r.CategoryController.UpdateCategory)
@@ -52,6 +51,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	admin.POST("/news", r.NewsController.Create)
 	admin.DELETE("/news/:id", r.NewsController.Delete)
 	admin.PUT("/news/:id", r.NewsController.Update)
+	admin.POST("/complaints/import", r.ComplaintController.Import)
 
 	// Route For User
 	user := e.Group("/api/v1")
@@ -73,6 +73,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	auth_user.GET("/complaints", r.ComplaintController.GetPaginated)
 	auth_user.GET("/complaints/:id", r.ComplaintController.GetByID)
 	auth_user.DELETE("/complaints/:id", r.ComplaintController.Delete)
+	auth_user.GET("/complaints/:complaint-id/processes", r.ComplaintProcessController.GetByComplaintID)
 	auth_user.GET("/categories", r.CategoryController.GetAll)
 	auth_user.GET("/categories/:id", r.CategoryController.GetByID)
 	auth_user.GET("/news", r.NewsController.GetPaginated)

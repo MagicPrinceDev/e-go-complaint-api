@@ -169,3 +169,11 @@ func (r *ComplaintRepo) GetStatus(id string) (string, error) {
 
 	return status, nil
 }
+
+func (r *ComplaintRepo) Import(complaints []entities.Complaint) error {
+	if err := r.DB.CreateInBatches(complaints, len(complaints)).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
