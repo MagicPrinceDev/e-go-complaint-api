@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"mime/multipart"
 	"time"
 
 	"gorm.io/gorm"
@@ -35,6 +36,7 @@ type ComplaintRepositoryInterface interface {
 	Update(complaint Complaint) (Complaint, error)
 	UpdateStatus(id string, status string) error
 	GetStatus(id string) (string, error)
+	Import(complaints []Complaint) error
 }
 
 type ComplaintUseCaseInterface interface {
@@ -45,4 +47,5 @@ type ComplaintUseCaseInterface interface {
 	Delete(id string, userId int, role string) error
 	Update(complaint Complaint) (Complaint, error)
 	UpdateStatus(id string, status string) error
+	Import(file *multipart.FileHeader) error
 }

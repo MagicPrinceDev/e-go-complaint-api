@@ -237,3 +237,18 @@ func (cc *ComplaintController) Update(c echo.Context) error {
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update Report", complaintResponse))
 
 }
+
+func (cc *ComplaintController) Import(c echo.Context) error {
+	form, err := c.MultipartForm()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+	file := form.File["file"][0]
+
+	err = cc.complaintUseCase.Import(file)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Import Report", nil))
+}

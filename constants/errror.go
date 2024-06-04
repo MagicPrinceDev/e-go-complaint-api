@@ -41,4 +41,6 @@ var (
 	ErrInvalidOTP                       = errors.New("invalid otp")
 	ErrExpiredOTP                       = errors.New("expired otp")
 	ErrEmailNotVerified                 = errors.New("email not verified")
+	ErrPageMustBeFilled                 = errors.New("page must be filled")
+	ErrLimitMustBeFilled                = errors.New("limit must be filled")
 )

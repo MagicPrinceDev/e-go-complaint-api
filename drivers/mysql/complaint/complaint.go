@@ -30,7 +30,11 @@ func (r *ComplaintRepo) GetPaginated(limit int, page int, search string, filter 
 
 	query = query.Order(sortBy + " " + sortType)
 
-	if err := query.Limit(limit).Offset((page - 1) * limit).Preload("User").Preload("Regency").Preload("Category").Preload("Files").Find(&complaints).Error; err != nil {
+	if limit != 0 && page != 0 {
+		query = query.Limit(limit).Offset((page - 1) * limit)
+	}
+
+	if err := query.Preload("User").Preload("Regency").Preload("Category").Preload("Files").Find(&complaints).Error; err != nil {
 		return nil, err
 	}
 
@@ -168,4 +172,12 @@ func (r *ComplaintRepo) GetStatus(id string) (string, error) {
 	}
 
 	return status, nil
+}
+
+func (r *ComplaintRepo) Import(complaints []entities.Complaint) error {
+	if err := r.DB.CreateInBatches(complaints, len(complaints)).Error; err != nil {
+		return err
+	}
+
+	return nil
 }

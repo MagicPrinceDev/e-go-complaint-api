@@ -49,7 +49,7 @@ import (
 
 func main() {
 	// For local development only
-	// config.LoadEnv()
+	config.LoadEnv()
 
 	config.InitConfigMySQL()
 	DB := mysql.ConnectDB(config.InitConfigMySQL())
@@ -77,7 +77,7 @@ func main() {
 	complaintFileUsecase := complaint_file_uc.NewComplaintFileUseCase(complaintFileRepo, complaintFileGCSAPI)
 
 	complaintRepo := complaint_rp.NewComplaintRepo(DB)
-	complaintUsecase := complaint_uc.NewComplaintUseCase(complaintRepo)
+	complaintUsecase := complaint_uc.NewComplaintUseCase(complaintRepo, complaintFileRepo)
 	ComplaintController := complaint_cl.NewComplaintController(complaintUsecase, complaintFileUsecase)
 
 	complaintProcessRepo := complaint_process_rp.NewComplaintProcessRepo(DB)
