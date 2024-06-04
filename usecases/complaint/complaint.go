@@ -100,6 +100,15 @@ func (u *ComplaintUseCase) GetByID(id string) (entities.Complaint, error) {
 	return complaint, nil
 }
 
+func (u *ComplaintUseCase) GetByUserID(userId int) ([]entities.Complaint, error) {
+	complaints, err := u.complaintRepo.GetByUserID(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	return complaints, nil
+}
+
 func (u *ComplaintUseCase) Create(complaint *entities.Complaint) (entities.Complaint, error) {
 	if complaint.CategoryID == 0 || complaint.UserID == 0 || complaint.RegencyID == "" || complaint.Description == "" || complaint.Address == "" || complaint.Type == "" {
 		return entities.Complaint{}, constants.ErrAllFieldsMustBeFilled

@@ -64,6 +64,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	user.PUT("/complaints/:id", r.ComplaintController.Update)
 	user.PUT("/users/update-profile", r.UserController.UpdateUser)
 	user.PUT("/users/change-password", r.UserController.UpdatePassword)
+	user.GET("/users/complaints", r.ComplaintController.GetByUserID)
 
 	// Route For All Authenticated User
 	auth_user := e.Group("/api/v1")

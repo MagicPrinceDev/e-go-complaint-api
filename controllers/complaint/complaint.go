@@ -95,6 +95,25 @@ func (cc *ComplaintController) GetByID(c echo.Context) error {
 	return c.JSON(200, base.NewSuccessResponse("Success Get Report", complaintResponse))
 }
 
+func (cc *ComplaintController) GetByUserID(c echo.Context) error {
+	user_id, err := utils.GetIDFromJWT(c)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	complaints, err := cc.complaintUseCase.GetByUserID(user_id)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	complaintResponses := []*complaint_response.AdminGet{}
+	for _, complaint := range complaints {
+		complaintResponses = append(complaintResponses, complaint_response.AdminGetFromEntitiesToResponse(&complaint))
+	}
+
+	return c.JSON(200, base.NewSuccessResponse("Success Get Reports", complaintResponses))
+}
+
 func (cc *ComplaintController) Create(c echo.Context) error {
 	user_id, err := utils.GetIDFromJWT(c)
 	if err != nil {

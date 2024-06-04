@@ -75,6 +75,16 @@ func (r *ComplaintRepo) GetByID(id string) (entities.Complaint, error) {
 	return complaint, nil
 }
 
+func (r *ComplaintRepo) GetByUserID(userId int) ([]entities.Complaint, error) {
+	var complaints []entities.Complaint
+
+	if err := r.DB.Preload("User").Preload("Regency").Preload("Category").Preload("Files").Where("user_id = ?", userId).Find(&complaints).Error; err != nil {
+		return nil, err
+	}
+
+	return complaints, nil
+}
+
 func (r *ComplaintRepo) Create(complaint *entities.Complaint) error {
 	if err := r.DB.Create(complaint).Error; err != nil {
 		return err
