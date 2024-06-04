@@ -30,6 +30,7 @@ type ComplaintRepositoryInterface interface {
 	GetPaginated(limit int, page int, search string, filter map[string]interface{}, sortBy string, sortType string) ([]Complaint, error)
 	GetMetaData(limit int, page int, search string, filter map[string]interface{}) (Metadata, error)
 	GetByID(id string) (Complaint, error)
+	GetByUserID(userId int) ([]Complaint, error)
 	Create(complaint *Complaint) error
 	Delete(id string, userId int) error
 	AdminDelete(id string) error
@@ -43,6 +44,7 @@ type ComplaintUseCaseInterface interface {
 	GetPaginated(limit int, page int, search string, filter map[string]interface{}, sortBy string, sortType string) ([]Complaint, error)
 	GetMetaData(limit int, page int, search string, filter map[string]interface{}) (Metadata, error)
 	GetByID(id string) (Complaint, error)
+	GetByUserID(userId int) ([]Complaint, error)
 	Create(complaint *Complaint) (Complaint, error)
 	Delete(id string, userId int, role string) error
 	Update(complaint Complaint) (Complaint, error)
