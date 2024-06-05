@@ -95,7 +95,7 @@ func main() {
 	discussionRepo := discussion_rp.NewDiscussionRepo(DB)
 	discussionUsecase := discussion_uc.NewDiscussionUseCase(discussionRepo)
 	DiscussionController := discussion_cl.NewDiscussionController(discussionUsecase, complaintUsecase)
-  
+
 	regencyRepo := regency_rp.NewRegencyRepo(DB)
 	regencyUsecase := regency_uc.NewRegencyUseCase(regencyRepo)
 	RegencyController := regency_cl.NewRegencyController(regencyUsecase)
