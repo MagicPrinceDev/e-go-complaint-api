@@ -2,7 +2,6 @@ package mailtrap
 
 import (
 	"bytes"
-	"path/filepath"
 	"strconv"
 	"text/template"
 
@@ -33,8 +32,10 @@ func (u *MailTrapApi) SendOTP(email, otp string) error {
 	m.SetHeader("To", email)
 	m.SetHeader("Subject", "Email Verification")
 
-	path := filepath.Join("templates", "otp.html")
-	template, err := template.ParseFiles(path)
+	// Local template
+	// template, err := template.ParseFiles("./templates/otp.html")
+	// Deployed template
+	template, err := template.ParseFiles("goapp/templates/otp.html")
 	if err != nil {
 		return err
 	}
