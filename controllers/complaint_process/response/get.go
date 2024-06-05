@@ -11,6 +11,7 @@ type Get struct {
 	Admin       *admin_response.Get `json:"admin"`
 	Status      string              `json:"status"`
 	Message     string              `json:"message"`
+	UpdatedAt   string              `json:"updated_at"`
 }
 
 func GetFromEntitiesToResponse(data *entities.ComplaintProcess) *Get {
@@ -20,5 +21,6 @@ func GetFromEntitiesToResponse(data *entities.ComplaintProcess) *Get {
 		Admin:       admin_response.GetFromEntitiesToResponse(&data.Admin),
 		Status:      data.Status,
 		Message:     data.Message,
+		UpdatedAt:   data.UpdatedAt.Format("3 January 2006 15:04:05"),
 	}
 }

@@ -18,6 +18,7 @@ type Get struct {
 	Status      string                        `json:"status"`
 	Type        string                        `json:"type"`
 	Files       []file_response.ComplaintFile `json:"files"`
+	UpdatedAt   string                        `json:"updated_at"`
 }
 
 func GetFromEntitiesToResponse(data *entities.Complaint) *Get {
@@ -50,5 +51,6 @@ func GetFromEntitiesToResponse(data *entities.Complaint) *Get {
 		Status:      data.Status,
 		Type:        data.Type,
 		Files:       files,
+		UpdatedAt:   data.UpdatedAt.Format("3 January 2006 15:04:05"),
 	}
 }
