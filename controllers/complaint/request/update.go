@@ -4,7 +4,7 @@ import "e-complaint-api/entities"
 
 type Update struct {
 	ID          string
-	UserID      int    `json:"user_id" form:"user_id" binding:"required"`
+	UserID      int    `json:"user_id" form:"user_id"`
 	CategoryID  int    `json:"category_id" form:"category_id" binding:"required"`
 	Description string `json:"description" form:"description" binding:"required"`
 	RegencyID   string `json:"regency_id" form:"regency_id" binding:"required"`

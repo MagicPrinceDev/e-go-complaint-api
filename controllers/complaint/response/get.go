@@ -10,7 +10,7 @@ import (
 
 type Get struct {
 	ID          string                        `json:"id"`
-	User        user_response.Get             `json:"user"`
+	User        user_response.GetUser         `json:"user"`
 	Category    category_response.Get         `json:"category"`
 	Regency     regency_response.Regency      `json:"regency"`
 	Address     string                        `json:"address"`
@@ -32,15 +32,17 @@ func GetFromEntitiesToResponse(data *entities.Complaint) *Get {
 
 	if data.Type == "private" {
 		(*data).User = entities.User{
-			ID:       0,
-			Name:     "Anonymous",
-			Username: "Anonymous",
+			ID:              0,
+			Name:            "Anonymous",
+			Email:           "anonymous@anonymous.com",
+			TelephoneNumber: "000000000000",
+			ProfilePhoto:    "profile_photos/default.jpg",
 		}
 	}
 
 	return &Get{
 		ID:          data.ID,
-		User:        *user_response.GetFromEntitiesToResponse(&data.User),
+		User:        *user_response.GetUsersFromEntitiesToResponse(&data.User),
 		Category:    *category_response.GetFromEntitiesToResponse(&data.Category),
 		Regency:     *regency_response.FromEntitiesToResponse(&data.Regency),
 		Address:     data.Address,

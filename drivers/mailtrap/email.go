@@ -2,7 +2,6 @@ package mailtrap
 
 import (
 	"bytes"
-	"path/filepath"
 	"strconv"
 	"text/template"
 
@@ -27,25 +26,22 @@ func NewMailTrapApi(smtpHost, smtpPort, smtpUsername, smtpPassword, emailFrom st
 	}
 }
 
-func (u *MailTrapApi) SendEmail(email string) error {
+func (u *MailTrapApi) SendOTP(email, otp string) error {
 	m := gomail.NewMessage()
 	m.SetHeader("From", u.EMAIL_FROM)
 	m.SetHeader("To", email)
 	m.SetHeader("Subject", "Email Verification")
 
-	verificationLink := "http://localhost:8080/api/v1/verify?email=" + email
-
-	path := filepath.Join("templates", "otp.html")
-	template, err := template.ParseFiles(path)
+	template, err := template.ParseFiles("./templates/otp.html")
 	if err != nil {
 		return err
 	}
 
 	var body bytes.Buffer
 	data := struct {
-		VerificationLink string
+		OTP string
 	}{
-		VerificationLink: verificationLink,
+		OTP: otp,
 	}
 
 	err = template.Execute(&body, data)

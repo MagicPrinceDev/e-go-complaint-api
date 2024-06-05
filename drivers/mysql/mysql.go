@@ -48,6 +48,8 @@ func Migration(db *gorm.DB) {
 	db.AutoMigrate(entities.ComplaintFile{})
 	db.AutoMigrate(entities.ComplaintProcess{})
 	db.AutoMigrate(entities.Discussion{})
+	db.AutoMigrate(entities.News{})
+	db.AutoMigrate(entities.NewsFile{})
 }
 
 func Seeder(db *gorm.DB, regencyAPI entities.RegencyIndonesiaAreaAPIInterface) {
@@ -59,4 +61,6 @@ func Seeder(db *gorm.DB, regencyAPI entities.RegencyIndonesiaAreaAPIInterface) {
 	seeder.SeedComplaintFile(db)
 	seeder.SeedComplaintProcess(db)
 	seeder.SeedDiscussion(db)
+	seeder.SeedNews(db)
+	seeder.SeedNewsFile(db)
 }

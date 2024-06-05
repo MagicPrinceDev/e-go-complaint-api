@@ -36,7 +36,19 @@ import (
 	discussion_rp "e-complaint-api/drivers/mysql/discussion"
 	discussion_uc "e-complaint-api/usecases/discussion"
 
+	regency_cl "e-complaint-api/controllers/regency"
+	regency_rp "e-complaint-api/drivers/mysql/regency"
+	regency_uc "e-complaint-api/usecases/regency"
+
+	news_cl "e-complaint-api/controllers/news"
+	news_rp "e-complaint-api/drivers/mysql/news"
+	news_uc "e-complaint-api/usecases/news"
+
+	news_file_rp "e-complaint-api/drivers/mysql/news_file"
+	news_file_uc "e-complaint-api/usecases/news_file"
+
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
@@ -47,6 +59,7 @@ func main() {
 	DB := mysql.ConnectDB(config.InitConfigMySQL())
 
 	e := echo.New()
+	e.Use(middleware.CORS())
 
 	adminRepo := admin_rp.NewAdminRepo(DB)
 	adminUsecase := admin_uc.NewAdminUseCase(adminRepo)
@@ -63,12 +76,12 @@ func main() {
 	userUsecase := user_uc.NewUserUseCase(userRepo, mailTrapApi)
 	UserController := user_cl.NewUserController(userUsecase)
 
-	complaintFileGCSAPI := gcs_api.NewFileHandlingAPI(os.Getenv("GCS_CREDENTIALS"), "complaint_files/")
+	complaintFileGCSAPI := gcs_api.NewFileHandlingAPI(os.Getenv("GCS_CREDENTIALS"), "complaint-files/")
 	complaintFileRepo := complaint_file_rp.NewComplaintFileRepo(DB)
 	complaintFileUsecase := complaint_file_uc.NewComplaintFileUseCase(complaintFileRepo, complaintFileGCSAPI)
 
 	complaintRepo := complaint_rp.NewComplaintRepo(DB)
-	complaintUsecase := complaint_uc.NewComplaintUseCase(complaintRepo)
+	complaintUsecase := complaint_uc.NewComplaintUseCase(complaintRepo, complaintFileRepo)
 	ComplaintController := complaint_cl.NewComplaintController(complaintUsecase, complaintFileUsecase)
 
 	complaintProcessRepo := complaint_process_rp.NewComplaintProcessRepo(DB)
@@ -82,6 +95,18 @@ func main() {
 	discussionRepo := discussion_rp.NewDiscussionRepo(DB)
 	discussionUsecase := discussion_uc.NewDiscussionUseCase(discussionRepo)
 	DiscussionController := discussion_cl.NewDiscussionController(discussionUsecase, complaintUsecase)
+  
+	regencyRepo := regency_rp.NewRegencyRepo(DB)
+	regencyUsecase := regency_uc.NewRegencyUseCase(regencyRepo)
+	RegencyController := regency_cl.NewRegencyController(regencyUsecase)
+
+	NewsFileGCSAPIInterface := gcs_api.NewFileHandlingAPI(os.Getenv("GCS_CREDENTIALS"), "news-files/")
+	NewsFileRepo := news_file_rp.NewNewsFileRepo(DB)
+	NewsFileUsecase := news_file_uc.NewNewsFileUseCase(NewsFileRepo, NewsFileGCSAPIInterface)
+
+	newsRepo := news_rp.NewNewsRepo(DB)
+	newsUsecase := news_uc.NewNewsUseCase(newsRepo)
+	NewsController := news_cl.NewNewsController(newsUsecase, NewsFileUsecase)
 
 	routes := routes.RouteController{
 		AdminController:            AdminController,
@@ -90,6 +115,8 @@ func main() {
 		CategoryController:         CategoryController,
 		ComplaintProcessController: ComplaintProcessController,
 		DiscussionController:       DiscussionController,
+		NewsController:             NewsController,
+		RegencyController:          RegencyController,
 	}
 
 	routes.InitRoute(e)

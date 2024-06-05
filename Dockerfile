@@ -13,6 +13,7 @@ FROM alpine:3.19 AS build-release-stage
 WORKDIR /
 
 COPY --from=build-stage /goapp /goapp
+COPY --from=build-stage /app/templates ./templates
 
 EXPOSE 8000
 

@@ -35,6 +35,13 @@ func ConvertResponseCode(err error) int {
 		constants.ErrNotFound,
 		constants.ErrAdminNotFound,
 		constants.ErrCommentCannotBeEmpty,
+		constants.ErrNewsNotFound,
+		constants.ErrUserNotFound,
+		constants.ErrInvalidOTP,
+		constants.ErrExpiredOTP,
+		constants.ErrEmailNotVerified,
+		constants.ErrPageMustBeFilled,
+		constants.ErrLimitMustBeFilled,
 	}
 
 	if contains(badRequestErrors, err) {

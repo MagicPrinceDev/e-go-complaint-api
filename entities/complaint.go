@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"mime/multipart"
 	"time"
 
 	"gorm.io/gorm"
@@ -30,20 +31,24 @@ type ComplaintRepositoryInterface interface {
 	GetPaginated(limit int, page int, search string, filter map[string]interface{}, sortBy string, sortType string) ([]Complaint, error)
 	GetMetaData(limit int, page int, search string, filter map[string]interface{}) (Metadata, error)
 	GetByID(id string) (Complaint, error)
+	GetByUserID(userId int) ([]Complaint, error)
 	Create(complaint *Complaint) error
 	Delete(id string, userId int) error
 	AdminDelete(id string) error
 	Update(complaint Complaint) (Complaint, error)
 	UpdateStatus(id string, status string) error
 	GetStatus(id string) (string, error)
+	Import(complaints []Complaint) error
 }
 
 type ComplaintUseCaseInterface interface {
 	GetPaginated(limit int, page int, search string, filter map[string]interface{}, sortBy string, sortType string) ([]Complaint, error)
 	GetMetaData(limit int, page int, search string, filter map[string]interface{}) (Metadata, error)
 	GetByID(id string) (Complaint, error)
+	GetByUserID(userId int) ([]Complaint, error)
 	Create(complaint *Complaint) (Complaint, error)
 	Delete(id string, userId int, role string) error
 	Update(complaint Complaint) (Complaint, error)
 	UpdateStatus(id string, status string) error
+	Import(file *multipart.FileHeader) error
 }
