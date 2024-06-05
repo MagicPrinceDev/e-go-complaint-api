@@ -35,7 +35,7 @@ func (u *MailTrapApi) SendOTP(email, otp string) error {
 	// Local template
 	// template, err := template.ParseFiles("./templates/otp.html")
 	// Deployed template
-	template, err := template.ParseFiles("goapp/templates/otp.html")
+	template, err := template.ParseFiles("/goapp/templates/otp.html")
 	if err != nil {
 		return err
 	}
