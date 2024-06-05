@@ -112,18 +112,15 @@ func (ac *AdminController) DeleteAdmin(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
-	// Get user role and ID from JWT
 	userRole, err := utils.GetRoleFromJWT(c)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
-	// Check if super admin tries to delete themselves
 	if userRole == "super_admin" && id == jwtID {
 		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrSuperAdminCannotDeleteThemselves.Error()))
 	}
 
-	// Delete admin
 	err = ac.adminUseCase.DeleteAdmin(id)
 	if err != nil {
 		if errors.Is(err, constants.ErrAdminNotFound) {

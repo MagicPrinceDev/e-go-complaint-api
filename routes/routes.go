@@ -5,6 +5,7 @@ import (
 	"e-complaint-api/controllers/category"
 	"e-complaint-api/controllers/complaint"
 	"e-complaint-api/controllers/complaint_process"
+	"e-complaint-api/controllers/discussion"
 	"e-complaint-api/controllers/news"
 	"e-complaint-api/controllers/regency"
 	"e-complaint-api/controllers/user"
@@ -22,6 +23,7 @@ type RouteController struct {
 	ComplaintController        *complaint.ComplaintController
 	CategoryController         *category.CategoryController
 	ComplaintProcessController *complaint_process.ComplaintProcessController
+	DiscussionController       *discussion.DiscussionController
 	NewsController             *news.NewsController
 	RegencyController          *regency.RegencyController
 }
@@ -78,6 +80,10 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	auth_user.GET("/complaints/:complaint-id/processes", r.ComplaintProcessController.GetByComplaintID)
 	auth_user.GET("/categories", r.CategoryController.GetAll)
 	auth_user.GET("/categories/:id", r.CategoryController.GetByID)
+	auth_user.DELETE("/complaints/:complaint-id/discussions/:discussion-id", r.DiscussionController.DeleteDiscussion)
+	auth_user.GET("/complaints/:complaint-id/discussions", r.DiscussionController.GetDiscussionByComplaintID)
+	auth_user.POST("/complaints/:complaint-id/discussions", r.DiscussionController.CreateDiscussion)
+	auth_user.PUT("/complaints/:complaint-id/discussions/:discussion-id", r.DiscussionController.UpdateDiscussion)
 	auth_user.GET("/news", r.NewsController.GetPaginated)
 	auth_user.GET("/news/:id", r.NewsController.GetByID)
 	auth_user.GET("/regencies", r.RegencyController.GetAll)

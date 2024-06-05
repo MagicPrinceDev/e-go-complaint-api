@@ -24,6 +24,7 @@ type Complaint struct {
 	Files       []ComplaintFile    `gorm:"foreignKey:ComplaintID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Category    Category           `gorm:"foreignKey:CategoryID;references:ID"`
 	Process     []ComplaintProcess `gorm:"foreignKey:ComplaintID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Discussion  []Discussion       `gorm:"foreignKey:ComplaintID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type ComplaintRepositoryInterface interface {

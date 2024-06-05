@@ -13,11 +13,12 @@ type Admin struct {
 	Password        string `gorm:"not null"`
 	TelephoneNumber string
 	IsSuperAdmin    bool           `gorm:"default:false"`
-	ProfilePhoto    string         `gorm:"default:profile-photos/admin-default.jpg"`
+  ProfilePhoto    string         `gorm:"default:profile-photos/admin-default.jpg"`
 	CreatedAt       time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt       time.Time      `gorm:"autoUpdateTime"`
 	DeletedAt       gorm.DeletedAt `gorm:"index"`
 	Token           string         `gorm:"-"`
+  Discussion      []Discussion   `gorm:"foreignKey:AdminID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type AdminRepositoryInterface interface {

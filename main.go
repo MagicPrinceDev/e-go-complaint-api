@@ -32,6 +32,10 @@ import (
 	category_rp "e-complaint-api/drivers/mysql/category"
 	category_uc "e-complaint-api/usecases/category"
 
+	discussion_cl "e-complaint-api/controllers/discussion"
+	discussion_rp "e-complaint-api/drivers/mysql/discussion"
+	discussion_uc "e-complaint-api/usecases/discussion"
+
 	regency_cl "e-complaint-api/controllers/regency"
 	regency_rp "e-complaint-api/drivers/mysql/regency"
 	regency_uc "e-complaint-api/usecases/regency"
@@ -88,6 +92,10 @@ func main() {
 	categoryUsecase := category_uc.NewCategoryUseCase(categoryRepo)
 	CategoryController := category_cl.NewCategoryController(categoryUsecase)
 
+	discussionRepo := discussion_rp.NewDiscussionRepo(DB)
+	discussionUsecase := discussion_uc.NewDiscussionUseCase(discussionRepo)
+	DiscussionController := discussion_cl.NewDiscussionController(discussionUsecase, complaintUsecase)
+  
 	regencyRepo := regency_rp.NewRegencyRepo(DB)
 	regencyUsecase := regency_uc.NewRegencyUseCase(regencyRepo)
 	RegencyController := regency_cl.NewRegencyController(regencyUsecase)
@@ -106,6 +114,7 @@ func main() {
 		ComplaintController:        ComplaintController,
 		CategoryController:         CategoryController,
 		ComplaintProcessController: ComplaintProcessController,
+		DiscussionController:       DiscussionController,
 		NewsController:             NewsController,
 		RegencyController:          RegencyController,
 	}
