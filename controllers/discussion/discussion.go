@@ -115,12 +115,11 @@ func (dc *DiscussionController) UpdateDiscussion(c echo.Context) error {
 	discussionID, err := strconv.Atoi(discussionIDStr)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
-
 	}
 
 	discussion, err := dc.discussionUseCase.GetById(discussionID)
-	if err != nil {
-		return c.JSON(http.StatusNotFound, base.NewErrorResponse(err.Error()))
+	if err != nil || discussion == nil {
+		return c.JSON(http.StatusNotFound, base.NewErrorResponse("Discussion not found"))
 	}
 
 	userID, err := utils.GetIDFromJWT(c)
@@ -129,14 +128,12 @@ func (dc *DiscussionController) UpdateDiscussion(c echo.Context) error {
 	}
 
 	if discussion.UserID != nil && *discussion.UserID != userID {
-		return c.JSON(http.StatusForbidden, base.NewErrorResponse(err.Error()))
-
+		return c.JSON(http.StatusForbidden, base.NewErrorResponse("You are not authorized to update this discussion"))
 	}
 
 	var req request.CreateDiscussion
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
-
 	}
 
 	discussion.Comment = req.Comment
