@@ -13,8 +13,8 @@ type User struct {
 type Discussion struct {
 	ID        int    `json:"id"`
 	User      *User  `json:"user,omitempty"`
-	Comment   string `json:"comment"`
 	Admin     *Admin `json:"admin,omitempty"`
+	Comment   string `json:"comment"`
 	CreatedAt string `json:"created_at"`
 }
 

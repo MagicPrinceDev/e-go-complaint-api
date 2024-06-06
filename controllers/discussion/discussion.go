@@ -84,6 +84,10 @@ func (dc *DiscussionController) GetDiscussionByComplaintID(c echo.Context) error
 		return c.JSON(http.StatusNotFound, base.NewErrorResponse("Discussion not found"))
 	}
 
+	if len(*discussions) == 0 {
+		return c.JSON(http.StatusNotFound, base.NewErrorResponse("Discussion has been deleted"))
+	}
+
 	var discussionsResponse []*response.DiscussionGet
 	for _, discussion := range *discussions {
 		discussionResponse := response.FromEntitiesGetToResponse(&discussion)
