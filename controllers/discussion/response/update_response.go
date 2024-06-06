@@ -13,10 +13,10 @@ type UserUpdate struct {
 type DiscussionUpdate struct {
 	ID        int          `json:"id"`
 	User      *UserUpdate  `json:"user,omitempty"`
+	Admin     *AdminUpdate `json:"admin,omitempty"`
 	Comment   string       `json:"comment"`
 	CreatedAt string       `json:"created_at"`
 	UpdatedAt string       `json:"update_at"`
-	Admin     *AdminUpdate `json:"admin,omitempty"`
 }
 
 type AdminUpdate struct {
