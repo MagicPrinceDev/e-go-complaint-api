@@ -48,7 +48,7 @@ func (dc *DiscussionController) CreateDiscussion(c echo.Context) error {
 
 	}
 
-	if role == "admin" {
+	if role == "admin" || role == "super_admin" {
 		req.AdminID = &userID
 		req.UserID = nil
 	} else {
@@ -76,19 +76,15 @@ func (dc *DiscussionController) CreateDiscussion(c echo.Context) error {
 func (dc *DiscussionController) GetDiscussionByComplaintID(c echo.Context) error {
 	complaintID := c.Param("complaint-id")
 	if complaintID == "" {
-		return c.JSON(http.StatusBadRequest, map[string]interface{}{
-			"message": "Complaint ID is required",
-		})
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse("Complaint Is Required"))
 	}
 
 	discussions, err := dc.discussionUseCase.GetByComplaintID(complaintID)
 	if err != nil {
-		return c.JSON(http.StatusNotFound, map[string]interface{}{
-			"message": "Discussion not found",
-		})
+		return c.JSON(http.StatusNotFound, base.NewErrorResponse("Discussion not found"))
 	}
 
-	var discussionsResponse []*response.GetDiscussion
+	var discussionsResponse []*response.DiscussionGet
 	for _, discussion := range *discussions {
 		discussionResponse := response.FromEntitiesGetToResponse(&discussion)
 		discussionsResponse = append(discussionsResponse, discussionResponse)
@@ -96,20 +92,22 @@ func (dc *DiscussionController) GetDiscussionByComplaintID(c echo.Context) error
 
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Discussion found", discussionsResponse))
 }
-
 func (dc *DiscussionController) UpdateDiscussion(c echo.Context) error {
 	complaintID := c.Param("complaint-id")
 	if complaintID == "" {
-		return c.JSON(http.StatusBadRequest, map[string]interface{}{
-			"message": "Complaint ID is required",
-		})
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse("Complaint Is Required"))
+
+	}
+
+	_, err := dc.complaintUsecase.GetByID(complaintID)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, base.NewErrorResponse("Complaint not found"))
 	}
 
 	discussionIDStr := c.Param("discussion-id")
 	if discussionIDStr == "" {
-		return c.JSON(http.StatusBadRequest, map[string]interface{}{
-			"message": "Discussion ID is required",
-		})
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse("Discussion ID is required"))
+
 	}
 
 	discussionID, err := strconv.Atoi(discussionIDStr)
@@ -128,7 +126,7 @@ func (dc *DiscussionController) UpdateDiscussion(c echo.Context) error {
 	}
 
 	if discussion.UserID != nil && *discussion.UserID != userID {
-		return c.JSON(http.StatusForbidden, base.NewErrorResponse("You are not authorized to update this discussion"))
+		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse("You are not authorized to update this discussion"))
 	}
 
 	var req request.CreateDiscussion
@@ -147,23 +145,24 @@ func (dc *DiscussionController) UpdateDiscussion(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
-	discussionResponse := response.FromEntitiesToResponse(updatedDiscussion)
+	discussionResponse := response.FromEntitiesUpdateToResponse(updatedDiscussion)
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Discussion updated successfully", discussionResponse))
 }
 
 func (dc *DiscussionController) DeleteDiscussion(c echo.Context) error {
 	complaintID := c.Param("complaint-id")
 	if complaintID == "" {
-		return c.JSON(http.StatusBadRequest, map[string]interface{}{
-			"message": "Complaint ID is required",
-		})
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse("Complaint ID is required"))
+	}
+
+	_, err := dc.complaintUsecase.GetByID(complaintID)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, base.NewErrorResponse("Complaint not found"))
 	}
 
 	discussionIDStr := c.Param("discussion-id")
 	if discussionIDStr == "" {
-		return c.JSON(http.StatusBadRequest, map[string]interface{}{
-			"message": "Discussion ID is required",
-		})
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse("Discussion ID is required"))
 	}
 
 	discussionID, err := strconv.Atoi(discussionIDStr)
@@ -181,7 +180,12 @@ func (dc *DiscussionController) DeleteDiscussion(c echo.Context) error {
 		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(err.Error()))
 	}
 
-	if discussion.UserID != nil && *discussion.UserID != userID {
+	role, err := utils.GetRoleFromJWT(c)
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(err.Error()))
+	}
+
+	if role != "admin" && discussion.UserID != nil && *discussion.UserID != userID {
 		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse("You are not authorized to delete this discussion"))
 	}
 
