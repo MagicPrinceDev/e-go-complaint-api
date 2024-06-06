@@ -2,7 +2,7 @@ package response
 
 import "e-complaint-api/entities"
 
-type User struct {
+type UserUpdate struct {
 	ID              int    `json:"id"`
 	Name            string `json:"name"`
 	TelephoneNumber string `json:"telephone_number"`
@@ -10,15 +10,16 @@ type User struct {
 	ProfilePhoto    string `json:"profile_photo"`
 }
 
-type Discussion struct {
-	ID        int    `json:"id"`
-	User      *User  `json:"user,omitempty"`
-	Comment   string `json:"comment"`
-	Admin     *Admin `json:"admin,omitempty"`
-	CreatedAt string `json:"created_at"`
+type DiscussionUpdate struct {
+	ID        int          `json:"id"`
+	User      *UserUpdate  `json:"user,omitempty"`
+	Comment   string       `json:"comment"`
+	CreatedAt string       `json:"created_at"`
+	UpdatedAt string       `json:"update_at"`
+	Admin     *AdminUpdate `json:"admin,omitempty"`
 }
 
-type Admin struct {
+type AdminUpdate struct {
 	ID              int    `json:"id"`
 	Name            string `json:"name"`
 	TelephoneNumber string `json:"telephone_number"`
@@ -27,27 +28,27 @@ type Admin struct {
 	ProfilePhoto    string `json:"profile_photo"`
 }
 
-func FromEntitiesToResponse(data *entities.Discussion) *Discussion {
-	var user *User
-	var admin *Admin
+func FromEntitiesUpdateToResponse(data *entities.Discussion) *DiscussionUpdate {
+	var user *UserUpdate
+	var admin *AdminUpdate
 
 	if data.AdminID != nil {
-		admin = AdminFromEntitiesToResponse(&data.Admin)
-	} else if data.UserID != nil {
-		user = UserFromEntitiesToResponse(&data.User)
+		admin = AdminFromEntitiesUpdateToResponse(&data.Admin)
+	} else {
+		user = UserFromEntitiesUpdateToResponse(&data.User)
 	}
 
-	return &Discussion{
+	return &DiscussionUpdate{
 		ID:        data.ID,
 		User:      user,
 		Admin:     admin,
 		Comment:   data.Comment,
 		CreatedAt: data.CreatedAt.Format("2006-01-02 15:04:05"),
+		UpdatedAt: data.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
 }
-
-func UserFromEntitiesToResponse(u *entities.User) *User {
-	return &User{
+func UserFromEntitiesUpdateToResponse(u *entities.User) *UserUpdate {
+	return &UserUpdate{
 		ID:              u.ID,
 		Name:            u.Name,
 		TelephoneNumber: u.TelephoneNumber,
@@ -56,8 +57,8 @@ func UserFromEntitiesToResponse(u *entities.User) *User {
 	}
 }
 
-func AdminFromEntitiesToResponse(a *entities.Admin) *Admin {
-	return &Admin{
+func AdminFromEntitiesUpdateToResponse(a *entities.Admin) *AdminUpdate {
+	return &AdminUpdate{
 		ID:              a.ID,
 		Name:            a.Name,
 		TelephoneNumber: a.TelephoneNumber,
