@@ -31,6 +31,11 @@ func (dc *DiscussionController) CreateDiscussion(c echo.Context) error {
 		})
 	}
 
+	_, err := dc.complaintUsecase.GetByID(complaintID)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, base.NewErrorResponse("Complaint not found"))
+	}
+
 	userID, err := utils.GetIDFromJWT(c)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
