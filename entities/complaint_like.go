@@ -5,3 +5,13 @@ type ComplaintLike struct {
 	ComplaintID int `json:"complaint_id"`
 	UserID      int `json:"user_id"`
 }
+
+type ComplaintLikeRepositoryInterface interface {
+	Likes(complaintLike []*ComplaintLike) error
+	Unlike(complaintLike []*ComplaintLike) error
+}
+
+type ComplaintLikeUseCaseInterface interface {
+	Likes(complaintLike []*ComplaintLike) error
+	Unlike(complaintLike []*ComplaintLike) error
+}
