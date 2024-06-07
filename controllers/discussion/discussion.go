@@ -79,7 +79,6 @@ func (dc *DiscussionController) GetDiscussionByComplaintID(c echo.Context) error
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse("Complaint Is Required"))
 	}
 
-	// Check if the complaint exists
 	_, err := dc.complaintUsecase.GetByID(complaintID)
 	if err != nil {
 		return c.JSON(http.StatusNotFound, base.NewErrorResponse("Complaint not found"))
