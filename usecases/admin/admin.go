@@ -49,9 +49,9 @@ func (u *AdminUseCase) Login(admin *entities.Admin) (entities.Admin, error) {
 	}
 
 	if admin.IsSuperAdmin {
-		(*admin).Token = middlewares.GenerateTokenJWT(admin.ID, admin.Name, "super_admin")
+		(*admin).Token = middlewares.GenerateTokenJWT(admin.ID, admin.Name, admin.Email, "super_admin")
 	} else {
-		(*admin).Token = middlewares.GenerateTokenJWT(admin.ID, admin.Name, "admin")
+		(*admin).Token = middlewares.GenerateTokenJWT(admin.ID, admin.Name, admin.Email, "admin")
 	}
 
 	return *admin, nil
