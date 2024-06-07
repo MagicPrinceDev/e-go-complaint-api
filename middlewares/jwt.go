@@ -2,23 +2,23 @@ package middlewares
 
 import (
 	"os"
-	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
 type jwtCustomClaims struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-	Role string `json:"role"`
+	ID    int    `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Role  string `json:"role"`
 	jwt.RegisteredClaims
 }
 
-func GenerateTokenJWT(userId int, name string, userRole string) string {
+func GenerateTokenJWT(userId int, name string, email string, userRole string) string {
 	var userClaims = jwtCustomClaims{
-		userId, name, userRole,
+		userId, name, email, userRole,
 		jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
+			// ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
 		},
 	}
 
