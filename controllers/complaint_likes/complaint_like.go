@@ -44,3 +44,5 @@ func (c *ComplaintLikeController) ToggleLike(ctx echo.Context) error {
 	successResponse := base.NewSuccessResponse(likeResponse.Message, nil)
 	return ctx.JSON(http.StatusOK, successResponse)
 }
+
+

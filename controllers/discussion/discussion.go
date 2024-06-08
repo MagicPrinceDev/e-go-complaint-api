@@ -31,6 +31,11 @@ func (dc *DiscussionController) CreateDiscussion(c echo.Context) error {
 		})
 	}
 
+	_, err := dc.complaintUsecase.GetByID(complaintID)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, base.NewErrorResponse("Complaint not found"))
+	}
+
 	userID, err := utils.GetIDFromJWT(c)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
@@ -79,13 +84,18 @@ func (dc *DiscussionController) GetDiscussionByComplaintID(c echo.Context) error
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse("Complaint Is Required"))
 	}
 
+	_, err := dc.complaintUsecase.GetByID(complaintID)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, base.NewErrorResponse("Complaint not found"))
+	}
+
 	discussions, err := dc.discussionUseCase.GetByComplaintID(complaintID)
 	if err != nil {
-		return c.JSON(http.StatusNotFound, base.NewErrorResponse("Discussion not found"))
+		return c.JSON(http.StatusNotFound, base.NewErrorResponse("Error retrieving discussions"))
 	}
 
 	if len(*discussions) == 0 {
-		return c.JSON(http.StatusNotFound, base.NewErrorResponse("Discussion has been deleted"))
+		return c.JSON(http.StatusNotFound, base.NewErrorResponse("No discussions found for this complaint"))
 	}
 
 	var discussionsResponse []*response.DiscussionGet
@@ -96,6 +106,7 @@ func (dc *DiscussionController) GetDiscussionByComplaintID(c echo.Context) error
 
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Discussion found", discussionsResponse))
 }
+
 func (dc *DiscussionController) UpdateDiscussion(c echo.Context) error {
 	complaintID := c.Param("complaint-id")
 	if complaintID == "" {

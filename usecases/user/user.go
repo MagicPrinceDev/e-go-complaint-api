@@ -50,7 +50,7 @@ func (u *UserUseCase) Login(user *entities.User) (entities.User, error) {
 
 	err := u.repository.Login(user)
 
-	(*user).Token = middlewares.GenerateTokenJWT(user.ID, user.Name, "user")
+	(*user).Token = middlewares.GenerateTokenJWT(user.ID, user.Name, user.Email, "user")
 
 	if err != nil {
 		return entities.User{}, err
