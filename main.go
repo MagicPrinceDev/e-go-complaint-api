@@ -47,6 +47,10 @@ import (
 	news_file_rp "e-complaint-api/drivers/mysql/news_file"
 	news_file_uc "e-complaint-api/usecases/news_file"
 
+	complaint_like "e-complaint-api/controllers/complaint_likes"
+	complaint_like_rp "e-complaint-api/drivers/mysql/complaint_like"
+	complaint_like_uc "e-complaint-api/usecases/complaint_like"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -108,6 +112,10 @@ func main() {
 	newsUsecase := news_uc.NewNewsUseCase(newsRepo)
 	NewsController := news_cl.NewNewsController(newsUsecase, NewsFileUsecase)
 
+	complaintLikeRepo := complaint_like_rp.NewComplaintLikeRepository(DB)
+	complaintLikeUsecase := complaint_like_uc.NewComplaintLikeUseCase(complaintLikeRepo)
+	ComplaintLikeController := complaint_like.NewComplaintLikeController(complaintLikeUsecase)
+
 	routes := routes.RouteController{
 		AdminController:            AdminController,
 		UserController:             UserController,
@@ -117,6 +125,7 @@ func main() {
 		DiscussionController:       DiscussionController,
 		NewsController:             NewsController,
 		RegencyController:          RegencyController,
+		ComplaintLikeController:    ComplaintLikeController,
 	}
 
 	routes.InitRoute(e)
