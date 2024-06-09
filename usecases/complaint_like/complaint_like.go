@@ -14,35 +14,24 @@ func NewComplaintLikeUseCase(repo entities.ComplaintLikeRepositoryInterface) *Co
 	}
 }
 
-func (clu *ComplaintLikeUseCase) ToggleLike(complaintLike *entities.ComplaintLike) error {
-	existingComplaintLike, err := clu.repo.FindByUserAndComplaint(complaintLike.UserID, complaintLike.ComplaintID)
+func (u *ComplaintLikeUseCase) ToggleLike(complaintLike *entities.ComplaintLike) (string, error) {
+	existingComplaintLike, err := u.repo.FindByUserAndComplaint(complaintLike.UserID, complaintLike.ComplaintID)
 	if err != nil {
-		if err.Error() == "record not found" {
-			err = clu.repo.Likes(complaintLike)
-			if err != nil {
-				return err
-			}
-			return nil
-		}
-		return err
+		return "", err
 	}
 
-	err = clu.repo.Unlike(existingComplaintLike)
-	if err != nil {
-		return err
+	var likeStatus string
+	if existingComplaintLike == nil {
+		err = u.repo.Likes(complaintLike)
+		likeStatus = "liked"
+	} else {
+		err = u.repo.Unlike(existingComplaintLike)
+		likeStatus = "unliked"
 	}
 
-	return nil
-}
+	if err != nil {
+		return "", err
+	}
 
-func (clu *ComplaintLikeUseCase) Likes(complaintLike *entities.ComplaintLike) error {
-	return clu.repo.Likes(complaintLike)
-}
-
-func (clu *ComplaintLikeUseCase) Unlike(complaintLike *entities.ComplaintLike) error {
-	return clu.repo.Unlike(complaintLike)
-}
-
-func (clu *ComplaintLikeUseCase) FindByUserAndComplaint(userID int, complaintID string) (*entities.ComplaintLike, error) {
-	return clu.repo.FindByUserAndComplaint(userID, complaintID)
+	return likeStatus, nil
 }

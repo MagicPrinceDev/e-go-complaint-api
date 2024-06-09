@@ -5,7 +5,6 @@ import (
 	"e-complaint-api/entities"
 	"e-complaint-api/utils"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"os"
 	"strconv"
@@ -190,7 +189,7 @@ func (u *ComplaintUseCase) Import(file *multipart.FileHeader) error {
 	defer f.Close()
 
 	// Create a temporary file to copy the contents
-	tempFile, err := ioutil.TempFile("", "uploaded-*.xlsx")
+	tempFile, err := os.CreateTemp("", "uploaded-*.xlsx")
 	if err != nil {
 		return constants.ErrInternalServerError
 	}
@@ -319,6 +318,24 @@ func (u *ComplaintUseCase) Import(file *multipart.FileHeader) error {
 
 	// Import the complaints
 	err = u.complaintRepo.Import(complaints)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *ComplaintUseCase) IncreaseTotalLikes(id string) error {
+	err := u.complaintRepo.IncreaseTotalLikes(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *ComplaintUseCase) DecreaseTotalLikes(id string) error {
+	err := u.complaintRepo.DecreaseTotalLikes(id)
 	if err != nil {
 		return err
 	}

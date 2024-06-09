@@ -3,24 +3,12 @@ package complaint_like
 import (
 	"e-complaint-api/entities"
 	"errors"
+
 	"gorm.io/gorm"
 )
 
 type ComplaintLikeRepository struct {
 	DB *gorm.DB
-}
-
-func (clr *ComplaintLikeRepository) ToggleLike(complaintLike *entities.ComplaintLike) error {
-	existingLike, err := clr.FindByUserAndComplaint(complaintLike.UserID, complaintLike.ComplaintID)
-	if err != nil {
-		return err
-	}
-
-	if existingLike != nil {
-		return clr.Unlike(existingLike)
-	}
-
-	return clr.Likes(complaintLike)
 }
 
 func NewComplaintLikeRepository(DB *gorm.DB) *ComplaintLikeRepository {

@@ -4,19 +4,20 @@ import (
 	"e-complaint-api/controllers/base"
 	"e-complaint-api/entities"
 	"e-complaint-api/utils"
-	"github.com/labstack/echo/v4"
 	"net/http"
+
+	"github.com/labstack/echo/v4"
 )
 
 type ComplaintLikeController struct {
-	useCase          entities.ComplaintLikeUseCaseInterface
-	useCaseComplaint entities.ComplaintUseCaseInterface
+	complaintLikeUseCase entities.ComplaintLikeUseCaseInterface
+	complaintUseCase     entities.ComplaintUseCaseInterface
 }
 
-func NewComplaintLikeController(useCase entities.ComplaintLikeUseCaseInterface, useCaseComplaint entities.ComplaintUseCaseInterface) *ComplaintLikeController {
+func NewComplaintLikeController(complaintLikeUseCase entities.ComplaintLikeUseCaseInterface, complaintUseCase entities.ComplaintUseCaseInterface) *ComplaintLikeController {
 	return &ComplaintLikeController{
-		useCase:          useCase,
-		useCaseComplaint: useCaseComplaint,
+		complaintLikeUseCase: complaintLikeUseCase,
+		complaintUseCase:     complaintUseCase,
 	}
 }
 
@@ -24,11 +25,6 @@ func (c *ComplaintLikeController) ToggleLike(ctx echo.Context) error {
 	complaintID := ctx.Param("complaint-id")
 	if complaintID == "" {
 		return ctx.JSON(http.StatusBadRequest, map[string]string{"message": "Complaint ID is required"})
-	}
-
-	_, err := c.useCaseComplaint.GetByID(complaintID)
-	if err != nil {
-		return ctx.JSON(http.StatusNotFound, base.NewErrorResponse("Complaint not found"))
 	}
 
 	userID, err := utils.GetIDFromJWT(ctx)
@@ -41,22 +37,25 @@ func (c *ComplaintLikeController) ToggleLike(ctx echo.Context) error {
 		ComplaintID: complaintID,
 	}
 
-	existingComplaintLike, err := c.useCase.FindByUserAndComplaint(complaintLike.UserID, complaintLike.ComplaintID)
+	likeStatus, err := c.complaintLikeUseCase.ToggleLike(complaintLike)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
-	if existingComplaintLike != nil {
-		err = c.useCase.Unlike(complaintLike)
+	if likeStatus == "liked" {
+		err := c.complaintUseCase.IncreaseTotalLikes(complaintID)
 		if err != nil {
 			return ctx.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 		}
-		return ctx.JSON(http.StatusOK, base.NewSuccessResponse("Success Unlike", nil))
 	} else {
-		err = c.useCase.Likes(complaintLike)
+		err := c.complaintUseCase.DecreaseTotalLikes(complaintID)
 		if err != nil {
 			return ctx.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 		}
-		return ctx.JSON(http.StatusOK, base.NewSuccessResponse("Success Like", nil))
 	}
+
+	message := "Complaint " + likeStatus
+
+	successResponse := base.NewSuccessResponse(message, nil)
+	return ctx.JSON(http.StatusOK, successResponse)
 }
