@@ -19,6 +19,7 @@ func SeedComplaint(db *gorm.DB) {
 				Address:     "Jl. lorem ipsum No. 1 RT 01 RW 01, Kelurahan Lorem Ipsum, Kecamatan Lorem Ipsum, Kota Lorem Ipsum, Provinsi Lorem Ipsum",
 				Status:      "pending",
 				Type:        "public",
+				TotalLikes:  3,
 			},
 			{
 				ID:          "C-8ksh&s9280",
@@ -29,6 +30,7 @@ func SeedComplaint(db *gorm.DB) {
 				Address:     "Jl. lorem ipsum No. 1 RT 01 RW 01, Kelurahan Lorem Ipsum, Kecamatan Lorem Ipsum, Kota Lorem Ipsum, Provinsi Lorem Ipsum",
 				Status:      "selesai",
 				Type:        "private",
+				TotalLikes:  2,
 			},
 			{
 				ID:          "C-81jas92581",
@@ -39,6 +41,7 @@ func SeedComplaint(db *gorm.DB) {
 				Address:     "Jl. lorem ipsum No. 1 RT 01 RW 01, Kelurahan Lorem Ipsum, Kecamatan Lorem Ipsum, Kota Lorem Ipsum, Provinsi Lorem Ipsum",
 				Status:      "verifikasi",
 				Type:        "private",
+				TotalLikes:  2,
 			},
 			{
 				ID:          "C-271j9ak280",
@@ -49,6 +52,7 @@ func SeedComplaint(db *gorm.DB) {
 				Address:     "Jl. lorem ipsum No. 1 RT 01 RW 01, Kelurahan Lorem Ipsum, Kecamatan Lorem Ipsum, Kota Lorem Ipsum, Provinsi Lorem Ipsum",
 				Status:      "on progress",
 				Type:        "public",
+				TotalLikes:  1,
 			},
 			{
 				ID:          "C-123j9ak280",
@@ -59,6 +63,7 @@ func SeedComplaint(db *gorm.DB) {
 				Address:     "Jl. lorem ipsum No. 1 RT 01 RW 01, Kelurahan Lorem Ipsum, Kecamatan Lorem Ipsum, Kota Lorem Ipsum, Provinsi Lorem Ipsum",
 				Status:      "ditolak",
 				Type:        "public",
+				TotalLikes:  0,
 			},
 		}
 
