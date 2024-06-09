@@ -2,7 +2,6 @@ package complaint_like
 
 import (
 	"e-complaint-api/controllers/base"
-	"e-complaint-api/controllers/complaint_likes/response"
 	"e-complaint-api/entities"
 	"e-complaint-api/utils"
 	"github.com/labstack/echo/v4"
@@ -10,12 +9,14 @@ import (
 )
 
 type ComplaintLikeController struct {
-	useCase entities.ComplaintLikeUseCaseInterface
+	useCase          entities.ComplaintLikeUseCaseInterface
+	useCaseComplaint entities.ComplaintUseCaseInterface
 }
 
-func NewComplaintLikeController(useCase entities.ComplaintLikeUseCaseInterface) *ComplaintLikeController {
+func NewComplaintLikeController(useCase entities.ComplaintLikeUseCaseInterface, useCaseComplaint entities.ComplaintUseCaseInterface) *ComplaintLikeController {
 	return &ComplaintLikeController{
-		useCase: useCase,
+		useCase:          useCase,
+		useCaseComplaint: useCaseComplaint,
 	}
 }
 
@@ -23,6 +24,11 @@ func (c *ComplaintLikeController) ToggleLike(ctx echo.Context) error {
 	complaintID := ctx.Param("complaint-id")
 	if complaintID == "" {
 		return ctx.JSON(http.StatusBadRequest, map[string]string{"message": "Complaint ID is required"})
+	}
+
+	_, err := c.useCaseComplaint.GetByID(complaintID)
+	if err != nil {
+		return ctx.JSON(http.StatusNotFound, base.NewErrorResponse("Complaint not found"))
 	}
 
 	userID, err := utils.GetIDFromJWT(ctx)
@@ -35,14 +41,22 @@ func (c *ComplaintLikeController) ToggleLike(ctx echo.Context) error {
 		ComplaintID: complaintID,
 	}
 
-	err = c.useCase.ToggleLike(complaintLike)
+	existingComplaintLike, err := c.useCase.FindByUserAndComplaint(complaintLike.UserID, complaintLike.ComplaintID)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
-	likeResponse := response.NewLikeResponse(complaintLike.LikeStatus)
-	successResponse := base.NewSuccessResponse(likeResponse.Message, nil)
-	return ctx.JSON(http.StatusOK, successResponse)
+	if existingComplaintLike != nil {
+		err = c.useCase.Unlike(complaintLike)
+		if err != nil {
+			return ctx.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+		}
+		return ctx.JSON(http.StatusOK, base.NewSuccessResponse("Success Unlike", nil))
+	} else {
+		err = c.useCase.Likes(complaintLike)
+		if err != nil {
+			return ctx.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+		}
+		return ctx.JSON(http.StatusOK, base.NewSuccessResponse("Success Like", nil))
+	}
 }
-
-

@@ -6,7 +6,6 @@ type ComplaintLike struct {
 	ID          int       `gorm:"primaryKey"`
 	ComplaintID string    `gorm:"type:varchar(15);index;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
 	UserID      int       `gorm:"not null"`
-	LikeStatus  bool      `gorm:"default:false"`
 	CreatedAt   time.Time `gorm:"autoCreateTime"`
 }
 

@@ -40,12 +40,16 @@ func (clr *ComplaintLikeRepository) FindByUserAndComplaint(userID int, complaint
 	}
 	return &complaintLike, nil
 }
+
 func (clr *ComplaintLikeRepository) Likes(complaintLike *entities.ComplaintLike) error {
 	result := clr.DB.Create(complaintLike)
 	return result.Error
 }
 
 func (clr *ComplaintLikeRepository) Unlike(complaintLike *entities.ComplaintLike) error {
-	result := clr.DB.Delete(complaintLike)
-	return result.Error
+	db := clr.DB
+	if err := db.Where("user_id = ? AND complaint_id = ?", complaintLike.UserID, complaintLike.ComplaintID).Delete(&entities.ComplaintLike{}).Error; err != nil {
+		return err
+	}
+	return nil
 }
