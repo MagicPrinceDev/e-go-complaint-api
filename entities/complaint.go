@@ -16,6 +16,7 @@ type Complaint struct {
 	Address       string             `gorm:"not null"`
 	Status        string             `gorm:"enum('pending', 'verifikasi', 'on progress', 'selesai', 'ditolak');default:'pending'"`
 	Type          string             `gorm:"enum('public', 'private')"`
+	TotalLikes    int                `gorm:"default:0"`
 	CreatedAt     time.Time          `gorm:"autoCreateTime"`
 	UpdatedAt     time.Time          `gorm:"autoUpdateTime"`
 	DeletedAt     gorm.DeletedAt     `gorm:"index"`
@@ -40,6 +41,8 @@ type ComplaintRepositoryInterface interface {
 	UpdateStatus(id string, status string) error
 	GetStatus(id string) (string, error)
 	Import(complaints []Complaint) error
+	IncreaseTotalLikes(id string) error
+	DecreaseTotalLikes(id string) error
 }
 
 type ComplaintUseCaseInterface interface {
@@ -52,4 +55,6 @@ type ComplaintUseCaseInterface interface {
 	Update(complaint Complaint) (Complaint, error)
 	UpdateStatus(id string, status string) error
 	Import(file *multipart.FileHeader) error
+	IncreaseTotalLikes(id string) error
+	DecreaseTotalLikes(id string) error
 }

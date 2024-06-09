@@ -114,7 +114,7 @@ func main() {
 
 	complaintLikeRepo := complaint_like_rp.NewComplaintLikeRepository(DB)
 	complaintLikeUsecase := complaint_like_uc.NewComplaintLikeUseCase(complaintLikeRepo)
-	ComplaintLikeController := complaint_like.NewComplaintLikeController(complaintLikeUsecase)
+	ComplaintLikeController := complaint_like.NewComplaintLikeController(complaintLikeUsecase, complaintUsecase)
 
 	routes := routes.RouteController{
 		AdminController:            AdminController,

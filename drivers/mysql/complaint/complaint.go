@@ -191,3 +191,19 @@ func (r *ComplaintRepo) Import(complaints []entities.Complaint) error {
 
 	return nil
 }
+
+func (r *ComplaintRepo) IncreaseTotalLikes(id string) error {
+	if err := r.DB.Model(&entities.Complaint{}).Where("id = ?", id).Update("total_likes", gorm.Expr("total_likes + ?", 1)).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *ComplaintRepo) DecreaseTotalLikes(id string) error {
+	if err := r.DB.Model(&entities.Complaint{}).Where("id = ?", id).Update("total_likes", gorm.Expr("total_likes - ?", 1)).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

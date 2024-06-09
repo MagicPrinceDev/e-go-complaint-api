@@ -10,12 +10,14 @@ import (
 )
 
 type ComplaintLikeController struct {
-	useCase entities.ComplaintLikeUseCaseInterface
+	complaintLikeUseCase entities.ComplaintLikeUseCaseInterface
+	complaintUseCase     entities.ComplaintUseCaseInterface
 }
 
-func NewComplaintLikeController(useCase entities.ComplaintLikeUseCaseInterface) *ComplaintLikeController {
+func NewComplaintLikeController(complaintLikeUseCase entities.ComplaintLikeUseCaseInterface, complaintUseCase entities.ComplaintUseCaseInterface) *ComplaintLikeController {
 	return &ComplaintLikeController{
-		useCase: useCase,
+		complaintLikeUseCase: complaintLikeUseCase,
+		complaintUseCase:     complaintUseCase,
 	}
 }
 
@@ -35,9 +37,21 @@ func (c *ComplaintLikeController) ToggleLike(ctx echo.Context) error {
 		ComplaintID: complaintID,
 	}
 
-	likeStatus, err := c.useCase.ToggleLike(complaintLike)
+	likeStatus, err := c.complaintLikeUseCase.ToggleLike(complaintLike)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
+	if likeStatus == "liked" {
+		err := c.complaintUseCase.IncreaseTotalLikes(complaintID)
+		if err != nil {
+			return ctx.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+		}
+	} else {
+		err := c.complaintUseCase.DecreaseTotalLikes(complaintID)
+		if err != nil {
+			return ctx.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+		}
 	}
 
 	message := "Complaint " + likeStatus
