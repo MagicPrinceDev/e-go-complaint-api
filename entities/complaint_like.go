@@ -4,22 +4,19 @@ import "time"
 
 type ComplaintLike struct {
 	ID          int       `gorm:"primaryKey"`
-	ComplaintID string    `gorm:"type:varchar(15);index;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
+	ComplaintID string    `gorm:"type:varchar;size:15;not null"`
 	UserID      int       `gorm:"not null"`
-	LikeStatus  bool      `gorm:"default:false"`
 	CreatedAt   time.Time `gorm:"autoCreateTime"`
+	Complaint   Complaint `gorm:"foreignKey:ComplaintID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	User        User      `gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
 type ComplaintLikeRepositoryInterface interface {
 	Unlike(complaintLike *ComplaintLike) error
 	Likes(complaintLike *ComplaintLike) error
-	ToggleLike(complaintLike *ComplaintLike) error
 	FindByUserAndComplaint(userID int, complaintID string) (*ComplaintLike, error)
 }
 
 type ComplaintLikeUseCaseInterface interface {
-	Likes(complaintLike *ComplaintLike) error
-	Unlike(complaintLike *ComplaintLike) error
-	ToggleLike(complaintLike *ComplaintLike) error
-	FindByUserAndComplaint(userID int, complaintID string) (*ComplaintLike, error)
+	ToggleLike(complaintLike *ComplaintLike) (string, error)
 }

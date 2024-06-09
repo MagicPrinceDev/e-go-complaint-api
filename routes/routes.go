@@ -70,6 +70,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	user.PUT("/users/update-profile", r.UserController.UpdateUser)
 	user.PUT("/users/change-password", r.UserController.UpdatePassword)
 	user.GET("/users/complaints", r.ComplaintController.GetByUserID)
+	user.POST("/complaints/:complaint-id/likes", r.ComplaintLikeController.ToggleLike)
 
 	// Route For All Authenticated User
 	auth_user := e.Group("/api/v1")
@@ -89,7 +90,6 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	auth_user.GET("/news", r.NewsController.GetPaginated)
 	auth_user.GET("/news/:id", r.NewsController.GetByID)
 	auth_user.GET("/regencies", r.RegencyController.GetAll)
-	auth_user.POST("/complaints/:complaint-id/likes", r.ComplaintLikeController.ToggleLike)
 
 	// Route For Public
 }
