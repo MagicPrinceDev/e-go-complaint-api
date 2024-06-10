@@ -8,14 +8,13 @@ type UserGet struct {
 	TelephoneNumber string `json:"telephone_number"`
 	Email           string `json:"email"`
 	ProfilePhoto    string `json:"profile_photo"`
-	Comment         string `json:"comment,omitempty"`
-	UpdatedAt       string `json:"update_at,omitempty"`
 }
 
 type DiscussionGet struct {
 	ID        int       `json:"id"`
 	User      *UserGet  `json:"user,omitempty"`
 	Admin     *AdminGet `json:"admin,omitempty"`
+	Comment   string    `json:"comment"`
 	UpdatedAt string    `json:"update_at"`
 }
 
@@ -26,8 +25,6 @@ type AdminGet struct {
 	Email           string `json:"email"`
 	IsSuperAdmin    bool   `json:"is_super_admin"`
 	ProfilePhoto    string `json:"profile_photo"`
-	Comment         string `json:"comment,omitempty"`
-	UpdatedAt       string `json:"update_at,omitempty"`
 }
 
 func FromEntitiesGetToResponse(data *entities.Discussion) *DiscussionGet {
@@ -42,8 +39,6 @@ func FromEntitiesGetToResponse(data *entities.Discussion) *DiscussionGet {
 			Email:           data.Admin.Email,
 			IsSuperAdmin:    data.Admin.IsSuperAdmin,
 			ProfilePhoto:    data.Admin.ProfilePhoto,
-			Comment:         data.Comment,
-			UpdatedAt:       data.UpdatedAt.Format("2006-01-02 15:04:05"),
 		}
 	} else {
 		user = &UserGet{
@@ -52,8 +47,6 @@ func FromEntitiesGetToResponse(data *entities.Discussion) *DiscussionGet {
 			TelephoneNumber: data.User.TelephoneNumber,
 			Email:           data.User.Email,
 			ProfilePhoto:    data.User.ProfilePhoto,
-			Comment:         data.Comment,
-			UpdatedAt:       data.UpdatedAt.Format("2006-01-02 15:04:05"),
 		}
 	}
 
@@ -61,6 +54,7 @@ func FromEntitiesGetToResponse(data *entities.Discussion) *DiscussionGet {
 		ID:        data.ID,
 		User:      user,
 		Admin:     admin,
+		Comment:   data.Comment,
 		UpdatedAt: data.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
 }
