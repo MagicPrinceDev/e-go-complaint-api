@@ -8,6 +8,7 @@ import (
 	"e-complaint-api/controllers/complaint_process"
 	"e-complaint-api/controllers/discussion"
 	"e-complaint-api/controllers/news"
+	"e-complaint-api/controllers/news_like"
 	"e-complaint-api/controllers/regency"
 	"e-complaint-api/controllers/user"
 	"e-complaint-api/middlewares"
@@ -28,6 +29,7 @@ type RouteController struct {
 	NewsController             *news.NewsController
 	RegencyController          *regency.RegencyController
 	ComplaintLikeController    *complaint_like.ComplaintLikeController
+	NewsLikeController         *news_like.NewsLikeController
 }
 
 func (r *RouteController) InitRoute(e *echo.Echo) {
@@ -90,6 +92,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	auth_user.GET("/news", r.NewsController.GetPaginated)
 	auth_user.GET("/news/:id", r.NewsController.GetByID)
 	auth_user.GET("/regencies", r.RegencyController.GetAll)
+	auth_user.POST("/news/:news-id/likes", r.NewsLikeController.ToggleLike)
 
 	// Route For Public
 }
