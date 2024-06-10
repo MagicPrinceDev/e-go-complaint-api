@@ -2,7 +2,6 @@ package discussion
 
 import (
 	"e-complaint-api/entities"
-	"errors"
 	"gorm.io/gorm"
 )
 
@@ -15,10 +14,6 @@ func NewDiscussionRepo(db *gorm.DB) *DiscussionRepo {
 }
 
 func (r *DiscussionRepo) Create(discussion *entities.Discussion) error {
-	if discussion.Comment == "" {
-		return errors.New("comment cannot be empty")
-
-	}
 	if err := r.DB.Create(discussion).Error; err != nil {
 		return err
 	}
