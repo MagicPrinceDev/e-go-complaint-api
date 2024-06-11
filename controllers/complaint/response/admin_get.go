@@ -18,6 +18,7 @@ type AdminGet struct {
 	Status      string                        `json:"status"`
 	Type        string                        `json:"type"`
 	Files       []file_response.ComplaintFile `json:"files"`
+	TotalLikes  int                           `json:"total_likes"`
 	UpdatedAt   string                        `json:"updated_at"`
 }
 
@@ -41,6 +42,7 @@ func AdminGetFromEntitiesToResponse(data *entities.Complaint) *AdminGet {
 		Status:      data.Status,
 		Type:        data.Type,
 		Files:       files,
+		TotalLikes:  data.TotalLikes,
 		UpdatedAt:   data.UpdatedAt.Format("3 January 2006 15:04:05"),
 	}
 }

@@ -90,7 +90,13 @@ func (cc *ComplaintController) GetByID(c echo.Context) error {
 		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
 
-	complaintResponse := complaint_response.GetFromEntitiesToResponse(&complaint)
+	var complaintResponse interface{}
+	role, _ := utils.GetRoleFromJWT(c)
+	if role == "user" {
+		complaintResponse = complaint_response.GetFromEntitiesToResponse(&complaint)
+	} else {
+		complaintResponse = complaint_response.AdminGetFromEntitiesToResponse(&complaint)
+	}
 
 	return c.JSON(200, base.NewSuccessResponse("Success Get Report", complaintResponse))
 }
