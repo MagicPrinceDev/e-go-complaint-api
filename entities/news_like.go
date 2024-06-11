@@ -15,8 +15,12 @@ type NewsLikeRepositoryInterface interface {
 	FindByUserAndNews(userID int, newsID int) (*NewsLike, error)
 	Likes(newsLike *NewsLike) error
 	Unlike(newsLike *NewsLike) error
+	IncreaseTotalLikes(id string) error
+	DecreaseTotalLikes(id string) error
 }
 
 type NewsLikeUseCaseInterface interface {
 	ToggleLike(complaintLike *NewsLike) (string, error)
+	IncreaseTotalLikes(id string) error
+	DecreaseTotalLikes(id string) error
 }

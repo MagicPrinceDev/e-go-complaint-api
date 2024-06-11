@@ -75,3 +75,21 @@ func (u *NewsLikeUseCase) FindByUserAndNews(userID int, newsID int) (*entities.N
 
 	return newsLike, nil
 }
+
+func (u *NewsLikeUseCase) IncreaseTotalLikes(id string) error {
+	err := u.repo.IncreaseTotalLikes(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *NewsLikeUseCase) DecreaseTotalLikes(id string) error {
+	err := u.repo.DecreaseTotalLikes(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

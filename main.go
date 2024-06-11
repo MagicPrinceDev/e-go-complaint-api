@@ -122,7 +122,7 @@ func main() {
 
 	newsLikeRepo := news_like_rp.NewNewsLikeRepo(DB)
 	newsLikeUsecase := news_like_uc.NewNewsLikeUseCase(newsLikeRepo)
-	NewsLikeController := news_like.NewNewsLikeController(newsLikeUsecase)
+	NewsLikeController := news_like.NewNewsLikeController(newsLikeUsecase, newsUsecase)
 
 	routes := routes.RouteController{
 		AdminController:            AdminController,

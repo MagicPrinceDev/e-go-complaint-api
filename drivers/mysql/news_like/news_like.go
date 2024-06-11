@@ -36,7 +36,21 @@ func (r *NewsLikeRepo) Likes(newsLike *entities.NewsLike) error {
 
 func (r *NewsLikeRepo) Unlike(newsLike *entities.NewsLike) error {
 	db := r.DB
-	if err := db.Where("user_id = ? AND news_id = ?", newsLike.UserID, newsLike.NewsID).Delete(&NewsLikeRepo{}).Error; err != nil {
+	if err := db.Where("user_id = ? AND news_id = ?", newsLike.UserID, newsLike.NewsID).Delete(&entities.NewsLike{}).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *NewsLikeRepo) IncreaseTotalLikes(id string) error {
+	if err := r.DB.Model(&entities.News{}).Where("id = ?", id).Update("total_likes", gorm.Expr("total_likes + ?", 1)).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *NewsLikeRepo) DecreaseTotalLikes(id string) error {
+	if err := r.DB.Model(&entities.News{}).Where("id = ?", id).Update("total_likes", gorm.Expr("total_likes - ?", 1)).Error; err != nil {
 		return err
 	}
 	return nil
