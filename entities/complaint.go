@@ -43,6 +43,7 @@ type ComplaintRepositoryInterface interface {
 	Import(complaints []Complaint) error
 	IncreaseTotalLikes(id string) error
 	DecreaseTotalLikes(id string) error
+	GetComplaintIDsByUserID(userID int) ([]string, error)
 }
 
 type ComplaintUseCaseInterface interface {
@@ -57,4 +58,5 @@ type ComplaintUseCaseInterface interface {
 	Import(file *multipart.FileHeader) error
 	IncreaseTotalLikes(id string) error
 	DecreaseTotalLikes(id string) error
+	GetComplaintIDsByUserID(userID int) ([]string, error)
 }

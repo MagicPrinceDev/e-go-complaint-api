@@ -4,7 +4,8 @@ import (
 	"e-complaint-api/controllers/admin"
 	"e-complaint-api/controllers/category"
 	"e-complaint-api/controllers/complaint"
-	complaint_like "e-complaint-api/controllers/complaint_likes"
+	"e-complaint-api/controllers/complaint_activity"
+	complaint_like "e-complaint-api/controllers/complaint_like"
 	"e-complaint-api/controllers/complaint_process"
 	"e-complaint-api/controllers/discussion"
 	"e-complaint-api/controllers/news"
@@ -19,15 +20,16 @@ import (
 )
 
 type RouteController struct {
-	AdminController            *admin.AdminController
-	UserController             *user.UserController
-	ComplaintController        *complaint.ComplaintController
-	CategoryController         *category.CategoryController
-	ComplaintProcessController *complaint_process.ComplaintProcessController
-	DiscussionController       *discussion.DiscussionController
-	NewsController             *news.NewsController
-	RegencyController          *regency.RegencyController
-	ComplaintLikeController    *complaint_like.ComplaintLikeController
+	AdminController             *admin.AdminController
+	UserController              *user.UserController
+	ComplaintController         *complaint.ComplaintController
+	CategoryController          *category.CategoryController
+	ComplaintProcessController  *complaint_process.ComplaintProcessController
+	DiscussionController        *discussion.DiscussionController
+	NewsController              *news.NewsController
+	RegencyController           *regency.RegencyController
+	ComplaintLikeController     *complaint_like.ComplaintLikeController
+	ComplaintActivityController *complaint_activity.ComplaintActivityController
 }
 
 func (r *RouteController) InitRoute(e *echo.Echo) {
@@ -71,6 +73,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	user.PUT("/users/change-password", r.UserController.UpdatePassword)
 	user.GET("/users/complaints", r.ComplaintController.GetByUserID)
 	user.POST("/complaints/:complaint-id/likes", r.ComplaintLikeController.ToggleLike)
+	user.GET("/users/activities", r.ComplaintActivityController.GetByComplaintID)
 
 	// Route For All Authenticated User
 	auth_user := e.Group("/api/v1")
