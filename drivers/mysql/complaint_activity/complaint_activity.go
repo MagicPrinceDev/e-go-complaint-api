@@ -2,19 +2,20 @@ package complaint_activity
 
 import (
 	"e-complaint-api/entities"
+	"time"
 
 	"gorm.io/gorm"
 )
 
-type ComplainActivityRepo struct {
+type ComplaintActivityRepo struct {
 	DB *gorm.DB
 }
 
-func NewComplaintActivityRepo(db *gorm.DB) *ComplainActivityRepo {
-	return &ComplainActivityRepo{DB: db}
+func NewComplaintActivityRepo(db *gorm.DB) *ComplaintActivityRepo {
+	return &ComplaintActivityRepo{DB: db}
 }
 
-func (r *ComplainActivityRepo) GetByComplaintIDs(complaintIDs []string, activityType string) ([]entities.ComplaintActivity, error) {
+func (r *ComplaintActivityRepo) GetByComplaintIDs(complaintIDs []string, activityType string) ([]entities.ComplaintActivity, error) {
 	var complaintActivities []entities.ComplaintActivity
 
 	if activityType == "" {
@@ -32,4 +33,35 @@ func (r *ComplainActivityRepo) GetByComplaintIDs(complaintIDs []string, activity
 	}
 
 	return complaintActivities, nil
+}
+
+func (r *ComplaintActivityRepo) Create(complaintActivity *entities.ComplaintActivity) error {
+	if err := r.DB.Create(complaintActivity).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *ComplaintActivityRepo) Delete(complaintActivity entities.ComplaintActivity) error {
+	if complaintActivity.LikeID == nil {
+		if err := r.DB.Where("complaint_id = ? AND discussion_id = ?", complaintActivity.ComplaintID, *complaintActivity.DiscussionID).Delete(&complaintActivity).Error; err != nil {
+			return err
+		}
+	} else if complaintActivity.DiscussionID == nil {
+		if err := r.DB.Where("complaint_id = ? AND like_id = ?", complaintActivity.ComplaintID, *complaintActivity.LikeID).Delete(&complaintActivity).Error; err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (r *ComplaintActivityRepo) Update(complaintActivity entities.ComplaintActivity) error {
+	complaintActivity.UpdatedAt = time.Now()
+	if err := r.DB.Where("complaint_id = ? AND discussion_id = ?", complaintActivity.ComplaintID, complaintActivity.DiscussionID).Updates(&complaintActivity).Error; err != nil {
+		return err
+	}
+
+	return nil
 }
