@@ -22,3 +22,21 @@ func (u *ComplaintActivityUseCase) GetByComplaintIDs(complaintIDs []string, acti
 
 	return complaintActivities, nil
 }
+
+func (u *ComplaintActivityUseCase) Create(complaintActivity *entities.ComplaintActivity) (entities.ComplaintActivity, error) {
+	err := u.repo.Create(complaintActivity)
+	if err != nil {
+		return entities.ComplaintActivity{}, err
+	}
+
+	return *complaintActivity, nil
+}
+
+func (u *ComplaintActivityUseCase) Delete(complaintActivity entities.ComplaintActivity) error {
+	err := u.repo.Delete(complaintActivity)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -1,6 +1,8 @@
 package entities
 
-import "time"
+import (
+	"time"
+)
 
 type ComplaintActivity struct {
 	ID           int    `gorm:"primaryKey"`
@@ -15,8 +17,12 @@ type ComplaintActivity struct {
 
 type ComplaintActivityRepositoryInterface interface {
 	GetByComplaintIDs(complaintIDs []string, activityType string) ([]ComplaintActivity, error)
+	Create(complaintActivity *ComplaintActivity) error
+	Delete(complaintActivity ComplaintActivity) error
 }
 
 type ComplaintActivityUseCaseInterface interface {
 	GetByComplaintIDs(complaintIDs []string, activityType string) ([]ComplaintActivity, error)
+	Create(complaintActivity *ComplaintActivity) (ComplaintActivity, error)
+	Delete(complaintActivity ComplaintActivity) error
 }
