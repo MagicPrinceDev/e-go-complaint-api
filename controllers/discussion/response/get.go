@@ -55,6 +55,6 @@ func FromEntitiesGetToResponse(data *entities.Discussion) *DiscussionGet {
 		User:      user,
 		Admin:     admin,
 		Comment:   data.Comment,
-		UpdatedAt: data.UpdatedAt.Format("2006-01-02 15:04:05"),
+		UpdatedAt: data.UpdatedAt.Format("3 January 2006 15:04:05"),
 	}
 }

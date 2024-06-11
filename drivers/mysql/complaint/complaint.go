@@ -207,3 +207,13 @@ func (r *ComplaintRepo) DecreaseTotalLikes(id string) error {
 
 	return nil
 }
+
+func (r *ComplaintRepo) GetComplaintIDsByUserID(userID int) ([]string, error) {
+	var complaintIDs []string
+
+	if err := r.DB.Model(&entities.Complaint{}).Select("id").Where("user_id = ?", userID).Find(&complaintIDs).Error; err != nil {
+		return nil, err
+	}
+
+	return complaintIDs, nil
+}
