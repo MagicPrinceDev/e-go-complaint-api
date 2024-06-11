@@ -100,10 +100,6 @@ func main() {
 	categoryUsecase := category_uc.NewCategoryUseCase(categoryRepo)
 	CategoryController := category_cl.NewCategoryController(categoryUsecase)
 
-	discussionRepo := discussion_rp.NewDiscussionRepo(DB)
-	discussionUsecase := discussion_uc.NewDiscussionUseCase(discussionRepo)
-	DiscussionController := discussion_cl.NewDiscussionController(discussionUsecase, complaintUsecase)
-
 	regencyRepo := regency_rp.NewRegencyRepo(DB)
 	regencyUsecase := regency_uc.NewRegencyUseCase(regencyRepo)
 	RegencyController := regency_cl.NewRegencyController(regencyUsecase)
@@ -119,6 +115,10 @@ func main() {
 	complaintActivityRepo := complaint_activity_rp.NewComplaintActivityRepo(DB)
 	complaintActivityUsecase := complaint_activity_uc.NewComplaintActivityUseCase(complaintActivityRepo)
 	ComplaintActivityController := complaint_activity.NewComplaintActivityController(complaintActivityUsecase, complaintUsecase)
+
+	discussionRepo := discussion_rp.NewDiscussionRepo(DB)
+	discussionUsecase := discussion_uc.NewDiscussionUseCase(discussionRepo)
+	DiscussionController := discussion_cl.NewDiscussionController(discussionUsecase, complaintUsecase, complaintActivityUsecase)
 
 	complaintLikeRepo := complaint_like_rp.NewComplaintLikeRepository(DB)
 	complaintLikeUsecase := complaint_like_uc.NewComplaintLikeUseCase(complaintLikeRepo)

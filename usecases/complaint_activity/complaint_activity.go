@@ -40,3 +40,12 @@ func (u *ComplaintActivityUseCase) Delete(complaintActivity entities.ComplaintAc
 
 	return nil
 }
+
+func (u *ComplaintActivityUseCase) Update(complaintActivity entities.ComplaintActivity) error {
+	err := u.repo.Update(complaintActivity)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
