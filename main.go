@@ -2,6 +2,7 @@ package main
 
 import (
 	"e-complaint-api/config"
+	"e-complaint-api/controllers/news_comment"
 	"e-complaint-api/controllers/news_like"
 	"e-complaint-api/drivers/mailtrap"
 	"e-complaint-api/drivers/mysql"
@@ -54,6 +55,9 @@ import (
 
 	news_like_rp "e-complaint-api/drivers/mysql/news_like"
 	news_like_uc "e-complaint-api/usecases/news_like"
+
+	news_comment_rp "e-complaint-api/drivers/mysql/news_comment"
+	news_comment_uc "e-complaint-api/usecases/news_comment"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -124,6 +128,10 @@ func main() {
 	newsLikeUsecase := news_like_uc.NewNewsLikeUseCase(newsLikeRepo)
 	NewsLikeController := news_like.NewNewsLikeController(newsLikeUsecase, newsUsecase)
 
+	newsCommentRepo := news_comment_rp.NewNewsComment(DB)
+	newsCommentUsecase := news_comment_uc.NewNewsCommentUseCase(newsCommentRepo)
+	NewsCommentController := news_comment.NewNewsCommentController(newsCommentUsecase, newsUsecase)
+
 	routes := routes.RouteController{
 		AdminController:            AdminController,
 		UserController:             UserController,
@@ -135,6 +143,7 @@ func main() {
 		RegencyController:          RegencyController,
 		ComplaintLikeController:    ComplaintLikeController,
 		NewsLikeController:         NewsLikeController,
+		NewsCommentController:      NewsCommentController,
 	}
 
 	routes.InitRoute(e)
