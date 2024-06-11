@@ -116,13 +116,13 @@ func main() {
 	newsUsecase := news_uc.NewNewsUseCase(newsRepo)
 	NewsController := news_cl.NewNewsController(newsUsecase, NewsFileUsecase)
 
-	complaintLikeRepo := complaint_like_rp.NewComplaintLikeRepository(DB)
-	complaintLikeUsecase := complaint_like_uc.NewComplaintLikeUseCase(complaintLikeRepo)
-	ComplaintLikeController := complaint_like.NewComplaintLikeController(complaintLikeUsecase, complaintUsecase)
-
 	complaintActivityRepo := complaint_activity_rp.NewComplaintActivityRepo(DB)
 	complaintActivityUsecase := complaint_activity_uc.NewComplaintActivityUseCase(complaintActivityRepo)
 	ComplaintActivityController := complaint_activity.NewComplaintActivityController(complaintActivityUsecase, complaintUsecase)
+
+	complaintLikeRepo := complaint_like_rp.NewComplaintLikeRepository(DB)
+	complaintLikeUsecase := complaint_like_uc.NewComplaintLikeUseCase(complaintLikeRepo)
+	ComplaintLikeController := complaint_like.NewComplaintLikeController(complaintLikeUsecase, complaintUsecase, complaintActivityUsecase)
 
 	routes := routes.RouteController{
 		AdminController:             AdminController,

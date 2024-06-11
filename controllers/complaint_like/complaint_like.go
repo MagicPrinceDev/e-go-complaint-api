@@ -10,14 +10,16 @@ import (
 )
 
 type ComplaintLikeController struct {
-	complaintLikeUseCase entities.ComplaintLikeUseCaseInterface
-	complaintUseCase     entities.ComplaintUseCaseInterface
+	complaintLikeUseCase     entities.ComplaintLikeUseCaseInterface
+	complaintUseCase         entities.ComplaintUseCaseInterface
+	complaintActivityUseCase entities.ComplaintActivityUseCaseInterface
 }
 
-func NewComplaintLikeController(complaintLikeUseCase entities.ComplaintLikeUseCaseInterface, complaintUseCase entities.ComplaintUseCaseInterface) *ComplaintLikeController {
+func NewComplaintLikeController(complaintLikeUseCase entities.ComplaintLikeUseCaseInterface, complaintUseCase entities.ComplaintUseCaseInterface, complaintActivityUseCase entities.ComplaintActivityUseCaseInterface) *ComplaintLikeController {
 	return &ComplaintLikeController{
-		complaintLikeUseCase: complaintLikeUseCase,
-		complaintUseCase:     complaintUseCase,
+		complaintLikeUseCase:     complaintLikeUseCase,
+		complaintUseCase:         complaintUseCase,
+		complaintActivityUseCase: complaintActivityUseCase,
 	}
 }
 
@@ -47,8 +49,24 @@ func (c *ComplaintLikeController) ToggleLike(ctx echo.Context) error {
 		if err != nil {
 			return ctx.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 		}
+
+		var complaintActivity entities.ComplaintActivity
+		complaintActivity.ComplaintID = complaintID
+		complaintActivity.LikeID = &complaintLike.ID
+		_, err = c.complaintActivityUseCase.Create(&complaintActivity)
+		if err != nil {
+			return ctx.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+		}
+
 	} else {
 		err := c.complaintUseCase.DecreaseTotalLikes(complaintID)
+		if err != nil {
+			return ctx.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+		}
+		var complaintActivity entities.ComplaintActivity
+		complaintActivity.ComplaintID = complaintID
+		complaintActivity.LikeID = &complaintLike.ID
+		err = c.complaintActivityUseCase.Delete(complaintActivity)
 		if err != nil {
 			return ctx.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 		}

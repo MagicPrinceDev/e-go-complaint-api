@@ -43,7 +43,7 @@ func (r *ComplaintActivityRepo) Create(complaintActivity *entities.ComplaintActi
 }
 
 func (r *ComplaintActivityRepo) Delete(complaintActivity entities.ComplaintActivity) error {
-	if err := r.DB.Delete(&complaintActivity).Error; err != nil {
+	if err := r.DB.Where("complaint_id = ? AND like_id = ?", complaintActivity.ComplaintID, complaintActivity.LikeID).Delete(&complaintActivity).Error; err != nil {
 		return err
 	}
 
