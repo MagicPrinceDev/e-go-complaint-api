@@ -42,3 +42,10 @@ func (r *NewsComment) UpdateComment(newsComment *entities.NewsComment) error {
 	}
 	return nil
 }
+
+func (r *NewsComment) DeleteComment(id int) error {
+	if err := r.DB.Delete(&entities.NewsComment{}, id).Error; err != nil {
+		return err
+	}
+	return nil
+}

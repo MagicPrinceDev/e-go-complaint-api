@@ -24,6 +24,7 @@ type NewsCommentRepositoryInterface interface {
 	GetById(id int) (*NewsComment, error)
 	GetByNewsId(newsId int) ([]NewsComment, error)
 	UpdateComment(newsComment *NewsComment) error
+	DeleteComment(id int) error
 }
 
 type NewsCommentUseCaseInterface interface {
@@ -31,4 +32,5 @@ type NewsCommentUseCaseInterface interface {
 	GetById(id int) (*NewsComment, error)
 	GetByNewsId(newsId int) ([]NewsComment, error)
 	UpdateComment(newsComment *NewsComment) error
+	DeleteComment(id int) error
 }

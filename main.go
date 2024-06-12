@@ -65,7 +65,7 @@ import (
 
 func main() {
 	// For local development only
-	config.LoadEnv()
+	//config.LoadEnv()
 
 	config.InitConfigMySQL()
 	DB := mysql.ConnectDB(config.InitConfigMySQL())

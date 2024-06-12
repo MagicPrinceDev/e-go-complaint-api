@@ -55,3 +55,12 @@ func (ncu *NewsCommentUseCase) UpdateComment(newsComment *entities.NewsComment) 
 
 	return nil
 }
+
+func (ncu *NewsCommentUseCase) DeleteComment(id int) error {
+	err := ncu.repo.DeleteComment(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

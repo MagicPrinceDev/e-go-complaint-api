@@ -165,3 +165,54 @@ func (n *NewsCommentController) UpdateComment(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, base.NewSuccessResponse("Comment updated successfully", nil))
 }
+
+func (n *NewsCommentController) DeleteComment(ctx echo.Context) error {
+	newsIDStr := ctx.Param("news-id")
+	if newsIDStr == "" {
+		return ctx.JSON(http.StatusBadRequest, base.NewErrorResponse("News ID required"))
+	}
+
+	newsID, err := strconv.Atoi(newsIDStr)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, base.NewErrorResponse("News ID must be an integer"))
+	}
+
+	commentIDStr := ctx.Param("comment-id")
+	if commentIDStr == "" {
+		return ctx.JSON(http.StatusBadRequest, base.NewErrorResponse("Comment ID required"))
+	}
+
+	commentID, err := strconv.Atoi(commentIDStr)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, base.NewErrorResponse("Comment ID must be an integer"))
+	}
+
+	comment, err := n.newsCommentRepo.GetById(commentID)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, base.NewErrorResponse("Comment not found"))
+	}
+
+	if comment.NewsID != newsID {
+		return ctx.JSON(http.StatusBadRequest, base.NewErrorResponse("Comment does not belong to the specified news"))
+	}
+
+	userID, err := utils.GetIDFromJWT(ctx)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
+	role, err := utils.GetRoleFromJWT(ctx)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
+	if role != "admin" && comment.UserID != nil && *comment.UserID != userID {
+		return ctx.JSON(http.StatusUnauthorized, base.NewErrorResponse("You are not authorized to delete this comment"))
+	}
+
+	if err := n.newsCommentRepo.DeleteComment(comment.ID); err != nil {
+		return ctx.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
+	return ctx.JSON(http.StatusOK, base.NewSuccessResponse("Comment deleted successfully", nil))
+}
