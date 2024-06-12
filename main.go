@@ -47,9 +47,13 @@ import (
 	news_file_rp "e-complaint-api/drivers/mysql/news_file"
 	news_file_uc "e-complaint-api/usecases/news_file"
 
-	complaint_like "e-complaint-api/controllers/complaint_likes"
+	complaint_like "e-complaint-api/controllers/complaint_like"
 	complaint_like_rp "e-complaint-api/drivers/mysql/complaint_like"
 	complaint_like_uc "e-complaint-api/usecases/complaint_like"
+
+	complaint_activity "e-complaint-api/controllers/complaint_activity"
+	complaint_activity_rp "e-complaint-api/drivers/mysql/complaint_activity"
+	complaint_activity_uc "e-complaint-api/usecases/complaint_activity"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -57,7 +61,7 @@ import (
 
 func main() {
 	// For local development only
-	//config.LoadEnv()
+	// config.LoadEnv()
 
 	config.InitConfigMySQL()
 	DB := mysql.ConnectDB(config.InitConfigMySQL())
@@ -116,16 +120,21 @@ func main() {
 	complaintLikeUsecase := complaint_like_uc.NewComplaintLikeUseCase(complaintLikeRepo)
 	ComplaintLikeController := complaint_like.NewComplaintLikeController(complaintLikeUsecase, complaintUsecase)
 
+	complaintActivityRepo := complaint_activity_rp.NewComplaintActivityRepo(DB)
+	complaintActivityUsecase := complaint_activity_uc.NewComplaintActivityUseCase(complaintActivityRepo)
+	ComplaintActivityController := complaint_activity.NewComplaintActivityController(complaintActivityUsecase, complaintUsecase)
+
 	routes := routes.RouteController{
-		AdminController:            AdminController,
-		UserController:             UserController,
-		ComplaintController:        ComplaintController,
-		CategoryController:         CategoryController,
-		ComplaintProcessController: ComplaintProcessController,
-		DiscussionController:       DiscussionController,
-		NewsController:             NewsController,
-		RegencyController:          RegencyController,
-		ComplaintLikeController:    ComplaintLikeController,
+		AdminController:             AdminController,
+		UserController:              UserController,
+		ComplaintController:         ComplaintController,
+		CategoryController:          CategoryController,
+		ComplaintProcessController:  ComplaintProcessController,
+		DiscussionController:        DiscussionController,
+		NewsController:              NewsController,
+		RegencyController:           RegencyController,
+		ComplaintLikeController:     ComplaintLikeController,
+		ComplaintActivityController: ComplaintActivityController,
 	}
 
 	routes.InitRoute(e)

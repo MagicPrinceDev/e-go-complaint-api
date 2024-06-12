@@ -42,7 +42,7 @@ func FromEntitiesToResponse(data *entities.Discussion) *Discussion {
 		User:      user,
 		Admin:     admin,
 		Comment:   data.Comment,
-		CreatedAt: data.CreatedAt.Format("2006-01-02 15:04:05"),
+		CreatedAt: data.CreatedAt.Format("3 January 2006 15:04:05"),
 	}
 }
 
