@@ -12,7 +12,7 @@ func (r *CreateDiscussion) ToEntities(userID int, complaintID string, role strin
 	var adminID *int
 	var userIDPtr *int
 
-	if role == "admin" {
+	if role == "admin" || role == "super_admin" {
 		adminID = &userID
 	} else {
 		userIDPtr = &userID
