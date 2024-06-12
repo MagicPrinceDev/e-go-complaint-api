@@ -1,6 +1,9 @@
 package news_comment
 
-import "e-complaint-api/entities"
+import (
+	"e-complaint-api/constants"
+	"e-complaint-api/entities"
+)
 
 type NewsCommentUseCase struct {
 	repo entities.NewsCommentRepositoryInterface
@@ -14,6 +17,11 @@ func NewNewsCommentUseCase(repo entities.NewsCommentRepositoryInterface) *NewsCo
 
 func (ncu *NewsCommentUseCase) CommentNews(newsComment *entities.NewsComment) error {
 	err := ncu.repo.CommentNews(newsComment)
+
+	if newsComment.Comment == "" {
+		return constants.ErrCommentCannotBeEmpty
+	}
+
 	if err != nil {
 		return err
 	}
@@ -37,4 +45,13 @@ func (ncu *NewsCommentUseCase) GetByNewsId(newsId int) ([]entities.NewsComment, 
 	}
 
 	return newsComment, nil
+}
+
+func (ncu *NewsCommentUseCase) UpdateComment(newsComment *entities.NewsComment) error {
+	err := ncu.repo.UpdateComment(newsComment)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

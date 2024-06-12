@@ -35,3 +35,10 @@ func (r *NewsComment) GetByNewsId(newsId int) ([]entities.NewsComment, error) {
 	}
 	return newsComment, nil
 }
+
+func (r *NewsComment) UpdateComment(newsComment *entities.NewsComment) error {
+	if err := r.DB.Save(newsComment).Error; err != nil {
+		return err
+	}
+	return nil
+}

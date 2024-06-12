@@ -97,6 +97,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	auth_user.POST("/news/:news-id/likes", r.NewsLikeController.ToggleLike)
 	auth_user.POST("/news/:news-id/comments", r.NewsCommentController.CommentNews)
 	auth_user.GET("/news/:news-id/comments", r.NewsCommentController.GetCommentNews)
+	auth_user.PUT("/news/:news-id/comments/:comment-id", r.NewsCommentController.UpdateComment)
 
 	// Route For Public
 }

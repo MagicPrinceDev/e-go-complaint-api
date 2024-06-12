@@ -65,7 +65,7 @@ func (n *NewsCommentController) CommentNews(ctx echo.Context) error {
 
 	comment := req.ToEntities(userID, newsID, role)
 	if err := n.newsCommentRepo.CommentNews(comment); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+		return ctx.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
 	}
 
 	createCommentNews, err := n.newsCommentRepo.GetById(comment.ID)
@@ -111,4 +111,57 @@ func (n *NewsCommentController) GetCommentNews(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(http.StatusOK, base.NewSuccessResponse("Get comments news successfully", commentsResponse))
+}
+
+func (n *NewsCommentController) UpdateComment(ctx echo.Context) error {
+
+	newsIDStr := ctx.Param("news-id")
+	if newsIDStr == "" {
+		return ctx.JSON(http.StatusBadRequest, base.NewErrorResponse("News ID required"))
+	}
+
+	newsID, err := strconv.Atoi(newsIDStr)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, base.NewErrorResponse("News ID must be an integer"))
+	}
+
+	commentIDStr := ctx.Param("comment-id")
+	if commentIDStr == "" {
+		return ctx.JSON(http.StatusBadRequest, base.NewErrorResponse("Comment ID required"))
+	}
+
+	commentID, err := strconv.Atoi(commentIDStr)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, base.NewErrorResponse("Comment ID must be an integer"))
+	}
+
+	comment, err := n.newsCommentRepo.GetById(commentID)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, base.NewErrorResponse("Comment not found"))
+	}
+
+	if comment.NewsID != newsID {
+		return ctx.JSON(http.StatusBadRequest, base.NewErrorResponse("Comment does not belong to the specified news"))
+	}
+
+	userID, err := utils.GetIDFromJWT(ctx)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
+	if comment.UserID != nil && *comment.UserID != userID {
+		return ctx.JSON(http.StatusUnauthorized, base.NewErrorResponse("You are not authorized to update this comment"))
+	}
+
+	var req request.CommentNews
+	if err := ctx.Bind(&req); err != nil {
+		return ctx.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+	}
+
+	comment.Comment = req.Comment
+	if err := n.newsCommentRepo.UpdateComment(comment); err != nil {
+		return ctx.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
+	return ctx.JSON(http.StatusOK, base.NewSuccessResponse("Comment updated successfully", nil))
 }
