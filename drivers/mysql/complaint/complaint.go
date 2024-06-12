@@ -147,6 +147,7 @@ func (r *ComplaintRepo) Update(complaint entities.Complaint) (entities.Complaint
 	oldComplaint.CategoryID = complaint.CategoryID
 	oldComplaint.RegencyID = complaint.RegencyID
 	oldComplaint.Address = complaint.Address
+	oldComplaint.Date = complaint.Date
 
 	if err := r.DB.Save(&oldComplaint).Error; err != nil {
 		return entities.Complaint{}, err

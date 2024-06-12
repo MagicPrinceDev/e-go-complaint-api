@@ -16,6 +16,7 @@ type Complaint struct {
 	Address       string             `gorm:"not null"`
 	Status        string             `gorm:"enum('pending', 'verifikasi', 'on progress', 'selesai', 'ditolak');default:'pending'"`
 	Type          string             `gorm:"enum('public', 'private')"`
+	Date          time.Time          `gorm:"type:date"`
 	TotalLikes    int                `gorm:"default:0"`
 	CreatedAt     time.Time          `gorm:"autoCreateTime"`
 	UpdatedAt     time.Time          `gorm:"autoUpdateTime"`
