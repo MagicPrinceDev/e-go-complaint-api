@@ -1,6 +1,9 @@
 package request
 
-import "e-complaint-api/entities"
+import (
+	"e-complaint-api/entities"
+	"time"
+)
 
 type Create struct {
 	UserID      int    `json:"user_id" form:"user_id"`
@@ -8,16 +11,21 @@ type Create struct {
 	Description string `json:"description" form:"description" binding:"required"`
 	RegencyID   string `json:"regency_id" form:"regency_id" binding:"required"`
 	Address     string `json:"address" form:"address" binding:"required"`
+	Date        string `json:"date" form:"date"`
 	Type        string `json:"type" form:"type" binding:"required"`
 }
 
 func (r *Create) ToEntities() *entities.Complaint {
+	// Parse from dd-mm-yyyy to yyyy-mm-dd
+	date, _ := time.Parse("02-01-2006", r.Date)
+
 	return &entities.Complaint{
 		UserID:      r.UserID,
 		CategoryID:  r.CategoryID,
 		Description: r.Description,
 		RegencyID:   r.RegencyID,
 		Address:     r.Address,
+		Date:        date,
 		Type:        r.Type,
 	}
 }
