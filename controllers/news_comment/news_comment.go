@@ -79,3 +79,36 @@ func (n *NewsCommentController) CommentNews(ctx echo.Context) error {
 	return ctx.JSON(http.StatusCreated, base.NewSuccessResponse("Commented news successfully", newsResponse))
 
 }
+
+func (n *NewsCommentController) GetCommentNews(ctx echo.Context) error {
+	newsIDStr := ctx.Param("news-id")
+	if newsIDStr == "" {
+		return ctx.JSON(http.StatusBadRequest, base.NewErrorResponse("News ID required"))
+	}
+
+	newsID, err := strconv.Atoi(newsIDStr)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, base.NewErrorResponse("News ID must be an integer"))
+	}
+
+	_, err = n.newsRepo.GetByID(newsID)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, base.NewErrorResponse("News not found"))
+	}
+
+	comments, err := n.newsCommentRepo.GetByNewsId(newsID)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
+	if len(comments) == 0 {
+		return ctx.JSON(http.StatusNotFound, base.NewErrorResponse("Comment not found"))
+	}
+
+	var commentsResponse []*response.NewsGet
+	for _, comment := range comments {
+		commentsResponse = append(commentsResponse, response.FromEntitiesGetToResponse(&comment))
+	}
+
+	return ctx.JSON(http.StatusOK, base.NewSuccessResponse("Get comments news successfully", commentsResponse))
+}

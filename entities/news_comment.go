@@ -22,9 +22,11 @@ type NewsComment struct {
 type NewsCommentRepositoryInterface interface {
 	CommentNews(newsComment *NewsComment) error
 	GetById(id int) (*NewsComment, error)
+	GetByNewsId(newsId int) ([]NewsComment, error)
 }
 
 type NewsCommentUseCaseInterface interface {
 	CommentNews(newsComment *NewsComment) error
 	GetById(id int) (*NewsComment, error)
+	GetByNewsId(newsId int) ([]NewsComment, error)
 }

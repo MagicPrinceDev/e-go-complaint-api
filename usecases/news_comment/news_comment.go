@@ -29,3 +29,12 @@ func (ncu *NewsCommentUseCase) GetById(id int) (*entities.NewsComment, error) {
 
 	return newsComment, nil
 }
+
+func (ncu *NewsCommentUseCase) GetByNewsId(newsId int) ([]entities.NewsComment, error) {
+	newsComment, err := ncu.repo.GetByNewsId(newsId)
+	if err != nil {
+		return nil, err
+	}
+
+	return newsComment, nil
+}

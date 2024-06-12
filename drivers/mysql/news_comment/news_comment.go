@@ -27,3 +27,11 @@ func (r *NewsComment) GetById(id int) (*entities.NewsComment, error) {
 	}
 	return &newsComment, nil
 }
+
+func (r *NewsComment) GetByNewsId(newsId int) ([]entities.NewsComment, error) {
+	var newsComment []entities.NewsComment
+	if err := r.DB.Preload("User").Preload("Admin").Preload("News").Where("news_id = ?", newsId).Find(&newsComment).Error; err != nil {
+		return nil, err
+	}
+	return newsComment, nil
+}
