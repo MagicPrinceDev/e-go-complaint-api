@@ -19,6 +19,8 @@ type News struct {
 	Admin      Admin          `gorm:"foreignKey:AdminID;references:ID"`
 	Category   Category       `gorm:"foreignKey:CategoryID;references:ID"`
 	Files      []NewsFile     `gorm:"foreignKey:NewsID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	NewsLike   []NewsLike     `gorm:"foreignKey:NewsID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Comments   []NewsComment  `gorm:"foreignKey:NewsID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type NewsRepositoryInterface interface {

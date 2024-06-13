@@ -29,6 +29,11 @@ func (c *ComplaintLikeController) ToggleLike(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, map[string]string{"message": "Complaint ID is required"})
 	}
 
+	_, err := c.complaintUseCase.GetByID(complaintID)
+	if err != nil {
+		return ctx.JSON(http.StatusNotFound, base.NewErrorResponse("Complaint not found"))
+	}
+
 	userID, err := utils.GetIDFromJWT(ctx)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))

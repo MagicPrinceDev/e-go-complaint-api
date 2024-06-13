@@ -2,6 +2,8 @@ package main
 
 import (
 	"e-complaint-api/config"
+	"e-complaint-api/controllers/news_comment"
+	"e-complaint-api/controllers/news_like"
 	"e-complaint-api/drivers/mailtrap"
 	"e-complaint-api/drivers/mysql"
 	"e-complaint-api/drivers/openai_api"
@@ -62,13 +64,19 @@ import (
 
 	faq_rp "e-complaint-api/drivers/mysql/faq"
 
+	news_like_rp "e-complaint-api/drivers/mysql/news_like"
+	news_like_uc "e-complaint-api/usecases/news_like"
+
+	news_comment_rp "e-complaint-api/drivers/mysql/news_comment"
+	news_comment_uc "e-complaint-api/usecases/news_comment"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
 	// For local development only
-	// config.LoadEnv()
+	//config.LoadEnv()
 
 	config.InitConfigMySQL()
 	DB := mysql.ConnectDB(config.InitConfigMySQL())
@@ -137,6 +145,14 @@ func main() {
 	chatbotUsecase := chatbot_uc.NewChatbotUseCase(chatbotRepo, faqRepo, complaintRepo, openAIAPI)
 	ChatbotController := chatbot_cl.NewChatbotController(chatbotUsecase)
 
+	newsLikeRepo := news_like_rp.NewNewsLikeRepo(DB)
+	newsLikeUsecase := news_like_uc.NewNewsLikeUseCase(newsLikeRepo)
+	NewsLikeController := news_like.NewNewsLikeController(newsLikeUsecase, newsUsecase)
+
+	newsCommentRepo := news_comment_rp.NewNewsComment(DB)
+	newsCommentUsecase := news_comment_uc.NewNewsCommentUseCase(newsCommentRepo)
+	NewsCommentController := news_comment.NewNewsCommentController(newsCommentUsecase, newsUsecase)
+
 	routes := routes.RouteController{
 		AdminController:             AdminController,
 		UserController:              UserController,
@@ -147,6 +163,8 @@ func main() {
 		NewsController:              NewsController,
 		RegencyController:           RegencyController,
 		ComplaintLikeController:     ComplaintLikeController,
+		NewsLikeController:          NewsLikeController,
+		NewsCommentController:       NewsCommentController,
 		ComplaintActivityController: ComplaintActivityController,
 		ChatbotController:           ChatbotController,
 	}

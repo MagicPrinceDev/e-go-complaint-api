@@ -136,7 +136,7 @@ func (cc *ComplaintController) Create(c echo.Context) error {
 	}
 	files := form.File["files"]
 
-	if len(files) > 3 {
+	if len(files) > 5 {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrMaxFileCountExceeded.Error()))
 	}
 
@@ -218,7 +218,7 @@ func (cc *ComplaintController) Update(c echo.Context) error {
 
 	files := form.File["files"]
 	if len(files) != 0 {
-		if len(files) > 3 {
+		if len(files) > 5 {
 			return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrMaxFileCountExceeded.Error()))
 		}
 
