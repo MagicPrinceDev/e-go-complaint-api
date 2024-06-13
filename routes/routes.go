@@ -23,17 +23,17 @@ import (
 )
 
 type RouteController struct {
-	AdminController            *admin.AdminController
-	UserController             *user.UserController
-	ComplaintController        *complaint.ComplaintController
-	CategoryController         *category.CategoryController
-	ComplaintProcessController *complaint_process.ComplaintProcessController
-	DiscussionController       *discussion.DiscussionController
-	NewsController             *news.NewsController
-	RegencyController          *regency.RegencyController
-	ComplaintLikeController    *complaint_like.ComplaintLikeController
-	NewsLikeController         *news_like.NewsLikeController
-	NewsCommentController      *news_comment.NewsCommentController
+	AdminController             *admin.AdminController
+	UserController              *user.UserController
+	ComplaintController         *complaint.ComplaintController
+	CategoryController          *category.CategoryController
+	ComplaintProcessController  *complaint_process.ComplaintProcessController
+	DiscussionController        *discussion.DiscussionController
+	NewsController              *news.NewsController
+	RegencyController           *regency.RegencyController
+	ComplaintLikeController     *complaint_like.ComplaintLikeController
+	NewsLikeController          *news_like.NewsLikeController
+	NewsCommentController       *news_comment.NewsCommentController
 	ComplaintActivityController *complaint_activity.ComplaintActivityController
 	ChatbotController           *chatbot.ChatbotController
 }
@@ -83,6 +83,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	user.GET("/users/activities", r.ComplaintActivityController.GetByComplaintID)
 	user.POST("/chatbot/messages", r.ChatbotController.GetChatCompletion)
 	user.GET("/chatbot/messages", r.ChatbotController.GetHistory)
+	user.DELETE("/chatbot/messages", r.ChatbotController.ClearHistory)
 
 	// Route For All Authenticated User
 	auth_user := e.Group("/api/v1")
