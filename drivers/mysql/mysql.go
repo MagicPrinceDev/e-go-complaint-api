@@ -51,6 +51,8 @@ func Migration(db *gorm.DB) {
 	db.AutoMigrate(entities.News{})
 	db.AutoMigrate(entities.NewsFile{})
 	db.AutoMigrate(entities.ComplaintLike{})
+	db.AutoMigrate(entities.NewsLike{})
+	db.AutoMigrate(entities.NewsComment{})
 	db.AutoMigrate(entities.ComplaintActivity{})
 }
 

@@ -2,6 +2,8 @@ package main
 
 import (
 	"e-complaint-api/config"
+	"e-complaint-api/controllers/news_comment"
+	"e-complaint-api/controllers/news_like"
 	"e-complaint-api/drivers/mailtrap"
 	"e-complaint-api/drivers/mysql"
 	"e-complaint-api/routes"
@@ -54,6 +56,13 @@ import (
 	complaint_activity "e-complaint-api/controllers/complaint_activity"
 	complaint_activity_rp "e-complaint-api/drivers/mysql/complaint_activity"
 	complaint_activity_uc "e-complaint-api/usecases/complaint_activity"
+
+	news_like_rp "e-complaint-api/drivers/mysql/news_like"
+	news_like_uc "e-complaint-api/usecases/news_like"
+
+	news_comment_rp "e-complaint-api/drivers/mysql/news_comment"
+	news_comment_uc "e-complaint-api/usecases/news_comment"
+
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -124,16 +133,26 @@ func main() {
 	complaintLikeUsecase := complaint_like_uc.NewComplaintLikeUseCase(complaintLikeRepo)
 	ComplaintLikeController := complaint_like.NewComplaintLikeController(complaintLikeUsecase, complaintUsecase, complaintActivityUsecase)
 
+	newsLikeRepo := news_like_rp.NewNewsLikeRepo(DB)
+	newsLikeUsecase := news_like_uc.NewNewsLikeUseCase(newsLikeRepo)
+	NewsLikeController := news_like.NewNewsLikeController(newsLikeUsecase, newsUsecase)
+
+	newsCommentRepo := news_comment_rp.NewNewsComment(DB)
+	newsCommentUsecase := news_comment_uc.NewNewsCommentUseCase(newsCommentRepo)
+	NewsCommentController := news_comment.NewNewsCommentController(newsCommentUsecase, newsUsecase)
+
 	routes := routes.RouteController{
-		AdminController:             AdminController,
-		UserController:              UserController,
-		ComplaintController:         ComplaintController,
-		CategoryController:          CategoryController,
-		ComplaintProcessController:  ComplaintProcessController,
-		DiscussionController:        DiscussionController,
-		NewsController:              NewsController,
-		RegencyController:           RegencyController,
-		ComplaintLikeController:     ComplaintLikeController,
+		AdminController:            AdminController,
+		UserController:             UserController,
+		ComplaintController:        ComplaintController,
+		CategoryController:         CategoryController,
+		ComplaintProcessController: ComplaintProcessController,
+		DiscussionController:       DiscussionController,
+		NewsController:             NewsController,
+		RegencyController:          RegencyController,
+		ComplaintLikeController:    ComplaintLikeController,
+		NewsLikeController:         NewsLikeController,
+		NewsCommentController:      NewsCommentController,
 		ComplaintActivityController: ComplaintActivityController,
 	}
 

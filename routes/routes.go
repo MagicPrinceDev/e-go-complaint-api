@@ -9,6 +9,8 @@ import (
 	"e-complaint-api/controllers/complaint_process"
 	"e-complaint-api/controllers/discussion"
 	"e-complaint-api/controllers/news"
+	"e-complaint-api/controllers/news_comment"
+	"e-complaint-api/controllers/news_like"
 	"e-complaint-api/controllers/regency"
 	"e-complaint-api/controllers/user"
 	"e-complaint-api/middlewares"
@@ -20,15 +22,17 @@ import (
 )
 
 type RouteController struct {
-	AdminController             *admin.AdminController
-	UserController              *user.UserController
-	ComplaintController         *complaint.ComplaintController
-	CategoryController          *category.CategoryController
-	ComplaintProcessController  *complaint_process.ComplaintProcessController
-	DiscussionController        *discussion.DiscussionController
-	NewsController              *news.NewsController
-	RegencyController           *regency.RegencyController
-	ComplaintLikeController     *complaint_like.ComplaintLikeController
+	AdminController            *admin.AdminController
+	UserController             *user.UserController
+	ComplaintController        *complaint.ComplaintController
+	CategoryController         *category.CategoryController
+	ComplaintProcessController *complaint_process.ComplaintProcessController
+	DiscussionController       *discussion.DiscussionController
+	NewsController             *news.NewsController
+	RegencyController          *regency.RegencyController
+	ComplaintLikeController    *complaint_like.ComplaintLikeController
+	NewsLikeController         *news_like.NewsLikeController
+	NewsCommentController      *news_comment.NewsCommentController
 	ComplaintActivityController *complaint_activity.ComplaintActivityController
 }
 
@@ -93,6 +97,10 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	auth_user.GET("/news", r.NewsController.GetPaginated)
 	auth_user.GET("/news/:id", r.NewsController.GetByID)
 	auth_user.GET("/regencies", r.RegencyController.GetAll)
-
+	auth_user.POST("/news/:news-id/likes", r.NewsLikeController.ToggleLike)
+	auth_user.POST("/news/:news-id/comments", r.NewsCommentController.CommentNews)
+	auth_user.GET("/news/:news-id/comments", r.NewsCommentController.GetCommentNews)
+	auth_user.PUT("/news/:news-id/comments/:comment-id", r.NewsCommentController.UpdateComment)
+	auth_user.DELETE("/news/:news-id/comments/:comment-id", r.NewsCommentController.DeleteComment)
 	// Route For Public
 }
