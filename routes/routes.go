@@ -102,6 +102,5 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	auth_user.GET("/news/:news-id/comments", r.NewsCommentController.GetCommentNews)
 	auth_user.PUT("/news/:news-id/comments/:comment-id", r.NewsCommentController.UpdateComment)
 	auth_user.DELETE("/news/:news-id/comments/:comment-id", r.NewsCommentController.DeleteComment)
-
 	// Route For Public
 }
