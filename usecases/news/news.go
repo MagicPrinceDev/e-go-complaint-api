@@ -127,7 +127,7 @@ func (u *NewsUseCase) Update(news entities.News) (entities.News, error) {
 		if strings.HasSuffix(err.Error(), "REFERENCES `categories` (`id`))") {
 			return entities.News{}, constants.ErrCategoryNotFound
 		} else {
-			return entities.News{}, constants.ErrInternalServerError
+			return entities.News{}, err
 		}
 	}
 

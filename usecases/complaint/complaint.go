@@ -156,7 +156,7 @@ func (u *ComplaintUseCase) Update(complaint entities.Complaint) (entities.Compla
 		} else if strings.HasSuffix(err.Error(), "REFERENCES `categories` (`id`))") {
 			return entities.Complaint{}, constants.ErrCategoryNotFound
 		} else {
-			return entities.Complaint{}, constants.ErrInternalServerError
+			return entities.Complaint{}, err
 		}
 	}
 
