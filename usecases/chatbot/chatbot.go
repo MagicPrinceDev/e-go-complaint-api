@@ -76,3 +76,12 @@ func (u *ChatbotUseCase) GetHistory(userID int) ([]entities.Chatbot, error) {
 
 	return chatbots, nil
 }
+
+func (u *ChatbotUseCase) ClearHistory(userID int) error {
+	err := u.chatbotRepo.ClearHistory(userID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

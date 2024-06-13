@@ -2,6 +2,7 @@ package chatbot
 
 import (
 	"e-complaint-api/entities"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -32,4 +33,11 @@ func (r *ChatbotRepo) GetHistory(userID int) ([]entities.Chatbot, error) {
 		return nil, err
 	}
 	return chatbots, nil
+}
+
+func (r *ChatbotRepo) ClearHistory(userID int) error {
+	if err := r.DB.Model(&entities.Chatbot{}).Where("user_id = ?", userID).Update("deleted_at", time.Now()).Error; err != nil {
+		return err
+	}
+	return nil
 }

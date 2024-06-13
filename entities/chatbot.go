@@ -20,6 +20,7 @@ type Chatbot struct {
 type ChatbotRepositoryInterface interface {
 	Create(chatbot *Chatbot) error
 	GetHistory(userID int) ([]Chatbot, error)
+	ClearHistory(userID int) error
 }
 
 type ChatbotOpenAIAPIInterface interface {
@@ -29,4 +30,5 @@ type ChatbotOpenAIAPIInterface interface {
 type ChatbotUseCaseInterface interface {
 	GetChatCompletion(chatbot *Chatbot) error
 	GetHistory(userID int) ([]Chatbot, error)
+	ClearHistory(userID int) error
 }
