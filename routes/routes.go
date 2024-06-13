@@ -61,6 +61,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	admin.DELETE("/news/:id", r.NewsController.Delete)
 	admin.PUT("/news/:id", r.NewsController.Update)
 	admin.POST("/complaints/import", r.ComplaintController.Import)
+	admin.GET("/complaints/:complaint-id/discussions/get-recommendation", r.DiscussionController.GetAnswerRecommendation)
 
 	// Route For User
 	user := e.Group("/api/v1")
