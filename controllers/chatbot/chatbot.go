@@ -32,7 +32,7 @@ func (cc *ChatbotController) GetHistory(c echo.Context) error {
 
 	var historyResponse []*chatbot_response.Get
 	historyResponse = append(historyResponse, &chatbot_response.Get{
-		BotResponse: "Halo, saya adalah chatbot KeluhProv. Ada yang bisa saya bantu?",
+		BotResponse: "Halo, saya adalah KAVA(KeluhProv AI Virtual Assistant). Ada yang bisa saya bantu?",
 	})
 
 	if len(history) == 0 {
