@@ -69,4 +69,5 @@ func Seeder(db *gorm.DB, regencyAPI entities.RegencyIndonesiaAreaAPIInterface) {
 	seeder.SeedNewsFile(db)
 	seeder.SeedComplaintLike(db)
 	seeder.SeedComplaintActivity(db)
+	seeder.SeedNewsComment(db)
 }

@@ -63,14 +63,13 @@ import (
 	news_comment_rp "e-complaint-api/drivers/mysql/news_comment"
 	news_comment_uc "e-complaint-api/usecases/news_comment"
 
-
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
 	// For local development only
-	// config.LoadEnv()
+	//config.LoadEnv()
 
 	config.InitConfigMySQL()
 	DB := mysql.ConnectDB(config.InitConfigMySQL())
@@ -142,17 +141,17 @@ func main() {
 	NewsCommentController := news_comment.NewNewsCommentController(newsCommentUsecase, newsUsecase)
 
 	routes := routes.RouteController{
-		AdminController:            AdminController,
-		UserController:             UserController,
-		ComplaintController:        ComplaintController,
-		CategoryController:         CategoryController,
-		ComplaintProcessController: ComplaintProcessController,
-		DiscussionController:       DiscussionController,
-		NewsController:             NewsController,
-		RegencyController:          RegencyController,
-		ComplaintLikeController:    ComplaintLikeController,
-		NewsLikeController:         NewsLikeController,
-		NewsCommentController:      NewsCommentController,
+		AdminController:             AdminController,
+		UserController:              UserController,
+		ComplaintController:         ComplaintController,
+		CategoryController:          CategoryController,
+		ComplaintProcessController:  ComplaintProcessController,
+		DiscussionController:        DiscussionController,
+		NewsController:              NewsController,
+		RegencyController:           RegencyController,
+		ComplaintLikeController:     ComplaintLikeController,
+		NewsLikeController:          NewsLikeController,
+		NewsCommentController:       NewsCommentController,
 		ComplaintActivityController: ComplaintActivityController,
 	}
 
