@@ -147,6 +147,7 @@ func (r *ComplaintRepo) Update(complaint entities.Complaint) (entities.Complaint
 	oldComplaint.CategoryID = complaint.CategoryID
 	oldComplaint.RegencyID = complaint.RegencyID
 	oldComplaint.Address = complaint.Address
+	oldComplaint.Date = complaint.Date
 
 	if err := r.DB.Save(&oldComplaint).Error; err != nil {
 		return entities.Complaint{}, err
@@ -206,4 +207,14 @@ func (r *ComplaintRepo) DecreaseTotalLikes(id string) error {
 	}
 
 	return nil
+}
+
+func (r *ComplaintRepo) GetComplaintIDsByUserID(userID int) ([]string, error) {
+	var complaintIDs []string
+
+	if err := r.DB.Model(&entities.Complaint{}).Select("id").Where("user_id = ?", userID).Find(&complaintIDs).Error; err != nil {
+		return nil, err
+	}
+
+	return complaintIDs, nil
 }

@@ -342,3 +342,12 @@ func (u *ComplaintUseCase) DecreaseTotalLikes(id string) error {
 
 	return nil
 }
+
+func (u *ComplaintUseCase) GetComplaintIDsByUserID(userID int) ([]string, error) {
+	complaintIDs, err := u.complaintRepo.GetComplaintIDsByUserID(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return complaintIDs, nil
+}

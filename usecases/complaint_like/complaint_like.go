@@ -27,6 +27,7 @@ func (u *ComplaintLikeUseCase) ToggleLike(complaintLike *entities.ComplaintLike)
 	} else {
 		err = u.repo.Unlike(existingComplaintLike)
 		likeStatus = "unliked"
+		*complaintLike = *existingComplaintLike
 	}
 
 	if err != nil {

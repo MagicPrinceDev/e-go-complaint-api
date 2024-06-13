@@ -6,20 +6,23 @@ import (
 	"e-complaint-api/controllers/discussion/response"
 	"e-complaint-api/entities"
 	"e-complaint-api/utils"
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
+
+	"github.com/labstack/echo/v4"
 )
 
 type DiscussionController struct {
-	discussionUseCase entities.DiscussionUseCaseInterface
-	complaintUsecase  entities.ComplaintUseCaseInterface
+	discussionUseCase        entities.DiscussionUseCaseInterface
+	complaintUsecase         entities.ComplaintUseCaseInterface
+	complaintActivityUseCase entities.ComplaintActivityUseCaseInterface
 }
 
-func NewDiscussionController(discussionUseCase entities.DiscussionUseCaseInterface, complaintUsecase entities.ComplaintUseCaseInterface) *DiscussionController {
+func NewDiscussionController(discussionUseCase entities.DiscussionUseCaseInterface, complaintUsecase entities.ComplaintUseCaseInterface, complaintActivityUseCase entities.ComplaintActivityUseCaseInterface) *DiscussionController {
 	return &DiscussionController{
-		discussionUseCase: discussionUseCase,
-		complaintUsecase:  complaintUsecase,
+		discussionUseCase:        discussionUseCase,
+		complaintUsecase:         complaintUsecase,
+		complaintActivityUseCase: complaintActivityUseCase,
 	}
 }
 
@@ -72,6 +75,14 @@ func (dc *DiscussionController) CreateDiscussion(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 
+	}
+
+	var complaintActivity entities.ComplaintActivity
+	complaintActivity.ComplaintID = complaintID
+	complaintActivity.DiscussionID = &discussionEntity.ID
+	_, err = dc.complaintActivityUseCase.Create(&complaintActivity)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
 	discussionResponse := response.FromEntitiesToResponse(createdDiscussion)
@@ -161,6 +172,15 @@ func (dc *DiscussionController) UpdateDiscussion(c echo.Context) error {
 	}
 
 	discussionResponse := response.FromEntitiesUpdateToResponse(updatedDiscussion)
+
+	var complaintActivity entities.ComplaintActivity
+	complaintActivity.ComplaintID = complaintID
+	complaintActivity.DiscussionID = &discussionID
+	err = dc.complaintActivityUseCase.Update(complaintActivity)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Discussion updated successfully", discussionResponse))
 }
 
@@ -202,6 +222,14 @@ func (dc *DiscussionController) DeleteDiscussion(c echo.Context) error {
 
 	if role != "admin" && discussion.UserID != nil && *discussion.UserID != userID {
 		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse("You are not authorized to delete this discussion"))
+	}
+
+	var complaintActivity entities.ComplaintActivity
+	complaintActivity.ComplaintID = complaintID
+	complaintActivity.DiscussionID = &discussionID
+	err = dc.complaintActivityUseCase.Delete(complaintActivity)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
 	err = dc.discussionUseCase.Delete(discussionID)

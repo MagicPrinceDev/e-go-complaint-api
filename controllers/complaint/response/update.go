@@ -17,6 +17,7 @@ type Update struct {
 	Description string                         `json:"description"`
 	Status      string                         `json:"status"`
 	Type        string                         `json:"type"`
+	Date        string                         `json:"date"`
 	Files       []*file_response.ComplaintFile `json:"files"`
 	UpdatedAt   string                         `json:"updated_at"`
 }
@@ -48,6 +49,7 @@ func UpdateFromEntitiesToResponse(data *entities.Complaint) *Update {
 		Description: data.Description,
 		Status:      data.Status,
 		Type:        data.Type,
+		Date:        data.Date.Format("2 January 2006"),
 		Files:       files,
 		UpdatedAt:   data.UpdatedAt.Format("3 January 2006 15:04:05"),
 	}

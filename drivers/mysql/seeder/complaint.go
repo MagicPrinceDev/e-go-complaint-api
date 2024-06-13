@@ -3,6 +3,7 @@ package seeder
 import (
 	"e-complaint-api/entities"
 	"errors"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -19,6 +20,7 @@ func SeedComplaint(db *gorm.DB) {
 				Address:     "Jl. lorem ipsum No. 1 RT 01 RW 01, Kelurahan Lorem Ipsum, Kecamatan Lorem Ipsum, Kota Lorem Ipsum, Provinsi Lorem Ipsum",
 				Status:      "pending",
 				Type:        "public",
+				Date:        time.Now(),
 				TotalLikes:  3,
 			},
 			{
@@ -30,6 +32,7 @@ func SeedComplaint(db *gorm.DB) {
 				Address:     "Jl. lorem ipsum No. 1 RT 01 RW 01, Kelurahan Lorem Ipsum, Kecamatan Lorem Ipsum, Kota Lorem Ipsum, Provinsi Lorem Ipsum",
 				Status:      "selesai",
 				Type:        "private",
+				Date:        time.Now(),
 				TotalLikes:  2,
 			},
 			{
@@ -41,6 +44,7 @@ func SeedComplaint(db *gorm.DB) {
 				Address:     "Jl. lorem ipsum No. 1 RT 01 RW 01, Kelurahan Lorem Ipsum, Kecamatan Lorem Ipsum, Kota Lorem Ipsum, Provinsi Lorem Ipsum",
 				Status:      "verifikasi",
 				Type:        "private",
+				Date:        time.Now(),
 				TotalLikes:  2,
 			},
 			{
@@ -52,6 +56,7 @@ func SeedComplaint(db *gorm.DB) {
 				Address:     "Jl. lorem ipsum No. 1 RT 01 RW 01, Kelurahan Lorem Ipsum, Kecamatan Lorem Ipsum, Kota Lorem Ipsum, Provinsi Lorem Ipsum",
 				Status:      "on progress",
 				Type:        "public",
+				Date:        time.Now(),
 				TotalLikes:  1,
 			},
 			{
@@ -63,6 +68,7 @@ func SeedComplaint(db *gorm.DB) {
 				Address:     "Jl. lorem ipsum No. 1 RT 01 RW 01, Kelurahan Lorem Ipsum, Kecamatan Lorem Ipsum, Kota Lorem Ipsum, Provinsi Lorem Ipsum",
 				Status:      "ditolak",
 				Type:        "public",
+				Date:        time.Now(),
 				TotalLikes:  0,
 			},
 		}

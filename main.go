@@ -49,9 +49,13 @@ import (
 	news_file_rp "e-complaint-api/drivers/mysql/news_file"
 	news_file_uc "e-complaint-api/usecases/news_file"
 
-	complaint_like "e-complaint-api/controllers/complaint_likes"
+	complaint_like "e-complaint-api/controllers/complaint_like"
 	complaint_like_rp "e-complaint-api/drivers/mysql/complaint_like"
 	complaint_like_uc "e-complaint-api/usecases/complaint_like"
+
+	complaint_activity "e-complaint-api/controllers/complaint_activity"
+	complaint_activity_rp "e-complaint-api/drivers/mysql/complaint_activity"
+	complaint_activity_uc "e-complaint-api/usecases/complaint_activity"
 
 	news_like_rp "e-complaint-api/drivers/mysql/news_like"
 	news_like_uc "e-complaint-api/usecases/news_like"
@@ -59,13 +63,14 @@ import (
 	news_comment_rp "e-complaint-api/drivers/mysql/news_comment"
 	news_comment_uc "e-complaint-api/usecases/news_comment"
 
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
 	// For local development only
-	//config.LoadEnv()
+	// config.LoadEnv()
 
 	config.InitConfigMySQL()
 	DB := mysql.ConnectDB(config.InitConfigMySQL())
@@ -104,10 +109,6 @@ func main() {
 	categoryUsecase := category_uc.NewCategoryUseCase(categoryRepo)
 	CategoryController := category_cl.NewCategoryController(categoryUsecase)
 
-	discussionRepo := discussion_rp.NewDiscussionRepo(DB)
-	discussionUsecase := discussion_uc.NewDiscussionUseCase(discussionRepo)
-	DiscussionController := discussion_cl.NewDiscussionController(discussionUsecase, complaintUsecase)
-
 	regencyRepo := regency_rp.NewRegencyRepo(DB)
 	regencyUsecase := regency_uc.NewRegencyUseCase(regencyRepo)
 	RegencyController := regency_cl.NewRegencyController(regencyUsecase)
@@ -120,9 +121,17 @@ func main() {
 	newsUsecase := news_uc.NewNewsUseCase(newsRepo)
 	NewsController := news_cl.NewNewsController(newsUsecase, NewsFileUsecase)
 
+	complaintActivityRepo := complaint_activity_rp.NewComplaintActivityRepo(DB)
+	complaintActivityUsecase := complaint_activity_uc.NewComplaintActivityUseCase(complaintActivityRepo)
+	ComplaintActivityController := complaint_activity.NewComplaintActivityController(complaintActivityUsecase, complaintUsecase)
+
+	discussionRepo := discussion_rp.NewDiscussionRepo(DB)
+	discussionUsecase := discussion_uc.NewDiscussionUseCase(discussionRepo)
+	DiscussionController := discussion_cl.NewDiscussionController(discussionUsecase, complaintUsecase, complaintActivityUsecase)
+
 	complaintLikeRepo := complaint_like_rp.NewComplaintLikeRepository(DB)
 	complaintLikeUsecase := complaint_like_uc.NewComplaintLikeUseCase(complaintLikeRepo)
-	ComplaintLikeController := complaint_like.NewComplaintLikeController(complaintLikeUsecase, complaintUsecase)
+	ComplaintLikeController := complaint_like.NewComplaintLikeController(complaintLikeUsecase, complaintUsecase, complaintActivityUsecase)
 
 	newsLikeRepo := news_like_rp.NewNewsLikeRepo(DB)
 	newsLikeUsecase := news_like_uc.NewNewsLikeUseCase(newsLikeRepo)
@@ -144,6 +153,7 @@ func main() {
 		ComplaintLikeController:    ComplaintLikeController,
 		NewsLikeController:         NewsLikeController,
 		NewsCommentController:      NewsCommentController,
+		ComplaintActivityController: ComplaintActivityController,
 	}
 
 	routes.InitRoute(e)
