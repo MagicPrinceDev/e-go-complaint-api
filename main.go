@@ -4,6 +4,7 @@ import (
 	"e-complaint-api/config"
 	"e-complaint-api/drivers/mailtrap"
 	"e-complaint-api/drivers/mysql"
+	"e-complaint-api/drivers/openai_api"
 	"e-complaint-api/routes"
 	"os"
 
@@ -54,6 +55,12 @@ import (
 	complaint_activity "e-complaint-api/controllers/complaint_activity"
 	complaint_activity_rp "e-complaint-api/drivers/mysql/complaint_activity"
 	complaint_activity_uc "e-complaint-api/usecases/complaint_activity"
+
+	chatbot_cl "e-complaint-api/controllers/chatbot"
+	chatbot_rp "e-complaint-api/drivers/mysql/chatbot"
+	chatbot_uc "e-complaint-api/usecases/chatbot"
+
+	faq_rp "e-complaint-api/drivers/mysql/faq"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -124,6 +131,12 @@ func main() {
 	complaintLikeUsecase := complaint_like_uc.NewComplaintLikeUseCase(complaintLikeRepo)
 	ComplaintLikeController := complaint_like.NewComplaintLikeController(complaintLikeUsecase, complaintUsecase, complaintActivityUsecase)
 
+	openAIAPI := openai_api.NewOpenAIAPI(os.Getenv("OPENAI_API_KEY"))
+	faqRepo := faq_rp.NewFaqRepo(DB)
+	chatbotRepo := chatbot_rp.NewChatbotRepo(DB)
+	chatbotUsecase := chatbot_uc.NewChatbotUseCase(chatbotRepo, faqRepo, openAIAPI)
+	ChatbotController := chatbot_cl.NewChatbotController(chatbotUsecase)
+
 	routes := routes.RouteController{
 		AdminController:             AdminController,
 		UserController:              UserController,
@@ -135,6 +148,7 @@ func main() {
 		RegencyController:           RegencyController,
 		ComplaintLikeController:     ComplaintLikeController,
 		ComplaintActivityController: ComplaintActivityController,
+		ChatbotController:           ChatbotController,
 	}
 
 	routes.InitRoute(e)

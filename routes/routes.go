@@ -3,6 +3,7 @@ package routes
 import (
 	"e-complaint-api/controllers/admin"
 	"e-complaint-api/controllers/category"
+	"e-complaint-api/controllers/chatbot"
 	"e-complaint-api/controllers/complaint"
 	"e-complaint-api/controllers/complaint_activity"
 	complaint_like "e-complaint-api/controllers/complaint_like"
@@ -30,6 +31,7 @@ type RouteController struct {
 	RegencyController           *regency.RegencyController
 	ComplaintLikeController     *complaint_like.ComplaintLikeController
 	ComplaintActivityController *complaint_activity.ComplaintActivityController
+	ChatbotController           *chatbot.ChatbotController
 }
 
 func (r *RouteController) InitRoute(e *echo.Echo) {
@@ -74,6 +76,8 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	user.GET("/users/complaints", r.ComplaintController.GetByUserID)
 	user.POST("/complaints/:complaint-id/likes", r.ComplaintLikeController.ToggleLike)
 	user.GET("/users/activities", r.ComplaintActivityController.GetByComplaintID)
+	user.POST("/chatbot/messages", r.ChatbotController.GetChatCompletion)
+	user.GET("/chatbot/messages", r.ChatbotController.GetHistory)
 
 	// Route For All Authenticated User
 	auth_user := e.Group("/api/v1")
