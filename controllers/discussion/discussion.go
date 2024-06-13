@@ -239,3 +239,20 @@ func (dc *DiscussionController) DeleteDiscussion(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Discussion deleted successfully", nil))
 }
+
+func (dc *DiscussionController) GetAnswerRecommendation(c echo.Context) error {
+	complaintID := c.Param("complaint-id")
+	if complaintID == "" {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse("Complaint ID is required"))
+	}
+
+	answer, err := dc.discussionUseCase.GetAnswerRecommendation(complaintID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
+	var answerResponse response.AnswerRecommendation
+	answerResponse.Answer = answer
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Answer recommendation found", answerResponse))
+}

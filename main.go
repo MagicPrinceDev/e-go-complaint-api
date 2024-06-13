@@ -131,16 +131,17 @@ func main() {
 	complaintActivityUsecase := complaint_activity_uc.NewComplaintActivityUseCase(complaintActivityRepo)
 	ComplaintActivityController := complaint_activity.NewComplaintActivityController(complaintActivityUsecase, complaintUsecase)
 
+	openAIAPI := openai_api.NewOpenAIAPI(os.Getenv("OPENAI_API_KEY"))
+	faqRepo := faq_rp.NewFaqRepo(DB)
+
 	discussionRepo := discussion_rp.NewDiscussionRepo(DB)
-	discussionUsecase := discussion_uc.NewDiscussionUseCase(discussionRepo)
+	discussionUsecase := discussion_uc.NewDiscussionUseCase(discussionRepo, faqRepo, openAIAPI)
 	DiscussionController := discussion_cl.NewDiscussionController(discussionUsecase, complaintUsecase, complaintActivityUsecase)
 
 	complaintLikeRepo := complaint_like_rp.NewComplaintLikeRepository(DB)
 	complaintLikeUsecase := complaint_like_uc.NewComplaintLikeUseCase(complaintLikeRepo)
 	ComplaintLikeController := complaint_like.NewComplaintLikeController(complaintLikeUsecase, complaintUsecase, complaintActivityUsecase)
 
-	openAIAPI := openai_api.NewOpenAIAPI(os.Getenv("OPENAI_API_KEY"))
-	faqRepo := faq_rp.NewFaqRepo(DB)
 	chatbotRepo := chatbot_rp.NewChatbotRepo(DB)
 	chatbotUsecase := chatbot_uc.NewChatbotUseCase(chatbotRepo, faqRepo, complaintRepo, openAIAPI)
 	ChatbotController := chatbot_cl.NewChatbotController(chatbotUsecase)

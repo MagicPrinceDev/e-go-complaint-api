@@ -2,7 +2,6 @@ package openai_api
 
 import (
 	"context"
-	"fmt"
 
 	openai "github.com/sashabaranov/go-openai"
 )
@@ -34,10 +33,12 @@ func (o *OpenAIAPI) GetChatCompletion(prompt []string, userPrompt string) (strin
 		})
 	}
 
-	chatMessages = append(chatMessages, openai.ChatCompletionMessage{
-		Role:    openai.ChatMessageRoleUser,
-		Content: userPrompt,
-	})
+	if userPrompt != "" {
+		chatMessages = append(chatMessages, openai.ChatCompletionMessage{
+			Role:    openai.ChatMessageRoleUser,
+			Content: userPrompt,
+		})
+	}
 
 	req := openai.ChatCompletionRequest{
 		Model:    openai.GPT3Dot5Turbo,
@@ -50,9 +51,6 @@ func (o *OpenAIAPI) GetChatCompletion(prompt []string, userPrompt string) (strin
 	if err != nil {
 		return "", err
 	}
-
-	fmt.Println(chatMessages)
-	fmt.Println(resp.Choices[0].Message.Content)
 
 	return resp.Choices[0].Message.Content, nil
 }

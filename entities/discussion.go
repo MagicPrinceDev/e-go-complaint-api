@@ -1,8 +1,9 @@
 package entities
 
 import (
-	"gorm.io/gorm"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type Discussion struct {
@@ -27,10 +28,15 @@ type DiscussionRepositoryInterface interface {
 	Delete(id int) error
 }
 
+type DiscussionOpenAIAPIInterface interface {
+	GetChatCompletion(prompt []string, userPrompt string) (string, error)
+}
+
 type DiscussionUseCaseInterface interface {
 	Create(discussion *Discussion) error
 	GetById(id int) (*Discussion, error)
 	GetByComplaintID(complaintID string) (*[]Discussion, error)
 	Update(discussion *Discussion) error
 	Delete(id int) error
+	GetAnswerRecommendation(complaintID string) (string, error)
 }
