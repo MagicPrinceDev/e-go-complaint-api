@@ -6,6 +6,7 @@ import (
 	"e-complaint-api/controllers/news_like"
 	"e-complaint-api/drivers/mailtrap"
 	"e-complaint-api/drivers/mysql"
+	"e-complaint-api/drivers/openai_api"
 	"e-complaint-api/routes"
 	"os"
 
@@ -56,6 +57,12 @@ import (
 	complaint_activity "e-complaint-api/controllers/complaint_activity"
 	complaint_activity_rp "e-complaint-api/drivers/mysql/complaint_activity"
 	complaint_activity_uc "e-complaint-api/usecases/complaint_activity"
+
+	chatbot_cl "e-complaint-api/controllers/chatbot"
+	chatbot_rp "e-complaint-api/drivers/mysql/chatbot"
+	chatbot_uc "e-complaint-api/usecases/chatbot"
+
+	faq_rp "e-complaint-api/drivers/mysql/faq"
 
 	news_like_rp "e-complaint-api/drivers/mysql/news_like"
 	news_like_uc "e-complaint-api/usecases/news_like"
@@ -132,6 +139,12 @@ func main() {
 	complaintLikeUsecase := complaint_like_uc.NewComplaintLikeUseCase(complaintLikeRepo)
 	ComplaintLikeController := complaint_like.NewComplaintLikeController(complaintLikeUsecase, complaintUsecase, complaintActivityUsecase)
 
+	openAIAPI := openai_api.NewOpenAIAPI(os.Getenv("OPENAI_API_KEY"))
+	faqRepo := faq_rp.NewFaqRepo(DB)
+	chatbotRepo := chatbot_rp.NewChatbotRepo(DB)
+	chatbotUsecase := chatbot_uc.NewChatbotUseCase(chatbotRepo, faqRepo, complaintRepo, openAIAPI)
+	ChatbotController := chatbot_cl.NewChatbotController(chatbotUsecase)
+
 	newsLikeRepo := news_like_rp.NewNewsLikeRepo(DB)
 	newsLikeUsecase := news_like_uc.NewNewsLikeUseCase(newsLikeRepo)
 	NewsLikeController := news_like.NewNewsLikeController(newsLikeUsecase, newsUsecase)
@@ -153,6 +166,7 @@ func main() {
 		NewsLikeController:          NewsLikeController,
 		NewsCommentController:       NewsCommentController,
 		ComplaintActivityController: ComplaintActivityController,
+		ChatbotController:           ChatbotController,
 	}
 
 	routes.InitRoute(e)
