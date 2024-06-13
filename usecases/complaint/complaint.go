@@ -109,7 +109,7 @@ func (u *ComplaintUseCase) GetByUserID(userId int) ([]entities.Complaint, error)
 }
 
 func (u *ComplaintUseCase) Create(complaint *entities.Complaint) (entities.Complaint, error) {
-	if complaint.CategoryID == 0 || complaint.UserID == 0 || complaint.RegencyID == "" || complaint.Description == "" || complaint.Address == "" || complaint.Type == "" {
+	if complaint.CategoryID == 0 || complaint.UserID == 0 || complaint.RegencyID == "" || complaint.Description == "" || complaint.Address == "" || complaint.Type == "" || complaint.Date.IsZero() {
 		return entities.Complaint{}, constants.ErrAllFieldsMustBeFilled
 	}
 	(*complaint).ID = utils.GenerateID("C-", 10)
@@ -145,7 +145,7 @@ func (u *ComplaintUseCase) Delete(id string, userId int, role string) error {
 }
 
 func (u *ComplaintUseCase) Update(complaint entities.Complaint) (entities.Complaint, error) {
-	if complaint.CategoryID == 0 || complaint.UserID == 0 || complaint.RegencyID == "" || complaint.Description == "" || complaint.Address == "" || complaint.Type == "" {
+	if complaint.CategoryID == 0 || complaint.UserID == 0 || complaint.RegencyID == "" || complaint.Description == "" || complaint.Address == "" || complaint.Type == "" || complaint.Date.IsZero() {
 		return entities.Complaint{}, constants.ErrAllFieldsMustBeFilled
 	}
 
@@ -156,7 +156,7 @@ func (u *ComplaintUseCase) Update(complaint entities.Complaint) (entities.Compla
 		} else if strings.HasSuffix(err.Error(), "REFERENCES `categories` (`id`))") {
 			return entities.Complaint{}, constants.ErrCategoryNotFound
 		} else {
-			return entities.Complaint{}, constants.ErrInternalServerError
+			return entities.Complaint{}, err
 		}
 	}
 

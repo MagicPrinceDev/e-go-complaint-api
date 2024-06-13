@@ -36,6 +36,6 @@ func GetFromEntitiesToResponse(data *entities.News) *Get {
 		Content:    data.Content,
 		TotalLikes: data.TotalLikes,
 		Files:      files,
-		UpdatedAt:  data.UpdatedAt.Format("3 January 2006 15:04:05"),
+		UpdatedAt:  data.UpdatedAt.Format("2 January 2006 15:04:05"),
 	}
 }

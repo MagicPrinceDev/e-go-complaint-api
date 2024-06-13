@@ -41,6 +41,6 @@ func CreateFromEntitiesToResponse(data *entities.Complaint) *Create {
 		Status:      data.Status,
 		Type:        data.Type,
 		Date:        data.Date.Format("2 January 2006"),
-		CreatedAt:   data.CreatedAt.Format("3 January 2006 15:04:05"),
+		CreatedAt:   data.CreatedAt.Format("2 January 2006 15:04:05"),
 	}
 }
