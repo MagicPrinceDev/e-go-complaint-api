@@ -134,7 +134,7 @@ func main() {
 	openAIAPI := openai_api.NewOpenAIAPI(os.Getenv("OPENAI_API_KEY"))
 	faqRepo := faq_rp.NewFaqRepo(DB)
 	chatbotRepo := chatbot_rp.NewChatbotRepo(DB)
-	chatbotUsecase := chatbot_uc.NewChatbotUseCase(chatbotRepo, faqRepo, openAIAPI)
+	chatbotUsecase := chatbot_uc.NewChatbotUseCase(chatbotRepo, faqRepo, complaintRepo, openAIAPI)
 	ChatbotController := chatbot_cl.NewChatbotController(chatbotUsecase)
 
 	routes := routes.RouteController{

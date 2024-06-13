@@ -6,16 +6,18 @@ import (
 )
 
 type ChatbotUseCase struct {
-	chatbotRepo entities.ChatbotRepositoryInterface
-	faqRepo     entities.FaqRepositoryInterface
-	OpenAIAPI   entities.ChatbotOpenAIAPIInterface
+	chatbotRepo   entities.ChatbotRepositoryInterface
+	faqRepo       entities.FaqRepositoryInterface
+	complaintRepo entities.ComplaintRepositoryInterface
+	OpenAIAPI     entities.ChatbotOpenAIAPIInterface
 }
 
-func NewChatbotUseCase(chatbotRepo entities.ChatbotRepositoryInterface, faqRepo entities.FaqRepositoryInterface, OpenAIAPI entities.ChatbotOpenAIAPIInterface) *ChatbotUseCase {
+func NewChatbotUseCase(chatbotRepo entities.ChatbotRepositoryInterface, faqRepo entities.FaqRepositoryInterface, complaintRepo entities.ComplaintRepositoryInterface, OpenAIAPI entities.ChatbotOpenAIAPIInterface) *ChatbotUseCase {
 	return &ChatbotUseCase{
-		chatbotRepo: chatbotRepo,
-		faqRepo:     faqRepo,
-		OpenAIAPI:   OpenAIAPI,
+		chatbotRepo:   chatbotRepo,
+		faqRepo:       faqRepo,
+		complaintRepo: complaintRepo,
+		OpenAIAPI:     OpenAIAPI,
 	}
 }
 
@@ -25,14 +27,31 @@ func (u *ChatbotUseCase) GetChatCompletion(chatbot *entities.Chatbot) error {
 		return err
 	}
 
+	userComplaint, err := u.complaintRepo.GetByUserID(chatbot.UserID)
+	if err != nil {
+		return err
+	}
+
 	var prompt []string
-	message := "Tolong jawab pertanyaan user dengan mereferensikan FAQ berikut (Cocokkan Q yang diberikan user dengan Q yang ada di FAQ lalu jawab dengan A yang sesuai):\n\n"
+	message := "FAQ (Frequently Asked Questions):\n\n"
 	for i, f := range faq {
 		stringIdx := strconv.Itoa(i + 1)
 		faqMessage := stringIdx + ".) Q: " + f.Question + "\nA: " + f.Answer + "\n\n"
 		message += faqMessage
 	}
 	prompt = append(prompt, message)
+
+	if userComplaint != nil {
+		message = "Riwayat Aduan User:\n\n"
+		for i, c := range userComplaint {
+			stringIdx := strconv.Itoa(i + 1)
+			complaintMessage := stringIdx + ".)ID Complaint: " + c.ID + "\n" + "Deskripsi: " + c.Description + "\n" + "Status: " + c.Status + "\n" + "Tanggal Aduan dibuat: " + c.CreatedAt.Format("3 January 2006 15:04:05") + "\n\n"
+			message += complaintMessage
+		}
+		prompt = append(prompt, message)
+	}
+
+	prompt = append(prompt, "Tolong anda sebagai Customer Service untuk memberikan respon kepada user berdasarkan FAQ dan Riwayat Aduan User di atas")
 
 	botResponse, err := u.OpenAIAPI.GetChatCompletion(prompt, chatbot.UserMessage)
 	if err != nil {
