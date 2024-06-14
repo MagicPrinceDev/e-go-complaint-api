@@ -14,8 +14,8 @@ type Complaint struct {
 	Description   string             `gorm:"not null"`
 	RegencyID     string             `gorm:"not null;type:varchar;size:4"`
 	Address       string             `gorm:"not null"`
-	Status        string             `gorm:"enum('pending', 'verifikasi', 'on progress', 'selesai', 'ditolak');default:'pending'"`
-	Type          string             `gorm:"enum('public', 'private')"`
+	Status        string             `gorm:"type:enum('Pending', 'Verifikasi', 'On Progress', 'Selesai', 'Ditolak');default:'Pending'"`
+	Type          string             `gorm:"type:enum('public', 'private')"`
 	Date          time.Time          `gorm:"type:date"`
 	TotalLikes    int                `gorm:"default:0"`
 	CreatedAt     time.Time          `gorm:"autoCreateTime"`

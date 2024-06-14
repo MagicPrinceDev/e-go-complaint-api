@@ -105,11 +105,10 @@ func main() {
 	complaintFileUsecase := complaint_file_uc.NewComplaintFileUseCase(complaintFileRepo, complaintFileGCSAPI)
 
 	complaintRepo := complaint_rp.NewComplaintRepo(DB)
-	complaintUsecase := complaint_uc.NewComplaintUseCase(complaintRepo, complaintFileRepo)
-	ComplaintController := complaint_cl.NewComplaintController(complaintUsecase, complaintFileUsecase)
-
 	complaintProcessRepo := complaint_process_rp.NewComplaintProcessRepo(DB)
+	complaintUsecase := complaint_uc.NewComplaintUseCase(complaintRepo, complaintFileRepo)
 	complaintProcessUsecase := complaint_process_uc.NewComplaintProcessUseCase(complaintProcessRepo, complaintRepo)
+	ComplaintController := complaint_cl.NewComplaintController(complaintUsecase, complaintFileUsecase, complaintProcessUsecase)
 	ComplaintProcessController := complaint_process_cl.NewComplaintProcessController(complaintUsecase, complaintProcessUsecase)
 
 	categoryRepo := category_rp.NewCategoryRepo(DB)

@@ -10,7 +10,7 @@ type ComplaintProcess struct {
 	ID          int            `gorm:"primaryKey"`
 	ComplaintID string         `gorm:"not null;type:varchar;size:15;"`
 	AdminID     int            `gorm:"not null"`
-	Status      string         `gorm:"not null;type:enum('verifikasi','on progress','selesai','ditolak')"`
+	Status      string         `gorm:"not null;type:enum('Pending', 'Verifikasi', 'On Progress', 'Selesai', 'Ditolak')"`
 	Message     string         `gorm:"type:text"`
 	CreatedAt   time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt   time.Time      `gorm:"autoUpdateTime"`
