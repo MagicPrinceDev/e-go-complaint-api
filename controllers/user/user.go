@@ -104,6 +104,34 @@ func (uc *UserController) UpdateUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update User", userResponse))
 }
 
+func (uc *UserController) UpdateProfilePhoto(c echo.Context) error {
+	userID, err := utils.GetIDFromJWT(c)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
+	profilePhoto, err := c.FormFile("profile_photo")
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrAllFieldsMustBeFilled.Error()))
+	}
+
+	// Check file format
+	if profilePhoto.Header.Get("Content-Type") != "image/jpeg" && profilePhoto.Header.Get("Content-Type") != "image/png" && profilePhoto.Header.Get("Content-Type") != "image/jpg" {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrInvalidFileFormat.Error()))
+	}
+
+	if profilePhoto.Size > 5*1024*1024 {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrMaxFileSizeExceeded.Error()))
+	}
+
+	err = uc.userUseCase.UpdateProfilePhoto(userID, profilePhoto)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update Profile Photo", nil))
+}
+
 func (uc *UserController) DeleteUser(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)

@@ -95,8 +95,9 @@ func main() {
 		os.Getenv("SMTP_PASSWORD"),
 		os.Getenv("SMTP_FROM"),
 	)
+	userGCSAPI := gcs_api.NewFileHandlingAPI(os.Getenv("GCS_CREDENTIALS"), "profile-photos/")
 	userRepo := user_rp.NewUserRepo(DB)
-	userUsecase := user_uc.NewUserUseCase(userRepo, mailTrapApi)
+	userUsecase := user_uc.NewUserUseCase(userRepo, mailTrapApi, userGCSAPI)
 	UserController := user_cl.NewUserController(userUsecase)
 
 	complaintFileGCSAPI := gcs_api.NewFileHandlingAPI(os.Getenv("GCS_CREDENTIALS"), "complaint-files/")
