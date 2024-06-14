@@ -22,7 +22,7 @@ func (u *ComplaintProcessUseCase) Create(complaintProcess *entities.ComplaintPro
 		return entities.ComplaintProcess{}, constants.ErrAllFieldsMustBeFilled
 	}
 
-	if complaintProcess.Status != "Verifikasi" && complaintProcess.Status != "On Progress" && complaintProcess.Status != "Selesai" && complaintProcess.Status != "Ditolak" {
+	if complaintProcess.Status != "Pending" && complaintProcess.Status != "Verifikasi" && complaintProcess.Status != "On Progress" && complaintProcess.Status != "Selesai" && complaintProcess.Status != "Ditolak" {
 		return entities.ComplaintProcess{}, constants.ErrInvalidStatus
 	}
 

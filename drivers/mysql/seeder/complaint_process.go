@@ -12,13 +12,13 @@ func SeedComplaintProcess(db *gorm.DB) {
 		complaintProcesses := []entities.ComplaintProcess{
 			{
 				ComplaintID: "C-81j9aK9280",
-				AdminID:     4,
+				AdminID:     1,
 				Status:      "Pending",
 				Message:     "Aduan anda akan segera kami periksa",
 			},
 			{
 				ComplaintID: "C-8ksh&s9280",
-				AdminID:     2,
+				AdminID:     1,
 				Status:      "Pending",
 				Message:     "Aduan anda akan segera kami periksa",
 			},
@@ -42,7 +42,7 @@ func SeedComplaintProcess(db *gorm.DB) {
 			},
 			{
 				ComplaintID: "C-81jas92581",
-				AdminID:     3,
+				AdminID:     1,
 				Status:      "Pending",
 				Message:     "Aduan anda akan segera kami periksa",
 			},
@@ -54,7 +54,7 @@ func SeedComplaintProcess(db *gorm.DB) {
 			},
 			{
 				ComplaintID: "C-271j9ak280",
-				AdminID:     3,
+				AdminID:     1,
 				Status:      "Pending",
 				Message:     "Aduan anda akan segera kami periksa",
 			},
@@ -72,7 +72,7 @@ func SeedComplaintProcess(db *gorm.DB) {
 			},
 			{
 				ComplaintID: "C-123j9ak280",
-				AdminID:     4,
+				AdminID:     1,
 				Status:      "Pending",
 				Message:     "Aduan anda akan segera kami periksa",
 			},

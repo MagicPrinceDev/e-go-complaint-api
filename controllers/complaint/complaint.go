@@ -15,14 +15,16 @@ import (
 )
 
 type ComplaintController struct {
-	complaintUseCase     entities.ComplaintUseCaseInterface
-	complaintFileUseCase entities.ComplaintFileUseCaseInterface
+	complaintUseCase        entities.ComplaintUseCaseInterface
+	complaintFileUseCase    entities.ComplaintFileUseCaseInterface
+	complaintProcessUseCase entities.ComplaintProcessUseCaseInterface
 }
 
-func NewComplaintController(complaintUseCase entities.ComplaintUseCaseInterface, complaintFileUseCase entities.ComplaintFileUseCaseInterface) *ComplaintController {
+func NewComplaintController(complaintUseCase entities.ComplaintUseCaseInterface, complaintFileUseCase entities.ComplaintFileUseCaseInterface, complaintProcessUseCase entities.ComplaintProcessUseCaseInterface) *ComplaintController {
 	return &ComplaintController{
-		complaintUseCase:     complaintUseCase,
-		complaintFileUseCase: complaintFileUseCase,
+		complaintUseCase:        complaintUseCase,
+		complaintFileUseCase:    complaintFileUseCase,
+		complaintProcessUseCase: complaintProcessUseCase,
 	}
 }
 
@@ -168,6 +170,18 @@ func (cc *ComplaintController) Create(c echo.Context) error {
 	}
 
 	complaintResponse.Files = complaintFileResponse
+
+	complaintProcess := entities.ComplaintProcess{
+		ComplaintID: complaint.ID,
+		AdminID:     1,
+		Status:      "Pending",
+		Message:     "Aduan anda akan segera kami periksa",
+	}
+
+	_, err3 := cc.complaintProcessUseCase.Create(&complaintProcess)
+	if err3 != nil {
+		return c.JSON(utils.ConvertResponseCode(err3), base.NewErrorResponse(err3.Error()))
+	}
 
 	return c.JSON(http.StatusCreated, base.NewSuccessResponse("Success Create Report", complaintResponse))
 }
