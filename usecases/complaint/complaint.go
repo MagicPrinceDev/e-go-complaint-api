@@ -164,7 +164,7 @@ func (u *ComplaintUseCase) Update(complaint entities.Complaint) (entities.Compla
 }
 
 func (u *ComplaintUseCase) UpdateStatus(id string, status string) error {
-	if status != "pending" && status != "verifikasi" && status != "on progress" && status != "selesai" && status != "ditolak" {
+	if status != "Pending" && status != "Verifikasi" && status != "On Progress" && status != "Selesai" && status != "Ditolak" {
 		return constants.ErrInvalidStatus
 	}
 
@@ -248,43 +248,43 @@ func (u *ComplaintUseCase) Import(file *multipart.FileHeader) error {
 		pathFiles := row[7]
 
 		process = []entities.ComplaintProcess{}
-		if status == "verifikasi" {
+		if status == "Verifikasi" {
 			process = append(process, entities.ComplaintProcess{
 				AdminID: 1,
-				Status:  "verifikasi",
+				Status:  "Verifikasi",
 				Message: "Aduan anda telah diverifikasi oleh admin kami",
 			})
-		} else if status == "on progress" {
+		} else if status == "On Progress" {
 			process = append(process, entities.ComplaintProcess{
 				AdminID: 1,
-				Status:  "verifikasi",
+				Status:  "Verifikasi",
 				Message: "Aduan anda telah diverifikasi oleh admin kami",
 			})
 			process = append(process, entities.ComplaintProcess{
 				AdminID: 1,
-				Status:  "on progress",
+				Status:  "On Progress",
 				Message: "Aduan anda sedang dalam proses penanganan",
 			})
-		} else if status == "selesai" {
+		} else if status == "Selesai" {
 			process = append(process, entities.ComplaintProcess{
 				AdminID: 1,
-				Status:  "verifikasi",
+				Status:  "Verifikasi",
 				Message: "Aduan anda telah diverifikasi oleh admin kami",
 			})
 			process = append(process, entities.ComplaintProcess{
 				AdminID: 1,
-				Status:  "on progress",
+				Status:  "On Progress",
 				Message: "Aduan anda sedang dalam proses penanganan",
 			})
 			process = append(process, entities.ComplaintProcess{
 				AdminID: 1,
-				Status:  "selesai",
+				Status:  "Selesai",
 				Message: "Aduan anda telah selesai ditangani",
 			})
-		} else if status == "ditolak" {
+		} else if status == "Ditolak" {
 			process = append(process, entities.ComplaintProcess{
 				AdminID: 1,
-				Status:  "ditolak",
+				Status:  "Ditolak",
 				Message: "Aduan anda ditolak karena tidak sesuai dengan ketentuan yang berlaku",
 			})
 		}
