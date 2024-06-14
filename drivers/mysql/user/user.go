@@ -82,6 +82,14 @@ func (r *UserRepo) UpdateUser(id int, user *entities.User) error {
 	return nil
 }
 
+func (r *UserRepo) UpdateProfilePhoto(id int, profilePhoto string) error {
+	if err := r.DB.Model(&entities.User{}).Where("id = ?", id).Update("profile_photo", profilePhoto).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (r *UserRepo) Delete(id int) error {
 	if err := r.DB.Delete(&entities.User{}, id).Error; err != nil {
 		return err

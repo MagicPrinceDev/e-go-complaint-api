@@ -42,6 +42,7 @@ func ConvertResponseCode(err error) int {
 		constants.ErrEmailNotVerified,
 		constants.ErrPageMustBeFilled,
 		constants.ErrLimitMustBeFilled,
+		constants.ErrInvalidFileFormat,
 	}
 
 	if contains(badRequestErrors, err) {
