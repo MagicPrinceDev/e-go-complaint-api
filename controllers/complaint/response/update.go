@@ -51,6 +51,6 @@ func UpdateFromEntitiesToResponse(data *entities.Complaint) *Update {
 		Type:        data.Type,
 		Date:        data.Date.Format("2 January 2006"),
 		Files:       files,
-		UpdatedAt:   data.UpdatedAt.Format("3 January 2006 15:04:05"),
+		UpdatedAt:   data.UpdatedAt.Format("2 January 2006 15:04:05"),
 	}
 }

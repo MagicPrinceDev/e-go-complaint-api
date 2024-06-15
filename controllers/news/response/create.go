@@ -26,6 +26,6 @@ func CreateFromEntitiesToResponse(data *entities.News) *Create {
 		Title:      data.Title,
 		Content:    data.Content,
 		TotalLikes: data.TotalLikes,
-		CreatedAt:  data.CreatedAt.Format("3 January 2006 15:04:05"),
+		CreatedAt:  data.CreatedAt.Format("2 January 2006 15:04:05"),
 	}
 }

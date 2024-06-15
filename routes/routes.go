@@ -80,6 +80,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	user.POST("/complaints", r.ComplaintController.Create)
 	user.PUT("/complaints/:id", r.ComplaintController.Update)
 	user.PUT("/users/update-profile", r.UserController.UpdateUser)
+	user.PUT("/users/update-profile-photo", r.UserController.UpdateProfilePhoto)
 	user.PUT("/users/change-password", r.UserController.UpdatePassword)
 	user.GET("/users/complaints", r.ComplaintController.GetByUserID)
 	user.POST("/complaints/:complaint-id/likes", r.ComplaintLikeController.ToggleLike)

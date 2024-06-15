@@ -99,8 +99,9 @@ func main() {
 		os.Getenv("SMTP_PASSWORD"),
 		os.Getenv("SMTP_FROM"),
 	)
+	userGCSAPI := gcs_api.NewFileHandlingAPI(os.Getenv("GCS_CREDENTIALS"), "profile-photos/")
 	userRepo := user_rp.NewUserRepo(DB)
-	userUsecase := user_uc.NewUserUseCase(userRepo, mailTrapApi)
+	userUsecase := user_uc.NewUserUseCase(userRepo, mailTrapApi, userGCSAPI)
 	UserController := user_cl.NewUserController(userUsecase)
 
 	complaintFileGCSAPI := gcs_api.NewFileHandlingAPI(os.Getenv("GCS_CREDENTIALS"), "complaint-files/")
@@ -108,11 +109,10 @@ func main() {
 	complaintFileUsecase := complaint_file_uc.NewComplaintFileUseCase(complaintFileRepo, complaintFileGCSAPI)
 
 	complaintRepo := complaint_rp.NewComplaintRepo(DB)
-	complaintUsecase := complaint_uc.NewComplaintUseCase(complaintRepo, complaintFileRepo)
-	ComplaintController := complaint_cl.NewComplaintController(complaintUsecase, complaintFileUsecase)
-
 	complaintProcessRepo := complaint_process_rp.NewComplaintProcessRepo(DB)
+	complaintUsecase := complaint_uc.NewComplaintUseCase(complaintRepo, complaintFileRepo)
 	complaintProcessUsecase := complaint_process_uc.NewComplaintProcessUseCase(complaintProcessRepo, complaintRepo)
+	ComplaintController := complaint_cl.NewComplaintController(complaintUsecase, complaintFileUsecase, complaintProcessUsecase)
 	ComplaintProcessController := complaint_process_cl.NewComplaintProcessController(complaintUsecase, complaintProcessUsecase)
 
 	categoryRepo := category_rp.NewCategoryRepo(DB)

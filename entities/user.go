@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"mime/multipart"
 	"time"
 
 	"gorm.io/gorm"
@@ -30,6 +31,7 @@ type UserRepositoryInterface interface {
 	GetAllUsers() ([]*User, error)
 	GetUserByID(id int) (*User, error)
 	UpdateUser(id int, user *User) error
+	UpdateProfilePhoto(id int, profilePhoto string) error
 	Delete(id int) error
 	UpdatePassword(id int, newPassword string) error
 	SendOTP(email, otp string) error
@@ -40,12 +42,17 @@ type MailTrapAPIInterface interface {
 	SendOTP(email, otp string) error
 }
 
+type UserGCSAPIInterface interface {
+	Upload(files []*multipart.FileHeader) ([]string, error)
+}
+
 type UserUseCaseInterface interface {
 	Register(user *User) (User, error)
 	Login(user *User) (User, error)
 	GetAllUsers() ([]*User, error)
 	GetUserByID(id int) (*User, error)
 	UpdateUser(id int, user *User) (User, error)
+	UpdateProfilePhoto(id int, profilePhoto *multipart.FileHeader) error
 	Delete(id int) error
 	UpdatePassword(id int, oldPassword, newPassword string) error
 	SendOTP(email string) error

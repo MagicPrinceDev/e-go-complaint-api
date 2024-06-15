@@ -6,18 +6,21 @@ import (
 	"e-complaint-api/middlewares"
 	"e-complaint-api/utils"
 	"errors"
+	"mime/multipart"
 	"strings"
 )
 
 type UserUseCase struct {
 	repository   entities.UserRepositoryInterface
 	emailTrapApi entities.MailTrapAPIInterface
+	gcsAPI       entities.UserGCSAPIInterface
 }
 
-func NewUserUseCase(repository entities.UserRepositoryInterface, emailTrapApi entities.MailTrapAPIInterface) *UserUseCase {
+func NewUserUseCase(repository entities.UserRepositoryInterface, emailTrapApi entities.MailTrapAPIInterface, gcsAPI entities.UserGCSAPIInterface) *UserUseCase {
 	return &UserUseCase{
 		repository:   repository,
 		emailTrapApi: emailTrapApi,
+		gcsAPI:       gcsAPI,
 	}
 }
 
@@ -111,6 +114,20 @@ func (u *UserUseCase) UpdateUser(id int, user *entities.User) (entities.User, er
 	}
 
 	return *existingUser, nil
+}
+
+func (u *UserUseCase) UpdateProfilePhoto(id int, profilePhoto *multipart.FileHeader) error {
+	filepaths, err := u.gcsAPI.Upload([]*multipart.FileHeader{profilePhoto})
+	if err != nil {
+		return err
+	}
+
+	err = u.repository.UpdateProfilePhoto(id, filepaths[0])
+	if err != nil {
+		return constants.ErrInternalServerError
+	}
+
+	return nil
 }
 
 func (u *UserUseCase) Delete(id int) error {
