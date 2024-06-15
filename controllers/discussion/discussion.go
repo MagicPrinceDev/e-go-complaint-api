@@ -199,7 +199,6 @@ func (dc *DiscussionController) DeleteDiscussion(c echo.Context) error {
 	if discussionIDStr == "" {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse("Discussion ID is required"))
 	}
-
 	discussionID, err := strconv.Atoi(discussionIDStr)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
@@ -207,7 +206,7 @@ func (dc *DiscussionController) DeleteDiscussion(c echo.Context) error {
 
 	discussion, err := dc.discussionUseCase.GetById(discussionID)
 	if err != nil || discussion == nil {
-		return c.JSON(http.StatusNotFound, base.NewErrorResponse(err.Error()))
+		return c.JSON(http.StatusNotFound, base.NewErrorResponse("Discussion not found"))
 	}
 
 	userID, err := utils.GetIDFromJWT(c)
