@@ -169,7 +169,7 @@ func (u *UserUseCase) UpdatePassword(id int, oldPassword, newPassword string) er
 	return u.repository.UpdatePassword(id, hash)
 }
 
-func (u *UserUseCase) SendOTP(email string) error {
+func (u *UserUseCase) SendOTP(email, otp_type string) error {
 	if email == "" {
 		return constants.ErrAllFieldsMustBeFilled
 	}
@@ -181,7 +181,7 @@ func (u *UserUseCase) SendOTP(email string) error {
 		return err
 	}
 
-	err = u.emailTrapApi.SendOTP(email, otp)
+	err = u.emailTrapApi.SendOTP(email, otp, otp_type)
 	if err != nil {
 		return err
 	}
@@ -189,14 +189,21 @@ func (u *UserUseCase) SendOTP(email string) error {
 	return nil
 }
 
-func (u *UserUseCase) VerifyOTP(email, otp string) error {
+func (u *UserUseCase) VerifyOTP(email, otp, otp_type string) error {
 	if email == "" || otp == "" {
 		return constants.ErrAllFieldsMustBeFilled
 	}
 
-	err := u.repository.VerifyOTP(email, otp)
-	if err != nil {
-		return err
+	if otp_type == "forgot_password" {
+		err := u.repository.VerifyOTPForgotPassword(email, otp)
+		if err != nil {
+			return err
+		}
+	} else {
+		err := u.repository.VerifyOTPRegister(email, otp)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

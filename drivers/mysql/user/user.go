@@ -33,11 +33,11 @@ func (r *UserRepo) Login(user *entities.User) error {
 	var userDB entities.User
 
 	if err := r.DB.Where("email = ?", user.Email).First(&userDB).Error; err != nil {
-		return errors.New("username or password is incorrect")
+		return constants.ErrInvalidUsernameOrPassword
 	}
 
 	if !utils.CheckPasswordHash(user.Password, userDB.Password) {
-		return errors.New("username or password is incorrect")
+		return constants.ErrInvalidUsernameOrPassword
 	}
 
 	if !userDB.EmailVerified {
@@ -120,7 +120,7 @@ func (r *UserRepo) SendOTP(email, otp string) error {
 	return nil
 }
 
-func (r *UserRepo) VerifyOTP(email, otp string) error {
+func (r *UserRepo) VerifyOTPRegister(email, otp string) error {
 	var user entities.User
 	if err := r.DB.Model(&entities.User{}).Where("email = ?", email).First(&user).Error; err != nil {
 		return constants.ErrUserNotFound
@@ -135,11 +135,26 @@ func (r *UserRepo) VerifyOTP(email, otp string) error {
 	}
 
 	user.EmailVerified = true
-	// user.Otp = ""
-	// user.OtpExpiredAt = time.Time{}
 
 	if err := r.DB.Save(&user).Error; err != nil {
 		return constants.ErrInternalServerError
+	}
+
+	return nil
+}
+
+func (r *UserRepo) VerifyOTPForgotPassword(email, otp string) error {
+	var user entities.User
+	if err := r.DB.Model(&entities.User{}).Where("email = ?", email).First(&user).Error; err != nil {
+		return constants.ErrUserNotFound
+	}
+
+	if user.Otp != otp {
+		return constants.ErrInvalidOTP
+	}
+
+	if user.OtpExpiredAt.Before(time.Now()) {
+		return constants.ErrExpiredOTP
 	}
 
 	return nil
