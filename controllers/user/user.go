@@ -185,8 +185,8 @@ func (uc *UserController) UpdatePassword(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
 	}
 
-	oldPassword, newPassword := passwordRequest.ToEntities()
-	err = uc.userUseCase.UpdatePassword(jwtID, oldPassword, newPassword)
+	newPassword, confirmPassword := passwordRequest.ToEntities()
+	err = uc.userUseCase.UpdatePassword(jwtID, newPassword, confirmPassword)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
 	}

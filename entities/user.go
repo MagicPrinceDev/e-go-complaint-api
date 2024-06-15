@@ -57,7 +57,7 @@ type UserUseCaseInterface interface {
 	UpdateUser(id int, user *User) (User, error)
 	UpdateProfilePhoto(id int, profilePhoto *multipart.FileHeader) error
 	Delete(id int) error
-	UpdatePassword(id int, oldPassword, newPassword string) error
+	UpdatePassword(id int, newPassword, confirmNewPassword string) error
 	SendOTP(email, otp_type string) error
 	VerifyOTP(email, otp, otp_type string) error
 	UpdatePasswordForgot(email, newPassword string) error

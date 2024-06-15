@@ -46,4 +46,5 @@ var (
 	ErrLimitMustBeFilled                = errors.New("limit must be filled")
 	ErrInvalidFileFormat                = errors.New("invalid file format")
 	ErrForgotPasswordOTPNotVerified     = errors.New("forgot password otp not verified")
+	ErrConfirmPasswordDoesntMatch       = errors.New("confirm password doesn't match")
 )

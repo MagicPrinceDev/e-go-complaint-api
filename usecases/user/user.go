@@ -151,18 +151,13 @@ func (u *UserUseCase) Delete(id int) error {
 	return nil
 }
 
-func (u *UserUseCase) UpdatePassword(id int, oldPassword, newPassword string) error {
-	existingUser, err := u.repository.GetUserByID(id)
-	if err != nil {
-		return constants.ErrInternalServerError
-	}
-
-	if oldPassword == "" || newPassword == "" {
+func (u *UserUseCase) UpdatePassword(id int, newPassword, confirmNewPassword string) error {
+	if newPassword == "" || confirmNewPassword == "" {
 		return constants.ErrAllFieldsMustBeFilled
 	}
 
-	if !utils.CheckPasswordHash(oldPassword, existingUser.Password) {
-		return constants.ErrOldPasswordDoesntMatch
+	if newPassword != confirmNewPassword {
+		return constants.ErrConfirmPasswordDoesntMatch
 	}
 
 	hash, _ := utils.HashPassword(newPassword)
