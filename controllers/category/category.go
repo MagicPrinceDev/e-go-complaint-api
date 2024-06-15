@@ -1,11 +1,13 @@
 package category
 
 import (
+	"e-complaint-api/constants"
 	"e-complaint-api/controllers/base"
 	"e-complaint-api/controllers/category/request"
 	"e-complaint-api/controllers/category/response"
 	"e-complaint-api/entities"
 	"e-complaint-api/utils"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -39,6 +41,9 @@ func (cc *CategoryController) GetByID(c echo.Context) error {
 
 	category, err := cc.useCase.GetByID(id)
 	if err != nil {
+		if errors.Is(err, constants.ErrCategoryNotFound) {
+			return c.JSON(http.StatusNotFound, base.NewErrorResponse(constants.ErrCategoryNotFound.Error()))
+		}
 		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
 
@@ -67,6 +72,18 @@ func (cc *CategoryController) UpdateCategory(c echo.Context) error {
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+	}
+
+	if idStr == "" {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse("ID must be filled"))
+	}
+
+	_, err = cc.useCase.GetByID(id)
+	if err != nil {
+		if errors.Is(err, constants.ErrCategoryNotFound) {
+			return c.JSON(http.StatusNotFound, base.NewErrorResponse(constants.ErrCategoryNotFound.Error()))
+		}
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
 
 	var category request.CreateCategories
