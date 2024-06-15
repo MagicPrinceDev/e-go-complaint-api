@@ -57,6 +57,18 @@ func (uc *CategoryUseCase) UpdateCategory(id int, newCategory *entities.Category
 		return nil, constants.ErrInternalServerError
 	}
 
+	if newCategory.Name == "" && newCategory.Description == "" {
+		return nil, constants.ErrAllFieldsMustBeFilled
+	}
+
+	if newCategory.Name == "" {
+		newCategory.Name = existingCategory.Name
+	}
+
+	if newCategory.Description == "" {
+		newCategory.Description = existingCategory.Description
+	}
+
 	if existingCategory.Name == newCategory.Name && existingCategory.Description == newCategory.Description {
 		return nil, constants.ErrNoChangesDetected
 	}
