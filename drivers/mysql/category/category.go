@@ -28,7 +28,7 @@ func (r *CategoryRepo) GetByID(id int) (entities.Category, error) {
 	var category entities.Category
 	if err := r.DB.First(&category, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return entities.Category{}, constants.ErrNotFound
+			return entities.Category{}, constants.ErrCategoryNotFound
 		}
 		return entities.Category{}, err
 	}
@@ -47,7 +47,7 @@ func (r *CategoryRepo) CreateCategory(category *entities.Category) (*entities.Ca
 func (r *CategoryRepo) UpdateCategory(id int, category *entities.Category) (*entities.Category, error) {
 	if err := r.DB.Model(&entities.Category{}).Where("id = ?", id).Updates(&category).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, constants.ErrNotFound
+			return nil, constants.ErrCategoryNotFound
 		}
 		return nil, err
 	}
