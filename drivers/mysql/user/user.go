@@ -157,5 +157,29 @@ func (r *UserRepo) VerifyOTPForgotPassword(email, otp string) error {
 		return constants.ErrExpiredOTP
 	}
 
+	user.ForgotVerified = true
+	if err := r.DB.Save(&user).Error; err != nil {
+		return constants.ErrInternalServerError
+	}
+
+	return nil
+}
+
+func (r *UserRepo) UpdatePasswordForgot(email, newPassword string) error {
+	var user entities.User
+	if err := r.DB.Model(&entities.User{}).Where("email = ?", email).First(&user).Error; err != nil {
+		return constants.ErrUserNotFound
+	}
+
+	if !user.ForgotVerified {
+		return constants.ErrForgotPasswordOTPNotVerified
+	}
+
+	user.Password = newPassword
+	user.ForgotVerified = false
+	if err := r.DB.Save(&user).Error; err != nil {
+		return constants.ErrInternalServerError
+	}
+
 	return nil
 }
