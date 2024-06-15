@@ -26,13 +26,20 @@ func NewMailTrapApi(smtpHost, smtpPort, smtpUsername, smtpPassword, emailFrom st
 	}
 }
 
-func (u *MailTrapApi) SendOTP(email, otp string) error {
+func (u *MailTrapApi) SendOTP(email, otp, otp_type string) error {
 	m := gomail.NewMessage()
 	m.SetHeader("From", u.EMAIL_FROM)
 	m.SetHeader("To", email)
 	m.SetHeader("Subject", "Email Verification")
 
-	template, err := template.ParseFiles("./templates/otp.html")
+	path := ""
+	if otp_type == "forgot_password" {
+		path = "./templates/forgot_password.html"
+	} else {
+		path = "./templates/register.html"
+	}
+
+	template, err := template.ParseFiles(path)
 	if err != nil {
 		return err
 	}

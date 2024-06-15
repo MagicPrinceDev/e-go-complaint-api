@@ -35,11 +35,12 @@ type UserRepositoryInterface interface {
 	Delete(id int) error
 	UpdatePassword(id int, newPassword string) error
 	SendOTP(email, otp string) error
-	VerifyOTP(email, otp string) error
+	VerifyOTPRegister(email, otp string) error
+	VerifyOTPForgotPassword(email, otp string) error
 }
 
 type MailTrapAPIInterface interface {
-	SendOTP(email, otp string) error
+	SendOTP(email, otp, otp_type string) error
 }
 
 type UserGCSAPIInterface interface {
@@ -55,6 +56,6 @@ type UserUseCaseInterface interface {
 	UpdateProfilePhoto(id int, profilePhoto *multipart.FileHeader) error
 	Delete(id int) error
 	UpdatePassword(id int, oldPassword, newPassword string) error
-	SendOTP(email string) error
-	VerifyOTP(email, otp string) error
+	SendOTP(email, otp_type string) error
+	VerifyOTP(email, otp, otp_type string) error
 }
