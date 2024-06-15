@@ -3,6 +3,7 @@ package complaint_process
 import (
 	"e-complaint-api/constants"
 	"e-complaint-api/entities"
+	"strings"
 )
 
 type ComplaintProcessUseCase struct {
@@ -81,7 +82,11 @@ func (u *ComplaintProcessUseCase) Create(complaintProcess *entities.ComplaintPro
 
 	err = u.repository.Create(complaintProcess)
 	if err != nil {
-		return entities.ComplaintProcess{}, err
+		if strings.Contains(err.Error(), "REFERENCES `complaints` (`id`)") {
+			return entities.ComplaintProcess{}, constants.ErrComplaintNotFound
+		} else {
+			return entities.ComplaintProcess{}, constants.ErrInternalServerError
+		}
 	}
 
 	return *complaintProcess, nil
