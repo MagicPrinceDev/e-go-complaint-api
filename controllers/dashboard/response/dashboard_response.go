@@ -31,3 +31,12 @@ type NumberedComplaintResponse struct {
 	Complaint Complaint `json:"complaint"`
 	Category  Category  `json:"category"`
 }
+
+func NewDashboardResponse(totalComplaints int64, complaintsByStatus map[string]int64, usersByYearAndMonth map[string][]MonthData, latestComplaints []NumberedComplaintResponse) *DashboardResponse {
+	return &DashboardResponse{
+		TotalComplaints:     totalComplaints,
+		ComplaintsByStatus:  complaintsByStatus,
+		UsersByYearAndMonth: usersByYearAndMonth,
+		LatestComplaints:    latestComplaints,
+	}
+}
