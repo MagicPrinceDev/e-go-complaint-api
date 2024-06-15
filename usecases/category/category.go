@@ -26,8 +26,8 @@ func (uc *CategoryUseCase) GetAll() ([]entities.Category, error) {
 func (uc *CategoryUseCase) GetByID(id int) (entities.Category, error) {
 	category, err := uc.repository.GetByID(id)
 	if err != nil {
-		if errors.Is(err, constants.ErrNotFound) {
-			return entities.Category{}, constants.ErrNotFound
+		if errors.Is(err, constants.ErrCategoryNotFound) {
+			return entities.Category{}, constants.ErrCategoryNotFound
 		}
 		return entities.Category{}, constants.ErrInternalServerError
 	}
@@ -50,11 +50,13 @@ func (uc *CategoryUseCase) CreateCategory(category *entities.Category) (*entitie
 
 func (uc *CategoryUseCase) UpdateCategory(id int, newCategory *entities.Category) (*entities.Category, error) {
 	existingCategory, err := uc.repository.GetByID(id)
+
 	if err != nil {
 		if errors.Is(err, constants.ErrNotFound) {
-			return nil, constants.ErrNotFound
+			return nil, constants.ErrCategoryNotFound
 		}
 		return nil, constants.ErrInternalServerError
+
 	}
 
 	if newCategory.Name == "" && newCategory.Description == "" {
