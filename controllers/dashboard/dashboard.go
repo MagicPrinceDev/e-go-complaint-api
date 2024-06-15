@@ -1,6 +1,7 @@
 package dashboard
 
 import (
+	"e-complaint-api/controllers/base"
 	"e-complaint-api/controllers/dashboard/response"
 	"e-complaint-api/usecases/dashboard"
 	"github.com/labstack/echo/v4"
@@ -46,5 +47,6 @@ func (ctrl *DashboardController) GetDashboardData(c echo.Context) error {
 		LatestComplaints:    numberedLatestComplaints,
 	}
 
-	return c.JSON(http.StatusOK, resp)
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Dashboard data retrieved successfully", resp))
+
 }
