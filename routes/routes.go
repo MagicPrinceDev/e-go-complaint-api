@@ -78,6 +78,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	user.POST("/users/register/verify-otp", r.UserController.VerifyOTPRegister)
 	user.POST("/users/forgot-password/send-otp", r.UserController.SendOTPForgotPassword)
 	user.POST("/users/forgot-password/verify-otp", r.UserController.VerifyOTPForgotPassword)
+	user.PUT("/users/forgot-password/change-password", r.UserController.UpdatePasswordForgot)
 	user.Use(jwt, middlewares.IsUser)
 	user.POST("/complaints", r.ComplaintController.Create)
 	user.PUT("/complaints/:id", r.ComplaintController.Update)

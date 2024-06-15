@@ -249,3 +249,17 @@ func (uc *UserController) VerifyOTPForgotPassword(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Verify OTP", nil))
 }
+
+func (uc *UserController) UpdatePasswordForgot(c echo.Context) error {
+	var passwordRequest request.UpdatePasswordForgot
+	if err := c.Bind(&passwordRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+	}
+
+	err := uc.userUseCase.UpdatePasswordForgot(passwordRequest.Email, passwordRequest.NewPassword)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update Password", nil))
+}

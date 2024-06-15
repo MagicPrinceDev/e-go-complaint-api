@@ -23,6 +23,7 @@ type User struct {
 	Otp             string         `gorm:"default:null"`
 	OtpExpiredAt    time.Time      `gorm:"default:null"`
 	EmailVerified   bool           `gorm:"default:false"`
+	ForgotVerified  bool           `gorm:"default:false"`
 }
 
 type UserRepositoryInterface interface {
@@ -37,6 +38,7 @@ type UserRepositoryInterface interface {
 	SendOTP(email, otp string) error
 	VerifyOTPRegister(email, otp string) error
 	VerifyOTPForgotPassword(email, otp string) error
+	UpdatePasswordForgot(email, newPassword string) error
 }
 
 type MailTrapAPIInterface interface {
@@ -58,4 +60,5 @@ type UserUseCaseInterface interface {
 	UpdatePassword(id int, oldPassword, newPassword string) error
 	SendOTP(email, otp_type string) error
 	VerifyOTP(email, otp, otp_type string) error
+	UpdatePasswordForgot(email, newPassword string) error
 }

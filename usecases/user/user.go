@@ -208,3 +208,17 @@ func (u *UserUseCase) VerifyOTP(email, otp, otp_type string) error {
 
 	return nil
 }
+
+func (u *UserUseCase) UpdatePasswordForgot(email, newPassword string) error {
+	if email == "" || newPassword == "" {
+		return constants.ErrAllFieldsMustBeFilled
+	}
+
+	hash, _ := utils.HashPassword(newPassword)
+	err := u.repository.UpdatePasswordForgot(email, hash)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
