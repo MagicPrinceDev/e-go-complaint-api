@@ -2,12 +2,16 @@ package main
 
 import (
 	"e-complaint-api/config"
+	dashboard_cl "e-complaint-api/controllers/dashboard"
 	"e-complaint-api/controllers/news_comment"
 	"e-complaint-api/controllers/news_like"
 	"e-complaint-api/drivers/mailtrap"
 	"e-complaint-api/drivers/mysql"
+	dashboard_repo "e-complaint-api/drivers/mysql/dashboard"
 	"e-complaint-api/drivers/openai_api"
 	"e-complaint-api/routes"
+	dashboard_uc "e-complaint-api/usecases/dashboard"
+
 	"os"
 
 	gcs_api "e-complaint-api/drivers/google_cloud_storage"
@@ -76,7 +80,7 @@ import (
 
 func main() {
 	// For local development only
-	// config.LoadEnv()
+	//config.LoadEnv()
 
 	config.InitConfigMySQL()
 	DB := mysql.ConnectDB(config.InitConfigMySQL())
@@ -154,6 +158,10 @@ func main() {
 	newsCommentUsecase := news_comment_uc.NewNewsCommentUseCase(newsCommentRepo)
 	NewsCommentController := news_comment.NewNewsCommentController(newsCommentUsecase, newsUsecase)
 
+	dashboardRepo := dashboard_repo.NewDashboardRepo(DB)
+	dashboardUsecase := dashboard_uc.NewDashboardUseCase(*dashboardRepo)
+	dashboardController := dashboard_cl.NewDashboardController(*dashboardUsecase)
+
 	routes := routes.RouteController{
 		AdminController:             AdminController,
 		UserController:              UserController,
@@ -168,6 +176,7 @@ func main() {
 		NewsCommentController:       NewsCommentController,
 		ComplaintActivityController: ComplaintActivityController,
 		ChatbotController:           ChatbotController,
+		DashboardController:         dashboardController,
 	}
 
 	routes.InitRoute(e)

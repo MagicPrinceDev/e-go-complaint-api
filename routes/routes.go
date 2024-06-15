@@ -8,6 +8,7 @@ import (
 	"e-complaint-api/controllers/complaint_activity"
 	complaint_like "e-complaint-api/controllers/complaint_like"
 	"e-complaint-api/controllers/complaint_process"
+	dashboard "e-complaint-api/controllers/dashboard"
 	"e-complaint-api/controllers/discussion"
 	"e-complaint-api/controllers/news"
 	"e-complaint-api/controllers/news_comment"
@@ -36,6 +37,7 @@ type RouteController struct {
 	NewsCommentController       *news_comment.NewsCommentController
 	ComplaintActivityController *complaint_activity.ComplaintActivityController
 	ChatbotController           *chatbot.ChatbotController
+	DashboardController         *dashboard.DashboardController
 }
 
 func (r *RouteController) InitRoute(e *echo.Echo) {
@@ -66,6 +68,7 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	admin.PUT("/news/:id", r.NewsController.Update)
 	admin.POST("/complaints/import", r.ComplaintController.Import)
 	admin.GET("/complaints/:complaint-id/discussions/get-recommendation", r.DiscussionController.GetAnswerRecommendation)
+	admin.GET("/admins/dashboard", r.DashboardController.GetDashboardData)
 
 	// Route For User
 	user := e.Group("/api/v1")
@@ -109,4 +112,5 @@ func (r *RouteController) InitRoute(e *echo.Echo) {
 	auth_user.PUT("/news/:news-id/comments/:comment-id", r.NewsCommentController.UpdateComment)
 	auth_user.DELETE("/news/:news-id/comments/:comment-id", r.NewsCommentController.DeleteComment)
 	// Route For Public
+
 }
