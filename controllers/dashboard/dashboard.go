@@ -48,4 +48,5 @@ func (ctrl *DashboardController) GetDashboardData(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Dashboard data retrieved successfully", resp))
+
 }
