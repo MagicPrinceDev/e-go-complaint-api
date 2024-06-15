@@ -33,11 +33,11 @@ func (r *UserRepo) Login(user *entities.User) error {
 	var userDB entities.User
 
 	if err := r.DB.Where("email = ?", user.Email).First(&userDB).Error; err != nil {
-		return errors.New("username or password is incorrect")
+		return constants.ErrInvalidUsernameOrPassword
 	}
 
 	if !utils.CheckPasswordHash(user.Password, userDB.Password) {
-		return errors.New("username or password is incorrect")
+		return constants.ErrInvalidUsernameOrPassword
 	}
 
 	if !userDB.EmailVerified {
