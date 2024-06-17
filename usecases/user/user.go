@@ -76,7 +76,7 @@ func (u *UserUseCase) GetUserByID(id int) (*entities.User, error) {
 	user, err := u.repository.GetUserByID(id)
 
 	if err != nil {
-		return nil, constants.ErrInternalServerError
+		return nil, err
 	}
 
 	return user, nil

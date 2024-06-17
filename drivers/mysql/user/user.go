@@ -66,7 +66,7 @@ func (r *UserRepo) GetUserByID(id int) (*entities.User, error) {
 
 	if err := r.DB.First(&user, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, constants.ErrNotFound
+			return nil, constants.ErrUserNotFound
 		}
 		return nil, err
 	}
