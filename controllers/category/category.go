@@ -1,11 +1,13 @@
 package category
 
 import (
+	"e-complaint-api/constants"
 	"e-complaint-api/controllers/base"
 	"e-complaint-api/controllers/category/request"
 	"e-complaint-api/controllers/category/response"
 	"e-complaint-api/entities"
 	"e-complaint-api/utils"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -32,6 +34,13 @@ func (cc *CategoryController) GetAll(c echo.Context) error {
 func (cc *CategoryController) GetByID(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		var numError *strconv.NumError
+		if errors.As(err, &numError) {
+			return c.JSON(http.StatusBadRequest, base.NewErrorResponse("ID must be an integer"))
+		}
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
@@ -39,6 +48,9 @@ func (cc *CategoryController) GetByID(c echo.Context) error {
 
 	category, err := cc.useCase.GetByID(id)
 	if err != nil {
+		if errors.Is(err, constants.ErrCategoryNotFound) {
+			return c.JSON(http.StatusNotFound, base.NewErrorResponse(constants.ErrCategoryNotFound.Error()))
+		}
 		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
 
@@ -64,9 +76,28 @@ func (cc *CategoryController) CreateCategory(c echo.Context) error {
 func (cc *CategoryController) UpdateCategory(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		var numError *strconv.NumError
+		if errors.As(err, &numError) {
+			return c.JSON(http.StatusBadRequest, base.NewErrorResponse("ID must be an integer"))
+		}
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+	}
+
+	if idStr == "" {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse("ID must be filled"))
+	}
+
+	_, err = cc.useCase.GetByID(id)
+	if err != nil {
+		if errors.Is(err, constants.ErrCategoryNotFound) {
+			return c.JSON(http.StatusNotFound, base.NewErrorResponse(constants.ErrCategoryNotFound.Error()))
+		}
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
 
 	var category request.CreateCategories
@@ -89,9 +120,19 @@ func (cc *CategoryController) UpdateCategory(c echo.Context) error {
 func (cc *CategoryController) DeleteCategory(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
-
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+		var numError *strconv.NumError
+		if errors.As(err, &numError) {
+			return c.JSON(http.StatusBadRequest, base.NewErrorResponse("ID must be an integer"))
+		}
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+	_, err = cc.useCase.GetByID(id)
+	if err != nil {
+		if errors.Is(err, constants.ErrCategoryNotFound) {
+			return c.JSON(http.StatusNotFound, base.NewErrorResponse(constants.ErrCategoryNotFound.Error()))
+		}
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
 
 	err = cc.useCase.DeleteCategory(id)

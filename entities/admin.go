@@ -9,16 +9,17 @@ import (
 type Admin struct {
 	ID              int    `gorm:"primaryKey"`
 	Name            string `gorm:"not null"`
-	Username        string `gorm:"unique;not null"`
-	Password        string `gorm:"not null"`
 	Email           string `gorm:"unique"`
+	Password        string `gorm:"not null"`
 	TelephoneNumber string
 	IsSuperAdmin    bool           `gorm:"default:false"`
-	ProfilePhoto    string         `gorm:"default:profile_photos/default.jpg"`
+	ProfilePhoto    string         `gorm:"default:profile-photos/admin-default.jpg"`
 	CreatedAt       time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt       time.Time      `gorm:"autoUpdateTime"`
 	DeletedAt       gorm.DeletedAt `gorm:"index"`
 	Token           string         `gorm:"-"`
+	Discussion      []Discussion   `gorm:"foreignKey:AdminID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	NewsComment     []NewsComment  `gorm:"foreignKey:AdminID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type AdminRepositoryInterface interface {
@@ -28,9 +29,7 @@ type AdminRepositoryInterface interface {
 	GetAdminByID(id int) (*Admin, error)
 	DeleteAdmin(id int) error
 	UpdateAdmin(id int, user *Admin) error
-	UpdatePassword(id int, newPassword string) error
 	GetAdminByEmail(email string) (*Admin, error)
-	GetAdminByUsername(username string) (*Admin, error)
 }
 
 type AdminUseCaseInterface interface {
@@ -40,5 +39,4 @@ type AdminUseCaseInterface interface {
 	GetAdminByID(id int) (*Admin, error)
 	DeleteAdmin(id int) error
 	UpdateAdmin(id int, user *Admin) (Admin, error)
-	UpdatePassword(id int, oldPassword, newPassword string) error
 }

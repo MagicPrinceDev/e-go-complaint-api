@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #333;
+        }
+        p {
+            color: #555;
+            line-height: 1.6;
+        }
+        .otp {
+            display: block;
+            padding: 15px 30px;
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+            background-color: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            letter-spacing: 8px;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Halo,</h2>
+        <p>Terimakasih telah melakukan registrasi di aplikasi KeluhProv. Berikut adalah kode OTP anda.</p>
+        <div class="otp">{{.OTP}}</div>
+        <p class="footer">Jika anda tidak melakukan registrasi, tolong abaikan email ini.</p>
+        <p class="footer">Terimakasih,<br>Salam Admin KeluhProv</p>
+    </div>
+</body>
+</html>

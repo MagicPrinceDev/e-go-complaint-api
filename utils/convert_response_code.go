@@ -14,9 +14,6 @@ func ConvertResponseCode(err error) int {
 		constants.ErrInvalidJWT,
 		constants.ErrOldPasswordDoesntMatch,
 		constants.ErrLimitAndPageMustBeFilled,
-		constants.ErrComplaintNotFound,
-		constants.ErrRegencyNotFound,
-		constants.ErrCategoryNotFound,
 		constants.ErrMaxFileSizeExceeded,
 		constants.ErrMaxFileCountExceeded,
 		constants.ErrInvalidIDFormat,
@@ -28,16 +25,34 @@ func ConvertResponseCode(err error) int {
 		constants.ErrComplaintNotOnProgress,
 		constants.ErrInvalidStatus,
 		constants.ErrIDMustBeFilled,
-		constants.ErrComplaintProcessNotFound,
 		constants.ErrComplaintProcessCannotBeDeleted,
 		constants.ErrEmailOrUsernameAlreadyExists,
 		constants.ErrNoChangesDetected,
-		constants.ErrNotFound,
+		constants.ErrCommentCannotBeEmpty,
+		constants.ErrInvalidOTP,
+		constants.ErrExpiredOTP,
+		constants.ErrEmailNotVerified,
+		constants.ErrPageMustBeFilled,
+		constants.ErrLimitMustBeFilled,
+		constants.ErrInvalidFileFormat,
+		constants.ErrForgotPasswordOTPNotVerified,
+	}
+
+	var notFoundErrors = []error{
+		constants.ErrComplaintNotFound,
+		constants.ErrRegencyNotFound,
+		constants.ErrCategoryNotFound,
+		constants.ErrComplaintProcessNotFound,
 		constants.ErrAdminNotFound,
+		constants.ErrNewsNotFound,
+		constants.ErrUserNotFound,
+		constants.ErrNotFound,
 	}
 
 	if contains(badRequestErrors, err) {
 		return http.StatusBadRequest
+	} else if contains(notFoundErrors, err) {
+		return http.StatusNotFound
 	} else if err == constants.ErrUnauthorized {
 		return http.StatusUnauthorized
 	} else {

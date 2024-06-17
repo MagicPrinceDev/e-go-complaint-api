@@ -3,6 +3,7 @@ package complaint_process
 import (
 	"e-complaint-api/constants"
 	"e-complaint-api/entities"
+	"strings"
 )
 
 type ComplaintProcessUseCase struct {
@@ -22,7 +23,7 @@ func (u *ComplaintProcessUseCase) Create(complaintProcess *entities.ComplaintPro
 		return entities.ComplaintProcess{}, constants.ErrAllFieldsMustBeFilled
 	}
 
-	if complaintProcess.Status != "verifikasi" && complaintProcess.Status != "on progress" && complaintProcess.Status != "selesai" && complaintProcess.Status != "ditolak" {
+	if complaintProcess.Status != "Pending" && complaintProcess.Status != "Verifikasi" && complaintProcess.Status != "On Progress" && complaintProcess.Status != "Selesai" && complaintProcess.Status != "Ditolak" {
 		return entities.ComplaintProcess{}, constants.ErrInvalidStatus
 	}
 
@@ -31,57 +32,61 @@ func (u *ComplaintProcessUseCase) Create(complaintProcess *entities.ComplaintPro
 		return entities.ComplaintProcess{}, err
 	}
 
-	if complaintProcess.Status == "pending" {
-		if status == "on progress" {
+	if complaintProcess.Status == "Pending" {
+		if status == "On Progress" {
 			return entities.ComplaintProcess{}, constants.ErrComplaintNotVerified
-		} else if complaintProcess.Status == "selesai" {
+		} else if complaintProcess.Status == "Selesai" {
 			return entities.ComplaintProcess{}, constants.ErrComplaintNotVerified
 		}
-	} else if complaintProcess.Status == "verifikasi" {
-		if status == "verifikasi" {
+	} else if complaintProcess.Status == "Verifikasi" {
+		if status == "Verifikasi" {
 			return entities.ComplaintProcess{}, constants.ErrComplaintAlreadyVerified
-		} else if status == "ditolak" {
+		} else if status == "Ditolak" {
 			return entities.ComplaintProcess{}, constants.ErrComplaintAlreadyRejected
-		} else if status == "selesai" {
+		} else if status == "Selesai" {
 			return entities.ComplaintProcess{}, constants.ErrComplaintAlreadyFinished
-		} else if status == "on progress" {
+		} else if status == "On Progress" {
 			return entities.ComplaintProcess{}, constants.ErrComplaintAlreadyOnProgress
 		}
-	} else if complaintProcess.Status == "on progress" {
-		if status == "on progress" {
+	} else if complaintProcess.Status == "On Progress" {
+		if status == "On Progress" {
 			return entities.ComplaintProcess{}, constants.ErrComplaintAlreadyOnProgress
-		} else if status == "ditolak" {
+		} else if status == "Ditolak" {
 			return entities.ComplaintProcess{}, constants.ErrComplaintAlreadyRejected
-		} else if status == "selesai" {
+		} else if status == "Selesai" {
 			return entities.ComplaintProcess{}, constants.ErrComplaintAlreadyFinished
-		} else if status == "pending" {
+		} else if status == "Pending" {
 			return entities.ComplaintProcess{}, constants.ErrComplaintNotVerified
 		}
-	} else if complaintProcess.Status == "selesai" {
-		if status == "selesai" {
+	} else if complaintProcess.Status == "Selesai" {
+		if status == "Selesai" {
 			return entities.ComplaintProcess{}, constants.ErrComplaintAlreadyFinished
-		} else if status == "ditolak" {
+		} else if status == "Ditolak" {
 			return entities.ComplaintProcess{}, constants.ErrComplaintAlreadyRejected
-		} else if status == "pending" {
+		} else if status == "Pending" {
 			return entities.ComplaintProcess{}, constants.ErrComplaintNotVerified
-		} else if status == "verifikasi" {
+		} else if status == "Verifikasi" {
 			return entities.ComplaintProcess{}, constants.ErrComplaintNotOnProgress
 		}
-	} else if complaintProcess.Status == "ditolak" {
-		if status == "ditolak" {
+	} else if complaintProcess.Status == "Ditolak" {
+		if status == "Ditolak" {
 			return entities.ComplaintProcess{}, constants.ErrComplaintAlreadyRejected
-		} else if status == "selesai" {
+		} else if status == "Selesai" {
 			return entities.ComplaintProcess{}, constants.ErrComplaintAlreadyFinished
-		} else if status == "verifikasi" {
+		} else if status == "Verifikasi" {
 			return entities.ComplaintProcess{}, constants.ErrComplaintAlreadyVerified
-		} else if status == "on progress" {
+		} else if status == "On Progress" {
 			return entities.ComplaintProcess{}, constants.ErrComplaintAlreadyOnProgress
 		}
 	}
 
 	err = u.repository.Create(complaintProcess)
 	if err != nil {
-		return entities.ComplaintProcess{}, err
+		if strings.Contains(err.Error(), "REFERENCES `complaints` (`id`)") {
+			return entities.ComplaintProcess{}, constants.ErrComplaintNotFound
+		} else {
+			return entities.ComplaintProcess{}, constants.ErrInternalServerError
+		}
 	}
 
 	return *complaintProcess, nil
@@ -119,14 +124,14 @@ func (u *ComplaintProcessUseCase) Delete(complaintID string, complaintProcessID 
 		return "", err
 	}
 
-	if status == "verifikasi" {
-		status = "pending"
-	} else if status == "on progress" {
-		status = "verifikasi"
-	} else if status == "selesai" {
-		status = "on progress"
-	} else if status == "ditolak" {
-		status = "pending"
+	if status == "Verifikasi" {
+		status = "Pending"
+	} else if status == "On Progress" {
+		status = "Verifikasi"
+	} else if status == "Selesai" {
+		status = "On Progress"
+	} else if status == "Ditolak" {
+		status = "Pending"
 	}
 
 	return status, nil

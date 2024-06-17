@@ -15,14 +15,16 @@ import (
 )
 
 type ComplaintController struct {
-	complaintUseCase     entities.ComplaintUseCaseInterface
-	complaintFileUseCase entities.ComplaintFileUseCaseInterface
+	complaintUseCase        entities.ComplaintUseCaseInterface
+	complaintFileUseCase    entities.ComplaintFileUseCaseInterface
+	complaintProcessUseCase entities.ComplaintProcessUseCaseInterface
 }
 
-func NewComplaintController(complaintUseCase entities.ComplaintUseCaseInterface, complaintFileUseCase entities.ComplaintFileUseCaseInterface) *ComplaintController {
+func NewComplaintController(complaintUseCase entities.ComplaintUseCaseInterface, complaintFileUseCase entities.ComplaintFileUseCaseInterface, complaintProcessUseCase entities.ComplaintProcessUseCaseInterface) *ComplaintController {
 	return &ComplaintController{
-		complaintUseCase:     complaintUseCase,
-		complaintFileUseCase: complaintFileUseCase,
+		complaintUseCase:        complaintUseCase,
+		complaintFileUseCase:    complaintFileUseCase,
+		complaintProcessUseCase: complaintProcessUseCase,
 	}
 }
 
@@ -56,9 +58,20 @@ func (cc *ComplaintController) GetPaginated(c echo.Context) error {
 		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
 
-	complaintResponses := []*complaint_response.Get{}
-	for _, complaint := range complaints {
-		complaintResponses = append(complaintResponses, complaint_response.GetFromEntitiesToResponse(&complaint))
+	var complaintResponses interface{}
+	role, _ := utils.GetRoleFromJWT(c)
+	if role == "user" {
+		userResponses := []*complaint_response.Get{}
+		for _, complaint := range complaints {
+			userResponses = append(userResponses, complaint_response.GetFromEntitiesToResponse(&complaint))
+		}
+		complaintResponses = userResponses
+	} else {
+		adminResponses := []*complaint_response.AdminGet{}
+		for _, complaint := range complaints {
+			adminResponses = append(adminResponses, complaint_response.AdminGetFromEntitiesToResponse(&complaint))
+		}
+		complaintResponses = adminResponses
 	}
 
 	metaData, err := cc.complaintUseCase.GetMetaData(limit, page, search, filter)
@@ -79,9 +92,34 @@ func (cc *ComplaintController) GetByID(c echo.Context) error {
 		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
 
-	complaintResponse := complaint_response.GetFromEntitiesToResponse(&complaint)
+	var complaintResponse interface{}
+	role, _ := utils.GetRoleFromJWT(c)
+	if role == "user" {
+		complaintResponse = complaint_response.GetFromEntitiesToResponse(&complaint)
+	} else {
+		complaintResponse = complaint_response.AdminGetFromEntitiesToResponse(&complaint)
+	}
 
 	return c.JSON(200, base.NewSuccessResponse("Success Get Report", complaintResponse))
+}
+
+func (cc *ComplaintController) GetByUserID(c echo.Context) error {
+	user_id, err := utils.GetIDFromJWT(c)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	complaints, err := cc.complaintUseCase.GetByUserID(user_id)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	complaintResponses := []*complaint_response.AdminGet{}
+	for _, complaint := range complaints {
+		complaintResponses = append(complaintResponses, complaint_response.AdminGetFromEntitiesToResponse(&complaint))
+	}
+
+	return c.JSON(200, base.NewSuccessResponse("Success Get Reports", complaintResponses))
 }
 
 func (cc *ComplaintController) Create(c echo.Context) error {
@@ -100,7 +138,7 @@ func (cc *ComplaintController) Create(c echo.Context) error {
 	}
 	files := form.File["files"]
 
-	if len(files) > 3 {
+	if len(files) > 5 {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrMaxFileCountExceeded.Error()))
 	}
 
@@ -132,6 +170,18 @@ func (cc *ComplaintController) Create(c echo.Context) error {
 	}
 
 	complaintResponse.Files = complaintFileResponse
+
+	complaintProcess := entities.ComplaintProcess{
+		ComplaintID: complaint.ID,
+		AdminID:     1,
+		Status:      "Pending",
+		Message:     "Aduan anda akan segera kami periksa",
+	}
+
+	_, err3 := cc.complaintProcessUseCase.Create(&complaintProcess)
+	if err3 != nil {
+		return c.JSON(utils.ConvertResponseCode(err3), base.NewErrorResponse(err3.Error()))
+	}
 
 	return c.JSON(http.StatusCreated, base.NewSuccessResponse("Success Create Report", complaintResponse))
 }
@@ -182,7 +232,7 @@ func (cc *ComplaintController) Update(c echo.Context) error {
 
 	files := form.File["files"]
 	if len(files) != 0 {
-		if len(files) > 3 {
+		if len(files) > 5 {
 			return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrMaxFileCountExceeded.Error()))
 		}
 
@@ -225,4 +275,19 @@ func (cc *ComplaintController) Update(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update Report", complaintResponse))
 
+}
+
+func (cc *ComplaintController) Import(c echo.Context) error {
+	form, err := c.MultipartForm()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+	file := form.File["file"][0]
+
+	err = cc.complaintUseCase.Import(file)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Import Report", nil))
 }

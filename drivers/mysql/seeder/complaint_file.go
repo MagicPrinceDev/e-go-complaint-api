@@ -12,39 +12,39 @@ func SeedComplaintFile(db *gorm.DB) {
 		complaintFiles := []entities.ComplaintFile{
 			{
 				ComplaintID: "C-81j9aK9280",
-				Path:        "complaint_files/example1.jpg",
+				Path:        "complaint-files/example1.jpg",
 			},
 			{
 				ComplaintID: "C-81j9aK9280",
-				Path:        "complaint_files/example2.jpg",
+				Path:        "complaint-files/example2.jpg",
 			},
 			{
 				ComplaintID: "C-8ksh&s9280",
-				Path:        "complaint_files/example3.jpg",
+				Path:        "complaint-files/example3.jpg",
 			},
 			{
 				ComplaintID: "C-8ksh&s9280",
-				Path:        "complaint_files/example3.jpg",
+				Path:        "complaint-files/example3.jpg",
 			},
 			{
 				ComplaintID: "C-81jas92581",
-				Path:        "complaint_files/example3.jpg",
+				Path:        "complaint-files/example3.jpg",
 			},
 			{
 				ComplaintID: "C-81jas92581",
-				Path:        "complaint_files/example1.jpg",
+				Path:        "complaint-files/example1.jpg",
 			},
 			{
 				ComplaintID: "C-271j9ak280",
-				Path:        "complaint_files/example2.jpg",
+				Path:        "complaint-files/example2.jpg",
 			},
 			{
 				ComplaintID: "C-123j9ak280",
-				Path:        "complaint_files/example2.jpg",
+				Path:        "complaint-files/example2.jpg",
 			},
 			{
 				ComplaintID: "C-123j9ak280",
-				Path:        "complaint_files/example1.jpg",
+				Path:        "complaint-files/example1.jpg",
 			},
 		}
 

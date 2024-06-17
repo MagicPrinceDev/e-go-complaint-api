@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"mime/multipart"
 	"time"
 
 	"gorm.io/gorm"
@@ -9,15 +10,20 @@ import (
 type User struct {
 	ID              int    `gorm:"primaryKey"`
 	Name            string `gorm:"not null"`
-	Username        string `gorm:"unique;not null"`
-	Password        string `gorm:"not null"`
 	Email           string `gorm:"unique"`
+	Password        string `gorm:"not null"`
 	TelephoneNumber string
-	ProfilePhoto    string         `gorm:"default:profile_photos/default.jpg"`
+	ProfilePhoto    string         `gorm:"default:profile-photos/default.jpg"`
 	Token           string         `gorm:"-"`
+	Discussion      []Discussion   `gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	NewsComment     []NewsComment  `gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	CreatedAt       time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt       time.Time      `gorm:"autoUpdateTime"`
 	DeletedAt       gorm.DeletedAt `gorm:"index"`
+	Otp             string         `gorm:"default:null"`
+	OtpExpiredAt    time.Time      `gorm:"default:null"`
+	EmailVerified   bool           `gorm:"default:false"`
+	ForgotVerified  bool           `gorm:"default:false"`
 }
 
 type UserRepositoryInterface interface {
@@ -26,12 +32,21 @@ type UserRepositoryInterface interface {
 	GetAllUsers() ([]*User, error)
 	GetUserByID(id int) (*User, error)
 	UpdateUser(id int, user *User) error
+	UpdateProfilePhoto(id int, profilePhoto string) error
 	Delete(id int) error
 	UpdatePassword(id int, newPassword string) error
+	SendOTP(email, otp string) error
+	VerifyOTPRegister(email, otp string) error
+	VerifyOTPForgotPassword(email, otp string) error
+	UpdatePasswordForgot(email, newPassword string) error
 }
 
 type MailTrapAPIInterface interface {
-	SendEmail(emailReceiver string) error
+	SendOTP(email, otp, otp_type string) error
+}
+
+type UserGCSAPIInterface interface {
+	Upload(files []*multipart.FileHeader) ([]string, error)
 }
 
 type UserUseCaseInterface interface {
@@ -40,6 +55,10 @@ type UserUseCaseInterface interface {
 	GetAllUsers() ([]*User, error)
 	GetUserByID(id int) (*User, error)
 	UpdateUser(id int, user *User) (User, error)
+	UpdateProfilePhoto(id int, profilePhoto *multipart.FileHeader) error
 	Delete(id int) error
-	UpdatePassword(id int, oldPassword, newPassword string) error
+	UpdatePassword(id int, newPassword, confirmNewPassword string) error
+	SendOTP(email, otp_type string) error
+	VerifyOTP(email, otp, otp_type string) error
+	UpdatePasswordForgot(email, newPassword string) error
 }

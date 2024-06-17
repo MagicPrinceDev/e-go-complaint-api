@@ -30,6 +30,10 @@ func (repo *ComplaintProcessRepo) Create(complaintProcesses *entities.ComplaintP
 func (repo *ComplaintProcessRepo) GetByComplaintID(complaintID string) ([]entities.ComplaintProcess, error) {
 	var complaintProcesses []entities.ComplaintProcess
 	if err := repo.DB.Where("complaint_id = ?", complaintID).Preload("Admin").Find(&complaintProcesses).Error; err != nil {
+		return nil, constants.ErrInternalServerError
+	}
+
+	if len(complaintProcesses) == 0 {
 		return nil, constants.ErrComplaintProcessNotFound
 	}
 
@@ -38,7 +42,7 @@ func (repo *ComplaintProcessRepo) GetByComplaintID(complaintID string) ([]entiti
 
 func (repo *ComplaintProcessRepo) Update(complaintProcesses *entities.ComplaintProcess) error {
 	var oldComplaintProcess entities.ComplaintProcess
-	if err := repo.DB.First(&oldComplaintProcess, complaintProcesses.ID).Error; err != nil {
+	if err := repo.DB.Where("complaint_id = ? AND id = ?", complaintProcesses.ComplaintID, complaintProcesses.ID).First(&oldComplaintProcess).Error; err != nil {
 		return constants.ErrComplaintProcessNotFound
 	}
 

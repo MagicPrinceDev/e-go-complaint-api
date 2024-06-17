@@ -55,12 +55,6 @@ func (uc *UserController) GetAllUsers(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
-	userRole, err := utils.GetRoleFromJWT(c)
-	if userRole != "admin" {
-		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
-
-	}
-
 	usersResponse := response.GetAllUsersFromEntitiesToResponse(users)
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Get All Users", usersResponse))
 }
@@ -108,6 +102,34 @@ func (uc *UserController) UpdateUser(c echo.Context) error {
 
 	userResponse := response.UpdateUserFromEntitiesToResponse(&user)
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update User", userResponse))
+}
+
+func (uc *UserController) UpdateProfilePhoto(c echo.Context) error {
+	userID, err := utils.GetIDFromJWT(c)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+	}
+
+	profilePhoto, err := c.FormFile("profile_photo")
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrAllFieldsMustBeFilled.Error()))
+	}
+
+	// Check file format
+	if profilePhoto.Header.Get("Content-Type") != "image/jpeg" && profilePhoto.Header.Get("Content-Type") != "image/png" && profilePhoto.Header.Get("Content-Type") != "image/jpg" {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrInvalidFileFormat.Error()))
+	}
+
+	if profilePhoto.Size > 5*1024*1024 {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrMaxFileSizeExceeded.Error()))
+	}
+
+	err = uc.userUseCase.UpdateProfilePhoto(userID, profilePhoto)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update Profile Photo", nil))
 }
 
 func (uc *UserController) DeleteUser(c echo.Context) error {
@@ -163,10 +185,80 @@ func (uc *UserController) UpdatePassword(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
 	}
 
-	oldPassword, newPassword := passwordRequest.ToEntities()
-	err = uc.userUseCase.UpdatePassword(jwtID, oldPassword, newPassword)
+	newPassword, confirmPassword := passwordRequest.ToEntities()
+	err = uc.userUseCase.UpdatePassword(jwtID, newPassword, confirmPassword)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+	}
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update Password", nil))
+}
+
+func (uc *UserController) SendOTPRegister(c echo.Context) error {
+	var emailRequest request.SendOTP
+	if err := c.Bind(&emailRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+	}
+
+	err := uc.userUseCase.SendOTP(emailRequest.Email, "register")
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Send OTP", nil))
+}
+
+func (uc *UserController) VerifyOTPRegister(c echo.Context) error {
+	var otpRequest request.VerifyOTP
+	if err := c.Bind(&otpRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+	}
+
+	err := uc.userUseCase.VerifyOTP(otpRequest.Email, otpRequest.OTP, "register")
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Verify OTP", nil))
+}
+
+func (uc *UserController) SendOTPForgotPassword(c echo.Context) error {
+	var emailRequest request.SendOTP
+	if err := c.Bind(&emailRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+	}
+
+	err := uc.userUseCase.SendOTP(emailRequest.Email, "forgot_password")
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Send OTP", nil))
+}
+
+func (uc *UserController) VerifyOTPForgotPassword(c echo.Context) error {
+	var otpRequest request.VerifyOTP
+	if err := c.Bind(&otpRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+	}
+
+	err := uc.userUseCase.VerifyOTP(otpRequest.Email, otpRequest.OTP, "forgot_password")
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
+	}
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Verify OTP", nil))
+}
+
+func (uc *UserController) UpdatePasswordForgot(c echo.Context) error {
+	var passwordRequest request.UpdatePasswordForgot
+	if err := c.Bind(&passwordRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+	}
+
+	err := uc.userUseCase.UpdatePasswordForgot(passwordRequest.Email, passwordRequest.NewPassword)
+	if err != nil {
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
 
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Update Password", nil))
