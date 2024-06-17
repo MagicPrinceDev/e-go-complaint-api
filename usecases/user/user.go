@@ -83,22 +83,18 @@ func (u *UserUseCase) GetUserByID(id int) (*entities.User, error) {
 }
 
 func (u *UserUseCase) UpdateUser(id int, user *entities.User) (entities.User, error) {
+	if user.Email == "" || user.Name == "" || user.TelephoneNumber == "" {
+		return entities.User{}, constants.ErrAllFieldsMustBeFilled
+	}
+
 	existingUser, err := u.repository.GetUserByID(id)
 	if err != nil {
-		return entities.User{}, constants.ErrInternalServerError
+		return entities.User{}, err
 	}
 
-	// Ensure existing data remains if no new data is provided
-	if user.Name != "" {
-		existingUser.Name = user.Name
-	}
-	if user.Email != "" {
-		existingUser.Email = user.Email
-	}
-
-	if user.TelephoneNumber != "" {
-		existingUser.TelephoneNumber = user.TelephoneNumber
-	}
+	existingUser.Name = user.Name
+	existingUser.Email = user.Email
+	existingUser.TelephoneNumber = user.TelephoneNumber
 
 	err = u.repository.UpdateUser(id, existingUser)
 	if err != nil {
