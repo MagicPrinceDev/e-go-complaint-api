@@ -147,13 +147,9 @@ func (u *UserUseCase) Delete(id int) error {
 	return nil
 }
 
-func (u *UserUseCase) UpdatePassword(id int, newPassword, confirmNewPassword string) error {
-	if newPassword == "" || confirmNewPassword == "" {
+func (u *UserUseCase) UpdatePassword(id int, newPassword string) error {
+	if newPassword == "" {
 		return constants.ErrAllFieldsMustBeFilled
-	}
-
-	if newPassword != confirmNewPassword {
-		return constants.ErrConfirmPasswordDoesntMatch
 	}
 
 	hash, _ := utils.HashPassword(newPassword)
