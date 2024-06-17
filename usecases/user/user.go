@@ -127,16 +127,12 @@ func (u *UserUseCase) UpdateProfilePhoto(id int, profilePhoto *multipart.FileHea
 }
 
 func (u *UserUseCase) Delete(id int) error {
-	existingUser, err := u.repository.GetUserByID(id)
+	_, err := u.repository.GetUserByID(id)
 	if err != nil {
-		if errors.Is(err, constants.ErrNotFound) {
-			return constants.ErrNotFound
+		if errors.Is(err, constants.ErrUserNotFound) {
+			return constants.ErrUserNotFound
 		}
 		return constants.ErrInternalServerError
-	}
-
-	if existingUser == nil {
-		return constants.ErrNotFound
 	}
 
 	err = u.repository.Delete(id)
