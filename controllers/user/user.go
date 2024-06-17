@@ -66,18 +66,9 @@ func (uc *UserController) GetUserByID(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(constants.ErrInvalidIDFormat.Error()))
 	}
 
-	jwtID, err := utils.GetIDFromJWT(c)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
-	}
-
-	if id != jwtID {
-		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
-	}
-
 	user, err := uc.userUseCase.GetUserByID(id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
 
 	userResponse := response.GetUsersFromEntitiesToResponse(user)
