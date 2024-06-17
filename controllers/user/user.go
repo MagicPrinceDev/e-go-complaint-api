@@ -162,22 +162,12 @@ func (uc *UserController) UpdatePassword(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
-	userRole, err := utils.GetRoleFromJWT(c)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
-	}
-
-	if userRole != "user" {
-		return c.JSON(http.StatusUnauthorized, base.NewErrorResponse(constants.ErrUnauthorized.Error()))
-	}
-
 	var passwordRequest request.UpdatePassword
 	if err := c.Bind(&passwordRequest); err != nil {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
 	}
 
-	newPassword, confirmPassword := passwordRequest.ToEntities()
-	err = uc.userUseCase.UpdatePassword(jwtID, newPassword, confirmPassword)
+	err = uc.userUseCase.UpdatePassword(jwtID, passwordRequest.NewPassword)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
 	}
