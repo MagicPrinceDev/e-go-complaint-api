@@ -36,6 +36,7 @@ func ConvertResponseCode(err error) int {
 		constants.ErrLimitMustBeFilled,
 		constants.ErrInvalidFileFormat,
 		constants.ErrForgotPasswordOTPNotVerified,
+		constants.ErrEmailNotRegistered,
 	}
 
 	var notFoundErrors = []error{

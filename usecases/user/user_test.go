@@ -702,16 +702,16 @@ func TestSendOTP(t *testing.T) {
 		mockUserRepository.AssertExpectations(t)
 	})
 
-	t.Run("failed user not found", func(t *testing.T) {
+	t.Run("failed email not registered", func(t *testing.T) {
 		mockUserRepository := new(MockUserRepository)
 		mockMailTrapAPI := new(MockMailTrapAPI)
 		mockUserGCSAPI := new(MockUserGCSAPI)
 		userUseCase := NewUserUseCase(mockUserRepository, mockMailTrapAPI, mockUserGCSAPI)
 
-		mockUserRepository.On("SendOTP", "user@gmail.com", mock.Anything).Return(constants.ErrUserNotFound)
+		mockUserRepository.On("SendOTP", "user@gmail.com", mock.Anything).Return(constants.ErrEmailNotRegistered)
 
 		err := userUseCase.SendOTP("user@gmail.com", "register")
-		assert.Error(t, constants.ErrUserNotFound, err)
+		assert.Error(t, constants.ErrEmailNotRegistered, err)
 
 		mockUserRepository.AssertExpectations(t)
 	})
@@ -772,30 +772,30 @@ func TestVerifyOTP(t *testing.T) {
 		mockUserRepository.AssertExpectations(t)
 	})
 
-	t.Run("failed register user not found", func(t *testing.T) {
+	t.Run("failed register email not registered", func(t *testing.T) {
 		mockUserRepository := new(MockUserRepository)
 		mockMailTrapAPI := new(MockMailTrapAPI)
 		mockUserGCSAPI := new(MockUserGCSAPI)
 		userUseCase := NewUserUseCase(mockUserRepository, mockMailTrapAPI, mockUserGCSAPI)
 
-		mockUserRepository.On("VerifyOTPRegister", "user@gmail.com", "12345").Return(constants.ErrUserNotFound)
+		mockUserRepository.On("VerifyOTPRegister", "user@gmail.com", "12345").Return(constants.ErrEmailNotRegistered)
 
 		err := userUseCase.VerifyOTP("user@gmail.com", "12345", "register")
-		assert.Error(t, constants.ErrUserNotFound, err)
+		assert.Error(t, constants.ErrEmailNotRegistered, err)
 
 		mockUserRepository.AssertExpectations(t)
 	})
 
-	t.Run("failed forgot password user not found", func(t *testing.T) {
+	t.Run("failed forgot password email not registered", func(t *testing.T) {
 		mockUserRepository := new(MockUserRepository)
 		mockMailTrapAPI := new(MockMailTrapAPI)
 		mockUserGCSAPI := new(MockUserGCSAPI)
 		userUseCase := NewUserUseCase(mockUserRepository, mockMailTrapAPI, mockUserGCSAPI)
 
-		mockUserRepository.On("VerifyOTPForgotPassword", "user@gmail.com", "12345").Return(constants.ErrUserNotFound)
+		mockUserRepository.On("VerifyOTPForgotPassword", "user@gmail.com", "12345").Return(constants.ErrEmailNotRegistered)
 
 		err := userUseCase.VerifyOTP("user@gmail.com", "12345", "forgot_password")
-		assert.Error(t, constants.ErrUserNotFound, err)
+		assert.Error(t, constants.ErrEmailNotRegistered, err)
 
 		mockUserRepository.AssertExpectations(t)
 	})
