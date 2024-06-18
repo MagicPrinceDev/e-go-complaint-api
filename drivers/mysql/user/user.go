@@ -107,7 +107,7 @@ func (r *UserRepo) SendOTP(email, otp string) error {
 
 	var user entities.User
 	if err := r.DB.Model(&entities.User{}).Where("email = ?", email).First(&user).Error; err != nil {
-		return constants.ErrUserNotFound
+		return constants.ErrEmailNotRegistered
 	}
 
 	user.Otp = otp
@@ -123,7 +123,7 @@ func (r *UserRepo) SendOTP(email, otp string) error {
 func (r *UserRepo) VerifyOTPRegister(email, otp string) error {
 	var user entities.User
 	if err := r.DB.Model(&entities.User{}).Where("email = ?", email).First(&user).Error; err != nil {
-		return constants.ErrUserNotFound
+		return constants.ErrEmailNotRegistered
 	}
 
 	if user.Otp != otp {
