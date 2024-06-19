@@ -86,7 +86,7 @@ The E-Complaint API project is designed to streamline the complaint submission a
 
 - **Authentication:** JWT
 
-- **External API:**
+- **External API:** Mailtrap, Openai, and Indonesia Area API
 
 ## API Documentation
 https://documenter.getpostman.com/view/31634961/2sA3QngtbA
