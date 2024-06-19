@@ -97,7 +97,8 @@ https://documenter.getpostman.com/view/31634961/2sA3QngtbA
 
 
 ## High Level Architecture (HLA)
-![WhatsApp Image 2024-06-15 at 12 11 09_74364bd4](https://github.com/Capstone-Project-Alterra-Kelompok-8/e-complaint-api/assets/142136573/b3090052-2cee-415a-97d4-1db4b8c2cbb4)
+![HLA drawio](https://github.com/Capstone-Project-Alterra-Kelompok-8/e-complaint-api/assets/142136573/5a38eaac-2cb0-4232-b109-978d54a87a3b)
+
 
 ## Setup
 How To Setup This Project:
