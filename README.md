@@ -12,8 +12,7 @@ At KeluhProv, we are dedicated to revolutionizing the way people handle and mana
 The E-Complaint API project is designed to streamline the complaint submission and resolution process through a robust and scalable backend system. Our API serves as the backbone of various e-complaint applications, providing a reliable and secure way to manage complaint data, track the status of issues, and ensure timely responses.
 
 ## Main Features
-
-### Admin && Super Admin
+### Admin & Super Admin
 - Manage Admin Account (Super Admin)
 - Register 
 - Login
