@@ -1,6 +1,9 @@
 package response
 
-import "e-complaint-api/entities"
+import (
+	"e-complaint-api/entities"
+	"time"
+)
 
 type UserGet struct {
 	ID              int    `json:"id"`
@@ -50,11 +53,13 @@ func FromEntitiesGetToResponse(data *entities.NewsComment) *NewsGet {
 		}
 	}
 
+	loc, _ := time.LoadLocation("GMT")
+
 	return &NewsGet{
 		ID:        data.ID,
 		User:      user,
 		Admin:     admin,
 		Comment:   data.Comment,
-		UpdatedAt: data.UpdatedAt.Format("2006-01-02 15:04:05"),
+		UpdatedAt: data.UpdatedAt.In(loc).Format("2006-01-02 15:04:05"),
 	}
 }
