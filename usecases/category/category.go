@@ -41,6 +41,10 @@ func (uc *CategoryUseCase) CreateCategory(category *entities.Category) (*entitie
 		return nil, constants.ErrInternalServerError
 	}
 
+	if category == nil {
+		return nil, nil
+	}
+
 	if category.Name == "" || category.Description == "" {
 		return nil, constants.ErrAllFieldsMustBeFilled
 	}
@@ -52,11 +56,7 @@ func (uc *CategoryUseCase) UpdateCategory(id int, newCategory *entities.Category
 	existingCategory, err := uc.repository.GetByID(id)
 
 	if err != nil {
-		if errors.Is(err, constants.ErrNotFound) {
-			return nil, constants.ErrCategoryNotFound
-		}
 		return nil, constants.ErrInternalServerError
-
 	}
 
 	if newCategory.Name == "" && newCategory.Description == "" {
@@ -86,16 +86,11 @@ func (uc *CategoryUseCase) UpdateCategory(id int, newCategory *entities.Category
 func (uc *CategoryUseCase) DeleteCategory(id int) error {
 	_, err := uc.repository.GetByID(id)
 	if err != nil {
-		if errors.Is(err, constants.ErrNotFound) {
-			return constants.ErrNotFound
-		}
-		return constants.ErrInternalServerError
+		return constants.ErrCategoryNotFound
 	}
-
 	err = uc.repository.DeleteCategory(id)
 	if err != nil {
 		return constants.ErrInternalServerError
 	}
-
 	return nil
 }
