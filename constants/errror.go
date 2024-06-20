@@ -47,5 +47,7 @@ var (
 	ErrInvalidFileFormat                = errors.New("invalid file format")
 	ErrForgotPasswordOTPNotVerified     = errors.New("forgot password otp not verified")
 	ErrConfirmPasswordDoesntMatch       = errors.New("confirm password doesn't match")
+	ErrColumnsDoesntMatch               = errors.New("columns doesn't match")
+	ErrInvalidCategoryIDFormat          = errors.New("invalid category id format")
 	ErrEmailNotRegistered               = errors.New("email not registered")
 )
