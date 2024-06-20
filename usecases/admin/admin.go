@@ -23,6 +23,10 @@ func (u *AdminUseCase) CreateAccount(admin *entities.Admin) (entities.Admin, err
 		return entities.Admin{}, constants.ErrAllFieldsMustBeFilled
 	}
 
+	if len(admin.Password) < 8 {
+		return entities.Admin{}, constants.ErrPasswordMustBeAtLeast8Characters
+	}
+
 	err := u.repository.CreateAccount(admin)
 
 	if err != nil {
@@ -134,6 +138,10 @@ func (u *AdminUseCase) UpdateAdmin(id int, admin *entities.Admin) (entities.Admi
 
 	if !isUpdated {
 		return *existingAdmin, constants.ErrNoChangesDetected
+	}
+
+	if len(admin.Password) < 8 {
+		return entities.Admin{}, constants.ErrPasswordMustBeAtLeast8Characters
 	}
 
 	err = u.repository.UpdateAdmin(id, existingAdmin)
