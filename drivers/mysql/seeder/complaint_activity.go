@@ -62,11 +62,11 @@ func SeedComplaintActivity(db *gorm.DB) {
 				LikeID:      &LikeID3,
 			},
 			{
-				ComplaintID: "C-8ksh&s9280",
+				ComplaintID: "C-8kshis9280",
 				LikeID:      &LikeID4,
 			},
 			{
-				ComplaintID: "C-8ksh&s9280",
+				ComplaintID: "C-8kshis9280",
 				LikeID:      &LikeID5,
 			},
 			{

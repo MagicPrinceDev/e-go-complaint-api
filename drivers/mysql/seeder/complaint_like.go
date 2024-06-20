@@ -24,11 +24,11 @@ func SeedComplaintLike(db *gorm.DB) {
 			},
 			{
 				UserID:      2,
-				ComplaintID: "C-8ksh&s9280",
+				ComplaintID: "C-8kshis9280",
 			},
 			{
 				UserID:      3,
-				ComplaintID: "C-8ksh&s9280",
+				ComplaintID: "C-8kshis9280",
 			},
 			{
 				UserID:      1,
