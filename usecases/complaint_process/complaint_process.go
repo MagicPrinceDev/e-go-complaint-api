@@ -29,7 +29,7 @@ func (u *ComplaintProcessUseCase) Create(complaintProcess *entities.ComplaintPro
 
 	status, err := u.complaintRepository.GetStatus(complaintProcess.ComplaintID)
 	if err != nil {
-		return entities.ComplaintProcess{}, err
+		return entities.ComplaintProcess{}, constants.ErrInternalServerError
 	}
 
 	if complaintProcess.Status == "Pending" {
