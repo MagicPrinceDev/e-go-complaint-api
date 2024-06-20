@@ -12,8 +12,7 @@ At KeluhProv, we are dedicated to revolutionizing the way people handle and mana
 The E-Complaint API project is designed to streamline the complaint submission and resolution process through a robust and scalable backend system. Our API serves as the backbone of various e-complaint applications, providing a reliable and secure way to manage complaint data, track the status of issues, and ensure timely responses.
 
 ## Main Features
-
-### Admin && Super Admin
+### Admin & Super Admin
 - Manage Admin Account (Super Admin)
 - Register 
 - Login
@@ -87,7 +86,7 @@ The E-Complaint API project is designed to streamline the complaint submission a
 
 - **Authentication:** JWT
 
-- **External API:**
+- **External API:** Mailtrap, Openai, and Indonesia Area API
 
 ## API Documentation
 https://documenter.getpostman.com/view/31634961/2sA3QngtbA
@@ -97,7 +96,8 @@ https://documenter.getpostman.com/view/31634961/2sA3QngtbA
 
 
 ## High Level Architecture (HLA)
-![WhatsApp Image 2024-06-15 at 12 11 09_74364bd4](https://github.com/Capstone-Project-Alterra-Kelompok-8/e-complaint-api/assets/142136573/b3090052-2cee-415a-97d4-1db4b8c2cbb4)
+![HLA drawio](https://github.com/Capstone-Project-Alterra-Kelompok-8/e-complaint-api/assets/142136573/5a38eaac-2cb0-4232-b109-978d54a87a3b)
+
 
 ## Setup
 How To Setup This Project:
