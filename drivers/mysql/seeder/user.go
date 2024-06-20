@@ -10,7 +10,7 @@ import (
 
 func SeedUser(db *gorm.DB) {
 	if err := db.First(&entities.User{}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
-		hash, _ := utils.HashPassword("user")
+		hash, _ := utils.HashPassword("password")
 		users := []entities.User{
 			{
 				Name:            "Putra Ramadhan",
