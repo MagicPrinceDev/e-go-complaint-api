@@ -4,24 +4,23 @@ import (
 	"e-complaint-api/constants"
 	"e-complaint-api/entities"
 	"e-complaint-api/utils"
-	"io"
 	"mime/multipart"
-	"os"
 	"strconv"
 	"strings"
-
-	"github.com/xuri/excelize/v2"
+	"time"
 )
 
 type ComplaintUseCase struct {
 	complaintRepo     entities.ComplaintRepositoryInterface
 	complaintFileRepo entities.ComplaintFileRepositoryInterface
+	getRowsFromExcel  func(file *multipart.FileHeader) ([][]string, error)
 }
 
 func NewComplaintUseCase(complaintRepo entities.ComplaintRepositoryInterface, complaintFileRepo entities.ComplaintFileRepositoryInterface) *ComplaintUseCase {
 	return &ComplaintUseCase{
 		complaintRepo:     complaintRepo,
 		complaintFileRepo: complaintFileRepo,
+		getRowsFromExcel:  utils.GetRowsFromExcel,
 	}
 }
 
@@ -60,7 +59,10 @@ func (u *ComplaintUseCase) GetMetaData(limit int, page int, search string, filte
 		pagination.FirstPage = 1
 		pagination.LastPage = (metaData.TotalData + limit - 1) / limit
 		pagination.CurrentPage = page
-		if pagination.CurrentPage == pagination.LastPage {
+		if metaData.TotalData == 0 {
+			pagination.TotalDataPerPage = 0
+			pagination.LastPage = 1
+		} else if pagination.CurrentPage == pagination.LastPage {
 			pagination.TotalDataPerPage = metaData.TotalData - (pagination.LastPage-1)*limit
 		} else {
 			pagination.TotalDataPerPage = limit
@@ -181,37 +183,9 @@ func (u *ComplaintUseCase) UpdateStatus(id string, status string) error {
 }
 
 func (u *ComplaintUseCase) Import(file *multipart.FileHeader) error {
-	// Open the file from the multipart.FileHeader
-	f, err := file.Open()
+	rows, err := u.getRowsFromExcel(file)
 	if err != nil {
-		return constants.ErrInternalServerError
-	}
-	defer f.Close()
-
-	// Create a temporary file to copy the contents
-	tempFile, err := os.CreateTemp("", "uploaded-*.xlsx")
-	if err != nil {
-		return constants.ErrInternalServerError
-	}
-	defer os.Remove(tempFile.Name()) // Clean up the temp file
-	defer tempFile.Close()
-
-	// Copy the file contents to the temporary file
-	if _, err := io.Copy(tempFile, f); err != nil {
-		return constants.ErrInternalServerError
-	}
-
-	// Open the temporary file using excelize
-	excelFile, err := excelize.OpenFile(tempFile.Name())
-	if err != nil {
-		return constants.ErrInternalServerError
-	}
-	defer excelFile.Close()
-
-	// Get all rows in the "Sheet1"
-	rows, err := excelFile.GetRows("Sheet1")
-	if err != nil {
-		return constants.ErrInternalServerError
+		return err
 	}
 
 	var complaints []entities.Complaint
@@ -225,19 +199,19 @@ func (u *ComplaintUseCase) Import(file *multipart.FileHeader) error {
 			continue
 		}
 
-		if len(row) < 6 {
+		if len(row) < 9 {
 			// Ensure the row has enough columns
-			return constants.ErrInternalServerError
+			return constants.ErrColumnsDoesntMatch
 		}
 
 		userId, err := strconv.Atoi(row[0])
 		if err != nil {
-			return constants.ErrInternalServerError
+			return constants.ErrInvalidIDFormat
 		}
 
 		categoryId, err := strconv.Atoi(row[1])
 		if err != nil {
-			return constants.ErrInternalServerError
+			return constants.ErrInvalidCategoryIDFormat
 		}
 
 		regencyId := row[2]
@@ -245,16 +219,27 @@ func (u *ComplaintUseCase) Import(file *multipart.FileHeader) error {
 		description := row[4]
 		status := row[5]
 		typeComplaint := row[6]
-		pathFiles := row[7]
+		date, _ := time.Parse("02-01-2006", row[7])
+		pathFiles := row[8]
 
 		process = []entities.ComplaintProcess{}
 		if status == "Verifikasi" {
+			process = append(process, entities.ComplaintProcess{
+				AdminID: 1,
+				Status:  "Pending",
+				Message: "Aduan anda sedang dalam proses verifikasi oleh admin kami",
+			})
 			process = append(process, entities.ComplaintProcess{
 				AdminID: 1,
 				Status:  "Verifikasi",
 				Message: "Aduan anda telah diverifikasi oleh admin kami",
 			})
 		} else if status == "On Progress" {
+			process = append(process, entities.ComplaintProcess{
+				AdminID: 1,
+				Status:  "Pending",
+				Message: "Aduan anda sedang dalam proses verifikasi oleh admin kami",
+			})
 			process = append(process, entities.ComplaintProcess{
 				AdminID: 1,
 				Status:  "Verifikasi",
@@ -266,6 +251,11 @@ func (u *ComplaintUseCase) Import(file *multipart.FileHeader) error {
 				Message: "Aduan anda sedang dalam proses penanganan",
 			})
 		} else if status == "Selesai" {
+			process = append(process, entities.ComplaintProcess{
+				AdminID: 1,
+				Status:  "Pending",
+				Message: "Aduan anda sedang dalam proses verifikasi oleh admin kami",
+			})
 			process = append(process, entities.ComplaintProcess{
 				AdminID: 1,
 				Status:  "Verifikasi",
@@ -284,8 +274,19 @@ func (u *ComplaintUseCase) Import(file *multipart.FileHeader) error {
 		} else if status == "Ditolak" {
 			process = append(process, entities.ComplaintProcess{
 				AdminID: 1,
+				Status:  "Pending",
+				Message: "Aduan anda sedang dalam proses verifikasi oleh admin kami",
+			})
+			process = append(process, entities.ComplaintProcess{
+				AdminID: 1,
 				Status:  "Ditolak",
 				Message: "Aduan anda ditolak karena tidak sesuai dengan ketentuan yang berlaku",
+			})
+		} else if status == "Pending" {
+			process = append(process, entities.ComplaintProcess{
+				AdminID: 1,
+				Status:  "Pending",
+				Message: "Aduan anda sedang dalam proses verifikasi oleh admin kami",
 			})
 		}
 
@@ -309,6 +310,7 @@ func (u *ComplaintUseCase) Import(file *multipart.FileHeader) error {
 			Description: description,
 			Status:      status,
 			Type:        typeComplaint,
+			Date:        date,
 			Files:       complaintFiles,
 			Process:     process,
 		}
