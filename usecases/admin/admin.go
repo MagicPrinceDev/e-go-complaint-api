@@ -74,11 +74,7 @@ func (u *AdminUseCase) GetAllAdmins() ([]entities.Admin, error) {
 func (u *AdminUseCase) GetAdminByID(id int) (*entities.Admin, error) {
 	admin, err := u.repository.GetAdminByID(id)
 	if admin == nil {
-		return nil, constants.ErrAdminNotFound
-	}
-
-	if err != nil {
-		return nil, constants.ErrInternalServerError
+		return nil, err
 	}
 
 	return admin, nil
@@ -106,10 +102,6 @@ func (u *AdminUseCase) UpdateAdmin(id int, admin *entities.Admin) (entities.Admi
 			return entities.Admin{}, constants.ErrAdminNotFound
 		}
 		return entities.Admin{}, constants.ErrInternalServerError
-	}
-
-	if admin == nil {
-		return entities.Admin{}, constants.ErrAdminNotFound
 	}
 
 	// Check if the email is already taken by another admin

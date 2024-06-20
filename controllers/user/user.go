@@ -150,7 +150,7 @@ func (uc *UserController) DeleteUser(c echo.Context) error {
 
 	err = uc.userUseCase.Delete(id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
+		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
 
 	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success Delete User", nil))
