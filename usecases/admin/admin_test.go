@@ -57,7 +57,7 @@ func TestCreateAccount(t *testing.T) {
 		admin := entities.Admin{
 			Name:            "admin",
 			Email:           "admin@gmail.com",
-			Password:        "admin",
+			Password:        "admin12345",
 			TelephoneNumber: "08123456789",
 		}
 
@@ -77,7 +77,7 @@ func TestCreateAccount(t *testing.T) {
 		admin := entities.Admin{
 			Name:            "",
 			Email:           "admin@gmail.com",
-			Password:        "admin",
+			Password:        "admin12345",
 			TelephoneNumber: "08123456789",
 		}
 
@@ -95,7 +95,7 @@ func TestCreateAccount(t *testing.T) {
 		admin := entities.Admin{
 			Name:            "admin",
 			Email:           "admin@gmail.com",
-			Password:        "admin",
+			Password:        "admin12345",
 			TelephoneNumber: "08123456789",
 		}
 
@@ -115,7 +115,7 @@ func TestCreateAccount(t *testing.T) {
 		admin := entities.Admin{
 			Name:            "admin",
 			Email:           "admin@gmail.com",
-			Password:        "admin",
+			Password:        "admin12345",
 			TelephoneNumber: "08123456789",
 		}
 
@@ -135,7 +135,7 @@ func TestCreateAccount(t *testing.T) {
 		admin := entities.Admin{
 			Name:            "admin",
 			Email:           "admin@gmail.com",
-			Password:        "admin",
+			Password:        "admin12345",
 			TelephoneNumber: "08123456789",
 		}
 
@@ -143,6 +143,24 @@ func TestCreateAccount(t *testing.T) {
 
 		result, err := AdminUseCase.CreateAccount(&admin)
 		assert.Error(t, constants.ErrUsernameAlreadyExists, err)
+		assert.Equal(t, entities.Admin{}, result)
+
+		mockAdminRepo.AssertExpectations(t)
+	})
+
+	t.Run("failed password must be at least 8 characters", func(t *testing.T) {
+		mockAdminRepo := new(MockAdminRepository)
+		AdminUseCase := NewAdminUseCase(mockAdminRepo)
+
+		admin := entities.Admin{
+			Name:            "admin",
+			Email:           "admin@gmail.com",
+			Password:        "admin",
+			TelephoneNumber: "08123456789",
+		}
+
+		result, err := AdminUseCase.CreateAccount(&admin)
+		assert.Error(t, constants.ErrPasswordMustBeAtLeast8Characters, err)
 		assert.Equal(t, entities.Admin{}, result)
 
 		mockAdminRepo.AssertExpectations(t)
@@ -279,7 +297,7 @@ func TestGetAdminByID(t *testing.T) {
 			ID:              1,
 			Name:            "admin",
 			Email:           "admin@gmail.com",
-			Password:        "admin",
+			Password:        "admin12345",
 			TelephoneNumber: "08123456789",
 		}
 
@@ -368,7 +386,7 @@ func TestUpdateAdmin(t *testing.T) {
 			ID:              1,
 			Name:            "admin",
 			Email:           "admin@gmail.com",
-			Password:        "admin",
+			Password:        "admin12345",
 			TelephoneNumber: "08123456789",
 		}
 
@@ -420,7 +438,7 @@ func TestUpdateAdmin(t *testing.T) {
 			ID:              1,
 			Name:            "admin",
 			Email:           "admin@gmail.com",
-			Password:        "admin",
+			Password:        "admin12345",
 			TelephoneNumber: "08123456789",
 		}
 
@@ -449,7 +467,7 @@ func TestUpdateAdmin(t *testing.T) {
 			ID:              1,
 			Name:            "admin",
 			Email:           "admin123@gmail.com",
-			Password:        "admin",
+			Password:        "admin12345",
 			TelephoneNumber: "08123456789",
 		}
 
@@ -487,7 +505,7 @@ func TestUpdateAdmin(t *testing.T) {
 			ID:              1,
 			Name:            "admin",
 			Email:           "admin@gmail.com",
-			Password:        "admin",
+			Password:        "admin12345",
 			TelephoneNumber: "08123456789",
 		}
 
@@ -516,7 +534,7 @@ func TestUpdateAdmin(t *testing.T) {
 			ID:              1,
 			Name:            "admin",
 			Email:           "admin@gmail.com",
-			Password:        "admin",
+			Password:        "admin12345",
 			TelephoneNumber: "08123456789",
 		}
 
@@ -534,6 +552,35 @@ func TestUpdateAdmin(t *testing.T) {
 
 		result, err := AdminUseCase.UpdateAdmin(1, &updatedAdmin)
 		assert.Error(t, constants.ErrInternalServerError, err)
+		assert.Equal(t, entities.Admin{}, result)
+
+		mockAdminRepo.AssertExpectations(t)
+	})
+
+	t.Run("failed password must be at least 8 characters", func(t *testing.T) {
+		mockAdminRepo := new(MockAdminRepository)
+		AdminUseCase := NewAdminUseCase(mockAdminRepo)
+
+		admin := entities.Admin{
+			ID:              1,
+			Name:            "admin",
+			Email:           "admin@gmail.com",
+			Password:        "admin12345",
+			TelephoneNumber: "08123456789",
+		}
+
+		updatedAdmin := entities.Admin{
+			ID:              1,
+			Name:            "updated_admin",
+			Email:           "admin@gmail.com",
+			Password:        "admin",
+			TelephoneNumber: "08123456780",
+		}
+
+		mockAdminRepo.On("GetAdminByID", 1).Return(&admin, nil)
+
+		result, err := AdminUseCase.UpdateAdmin(1, &updatedAdmin)
+		assert.Error(t, constants.ErrPasswordMustBeAtLeast8Characters, err)
 		assert.Equal(t, entities.Admin{}, result)
 
 		mockAdminRepo.AssertExpectations(t)
