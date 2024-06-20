@@ -2,8 +2,8 @@ package entities
 
 type Faq struct {
 	ID       int    `gorm:"primaryKey"`
-	Question string `gorm:"not null"`
-	Answer   string `gorm:"not null"`
+	Question string `gorm:"not null;type:text"`
+	Answer   string `gorm:"not null;type:text"`
 }
 
 type FaqRepositoryInterface interface {

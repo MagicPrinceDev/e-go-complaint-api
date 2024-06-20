@@ -10,7 +10,7 @@ type News struct {
 	ID         int            `gorm:"primaryKey"`
 	AdminID    int            `gorm:"not null"`
 	CategoryID int            `gorm:"not null"`
-	Title      string         `gorm:"not null"`
+	Title      string         `gorm:"not null;type:varchar(255)"`
 	Content    string         `gorm:"not null"`
 	TotalLikes int            `gorm:"default:0"`
 	CreatedAt  time.Time      `gorm:"autoCreateTime"`
