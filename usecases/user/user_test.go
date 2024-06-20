@@ -206,6 +206,26 @@ func TestRegister(t *testing.T) {
 
 		mockUserRepository.AssertExpectations(t)
 	})
+
+	t.Run("failed password must be at least 8 characters", func(t *testing.T) {
+		mockUserRepository := new(MockUserRepository)
+		mockMailTrapAPI := new(MockMailTrapAPI)
+		mockUserGCSAPI := new(MockUserGCSAPI)
+		userUseCase := NewUserUseCase(mockUserRepository, mockMailTrapAPI, mockUserGCSAPI)
+
+		user := entities.User{
+			Email:           "user@gmail.com",
+			Password:        "pass",
+			Name:            "User",
+			TelephoneNumber: "081234567890",
+		}
+
+		result, err := userUseCase.Register(&user)
+		assert.Error(t, constants.ErrPasswordMustBeAtLeast8Characters, err)
+		assert.Equal(t, entities.User{}, result)
+
+		mockUserRepository.AssertExpectations(t)
+	})
 }
 
 func TestLogin(t *testing.T) {
@@ -643,6 +663,18 @@ func TestUpdatePassword(t *testing.T) {
 
 		mockUserRepository.AssertExpectations(t)
 	})
+
+	t.Run("failed password must be at least 8 characters", func(t *testing.T) {
+		mockUserRepository := new(MockUserRepository)
+		mockMailTrapAPI := new(MockMailTrapAPI)
+		mockUserGCSAPI := new(MockUserGCSAPI)
+		userUseCase := NewUserUseCase(mockUserRepository, mockMailTrapAPI, mockUserGCSAPI)
+
+		err := userUseCase.UpdatePassword(1, "pass")
+		assert.Error(t, constants.ErrPasswordMustBeAtLeast8Characters, err)
+
+		mockUserRepository.AssertExpectations(t)
+	})
 }
 
 func TestSendOTP(t *testing.T) {
@@ -922,6 +954,18 @@ func TestUpdatePasswordForgot(t *testing.T) {
 
 		err := userUseCase.UpdatePasswordForgot("user@gmail.com", "password")
 		assert.Error(t, constants.ErrForgotPasswordOTPNotVerified, err)
+
+		mockUserRepository.AssertExpectations(t)
+	})
+
+	t.Run("failed password must be at least 8 characters", func(t *testing.T) {
+		mockUserRepository := new(MockUserRepository)
+		mockMailTrapAPI := new(MockMailTrapAPI)
+		mockUserGCSAPI := new(MockUserGCSAPI)
+		userUseCase := NewUserUseCase(mockUserRepository, mockMailTrapAPI, mockUserGCSAPI)
+
+		err := userUseCase.UpdatePasswordForgot("user@gmail.com", "pass")
+		assert.Error(t, constants.ErrPasswordMustBeAtLeast8Characters, err)
 
 		mockUserRepository.AssertExpectations(t)
 	})
