@@ -1,4 +1,18 @@
 mode: set
+e-complaint-api/usecases/news_like/news_like.go:9.85,13.2 1 1
+e-complaint-api/usecases/news_like/news_like.go:15.83,18.17 2 1
+e-complaint-api/usecases/news_like/news_like.go:18.17,20.17 2 1
+e-complaint-api/usecases/news_like/news_like.go:20.17,22.4 1 1
+e-complaint-api/usecases/news_like/news_like.go:24.3,24.22 1 1
+e-complaint-api/usecases/news_like/news_like.go:27.2,28.16 2 1
+e-complaint-api/usecases/news_like/news_like.go:28.16,30.3 1 1
+e-complaint-api/usecases/news_like/news_like.go:32.2,32.23 1 1
+e-complaint-api/usecases/news_like/news_like.go:35.63,37.16 2 1
+e-complaint-api/usecases/news_like/news_like.go:37.16,39.3 1 1
+e-complaint-api/usecases/news_like/news_like.go:41.2,41.12 1 1
+e-complaint-api/usecases/news_like/news_like.go:44.63,46.16 2 1
+e-complaint-api/usecases/news_like/news_like.go:46.16,48.3 1 1
+e-complaint-api/usecases/news_like/news_like.go:50.2,50.12 1 1
 e-complaint-api/usecases/admin/admin.go:15.82,19.2 1 1
 e-complaint-api/usecases/admin/admin.go:21.85,22.98 1 1
 e-complaint-api/usecases/admin/admin.go:22.98,24.3 1 1
