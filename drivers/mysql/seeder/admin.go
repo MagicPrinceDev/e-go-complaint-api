@@ -10,7 +10,7 @@ import (
 
 func SeedAdmin(db *gorm.DB) {
 	if err := db.First(&entities.Admin{}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
-		hash, _ := utils.HashPassword("admin")
+		hash, _ := utils.HashPassword("password")
 		admins := []entities.Admin{
 			{
 				Name:            "Super Admin",
