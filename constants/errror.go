@@ -50,4 +50,5 @@ var (
 	ErrColumnsDoesntMatch               = errors.New("columns doesn't match")
 	ErrInvalidCategoryIDFormat          = errors.New("invalid category id format")
 	ErrEmailNotRegistered               = errors.New("email not registered")
+	ErrDiscussionNotFound               = errors.New("discussion not found")
 )
