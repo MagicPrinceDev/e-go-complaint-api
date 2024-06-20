@@ -29,6 +29,10 @@ func (u *UserUseCase) Register(user *entities.User) (entities.User, error) {
 		return entities.User{}, constants.ErrAllFieldsMustBeFilled
 	}
 
+	if len(user.Password) < 8 {
+		return entities.User{}, constants.ErrPasswordMustBeAtLeast8Characters
+	}
+
 	err := u.repository.Register(user)
 
 	if err != nil {
@@ -148,6 +152,10 @@ func (u *UserUseCase) UpdatePassword(id int, newPassword string) error {
 		return constants.ErrAllFieldsMustBeFilled
 	}
 
+	if len(newPassword) < 8 {
+		return constants.ErrPasswordMustBeAtLeast8Characters
+	}
+
 	hash, _ := utils.HashPassword(newPassword)
 	return u.repository.UpdatePassword(id, hash)
 }
@@ -195,6 +203,10 @@ func (u *UserUseCase) VerifyOTP(email, otp, otp_type string) error {
 func (u *UserUseCase) UpdatePasswordForgot(email, newPassword string) error {
 	if email == "" || newPassword == "" {
 		return constants.ErrAllFieldsMustBeFilled
+	}
+
+	if len(newPassword) < 8 {
+		return constants.ErrPasswordMustBeAtLeast8Characters
 	}
 
 	hash, _ := utils.HashPassword(newPassword)
