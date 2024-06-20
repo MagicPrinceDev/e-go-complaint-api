@@ -78,13 +78,15 @@ The E-Complaint API project is designed to streamline the complaint submission a
 
 - **ORM Library:** GORM
 
-- **Database:** MySQL
+- **Database:** MySQL (Google Cloud Platform)
 
-- **Storage:** Google Cloud Platform
+- **Storage:** Cloud Storage (Google Cloud Platform)
 
 - **Code Structure:** Clean Architecture
 
 - **Authentication:** JWT
+
+- **Deployment:**  Cloud Run (Google Cloud Platform)
 
 - **External API:** Mailtrap, Openai, and Indonesia Area API
 
