@@ -11,9 +11,9 @@ type Complaint struct {
 	ID            string             `gorm:"primaryKey;length:15"`
 	UserID        int                `gorm:"not null"`
 	CategoryID    int                `gorm:"not null"`
-	Description   string             `gorm:"not null"`
-	RegencyID     string             `gorm:"not null;type:varchar;size:4"`
+	RegencyID     string             `gorm:"not null;type:varchar;size:4;"`
 	Address       string             `gorm:"not null"`
+	Description   string             `gorm:"not null"`
 	Status        string             `gorm:"type:enum('Pending', 'Verifikasi', 'On Progress', 'Selesai', 'Ditolak');default:'Pending'"`
 	Type          string             `gorm:"type:enum('public', 'private')"`
 	Date          time.Time          `gorm:"type:date"`

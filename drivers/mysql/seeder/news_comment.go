@@ -3,6 +3,7 @@ package seeder
 import (
 	"e-complaint-api/entities"
 	"errors"
+
 	"gorm.io/gorm"
 )
 
@@ -10,30 +11,47 @@ func SeedNewsComment(db *gorm.DB) {
 	var newsComment []entities.NewsComment
 
 	userID1 := 1
-	adminID2 := 2
+	userID2 := 2
 	userID3 := 3
+	adminID2 := 2
+	adminID3 := 3
 
 	if err := db.First(&entities.NewsComment{}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
 		newsComment = []entities.NewsComment{
 			{
 				UserID:  &userID1,
 				NewsID:  1,
-				Comment: "Apa yang terjadi di sana?",
+				Comment: "Terimakasih atas informasinya",
 			},
 			{
 				AdminID: &adminID2,
 				NewsID:  1,
-				Comment: "Sedang terjadi tanah longsor di sana",
+				Comment: "Sama-sama, semoga bermanfaat",
+			},
+			{
+				UserID:  &userID2,
+				NewsID:  1,
+				Comment: "Terimakasih telah memperbaiki fasilitas kesehatan kami",
 			},
 			{
 				UserID:  &userID3,
 				NewsID:  2,
-				Comment: "Apakah banyak korban jiwa?",
+				Comment: "Terimakasih telah memperbaiki fasilitas SMA kami",
 			},
 			{
-				AdminID: &adminID2,
+				AdminID: &adminID3,
 				NewsID:  2,
-				Comment: "Sekitar 10 Orang Sedang di evakuasi",
+				Comment: "Sama-sama, semoga bermanfaat",
+			},
+			{
+				UserID:  &userID1,
+				NewsID:  3,
+				Comment: "Terimakasih telah meningkatkan keamanan di lingkungan kami",
+			},
+			{
+				AdminID: &adminID3,
+				NewsID:  3,
+				Comment: "Sama-sama, semoga lingkungan anda semakin aman",
 			},
 		}
 	}

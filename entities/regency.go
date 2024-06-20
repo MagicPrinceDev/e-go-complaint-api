@@ -2,7 +2,7 @@ package entities
 
 type Regency struct {
 	ID   string `gorm:"primaryKey"`
-	Name string `gorm:"not null"`
+	Name string `gorm:"not null;type:varchar(255)"`
 }
 
 type RegencyRepositoryInterface interface {

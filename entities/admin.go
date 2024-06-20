@@ -7,13 +7,13 @@ import (
 )
 
 type Admin struct {
-	ID              int    `gorm:"primaryKey"`
-	Name            string `gorm:"not null"`
-	Email           string `gorm:"unique"`
-	Password        string `gorm:"not null"`
-	TelephoneNumber string
+	ID              int            `gorm:"primaryKey"`
+	Name            string         `gorm:"not null;type:varchar(255)"`
+	Email           string         `gorm:"unique;type:varchar(255)"`
+	Password        string         `gorm:"not null;type:varchar(255)"`
+	TelephoneNumber string         `gorm:"type:varchar(20)"`
 	IsSuperAdmin    bool           `gorm:"default:false"`
-	ProfilePhoto    string         `gorm:"default:profile-photos/admin-default.jpg"`
+	ProfilePhoto    string         `gorm:"default:profile-photos/admin-default.jpg;type:varchar(255)"`
 	CreatedAt       time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt       time.Time      `gorm:"autoUpdateTime"`
 	DeletedAt       gorm.DeletedAt `gorm:"index"`

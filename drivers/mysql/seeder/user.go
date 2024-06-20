@@ -13,25 +13,28 @@ func SeedUser(db *gorm.DB) {
 		hash, _ := utils.HashPassword("user")
 		users := []entities.User{
 			{
-				Name:            "User 1",
+				Name:            "Putra Ramadhan",
 				Password:        hash,
-				Email:           "user1@gmail.com",
+				Email:           "putraramadhan@gmail.com",
 				TelephoneNumber: "081234567890",
 				EmailVerified:   true,
+				ProfilePhoto:    "profile-photos/example_1.jpg",
 			},
 			{
-				Name:            "User 2",
+				Name:            "Andika Saputra",
 				Password:        hash,
-				Email:           "user2@gmail.com",
+				Email:           "andikaputra@gmail.com",
 				TelephoneNumber: "081234567890",
 				EmailVerified:   true,
+				ProfilePhoto:    "profile-photos/example_2.jpg",
 			},
 			{
-				Name:            "User 3",
+				Name:            "Muhammad Iqbal",
 				Password:        hash,
-				Email:           "user3@gmail.com",
+				Email:           "muhammadiqbal@gmail.com",
 				TelephoneNumber: "081234567890",
 				EmailVerified:   true,
+				ProfilePhoto:    "profile-photos/example_3.jpg",
 			},
 		}
 
