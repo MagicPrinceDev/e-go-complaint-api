@@ -30,7 +30,7 @@ func (ctrl *DashboardController) GetDashboardData(c echo.Context) error {
 				Name: complaint.User.Name,
 			},
 			Complaint: response.Complaint{
-				Date:   complaint.Date.Format("2 January 2006"),
+				Date:   complaint.CreatedAt.Format("2 January 2006 15:04:05"),
 				Status: complaint.Status,
 			},
 			Category: response.Category{
