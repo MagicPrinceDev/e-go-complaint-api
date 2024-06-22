@@ -2,15 +2,21 @@ package dashboard
 
 import (
 	"e-complaint-api/controllers/dashboard/response"
-	"e-complaint-api/drivers/mysql/dashboard"
 	"e-complaint-api/entities"
 )
 
-type DashboardUsecase struct {
-	DashboardRepo dashboard.DashboardRepo
+type DashboardRepoInterface interface {
+	GetTotalComplaints() (int64, error)
+	GetComplaintsByStatus() (map[string]int64, error)
+	GetUsersByYearAndMonth() (map[string][]response.MonthData, error)
+	GetLatestComplaints(limit int) ([]entities.Complaint, error)
 }
 
-func NewDashboardUseCase(dashboardRepo dashboard.DashboardRepo) *DashboardUsecase {
+type DashboardUsecase struct {
+	DashboardRepo DashboardRepoInterface
+}
+
+func NewDashboardUseCase(dashboardRepo DashboardRepoInterface) *DashboardUsecase {
 	return &DashboardUsecase{DashboardRepo: dashboardRepo}
 }
 
