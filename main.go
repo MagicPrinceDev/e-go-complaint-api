@@ -159,7 +159,7 @@ func main() {
 	NewsCommentController := news_comment.NewNewsCommentController(newsCommentUsecase, newsUsecase)
 
 	dashboardRepo := dashboard_repo.NewDashboardRepo(DB)
-	dashboardUsecase := dashboard_uc.NewDashboardUseCase(*dashboardRepo)
+	dashboardUsecase := dashboard_uc.NewDashboardUseCase(dashboardRepo)
 	dashboardController := dashboard_cl.NewDashboardController(*dashboardUsecase)
 
 	routes := routes.RouteController{
