@@ -90,16 +90,17 @@ The E-Complaint API project is designed to streamline the complaint submission a
 
 - **External API:** Mailtrap, Openai, and Indonesia Area API
 
+## Entity Relationship Diagram (ERD)
+![ERD](https://github.com/Capstone-Project-Alterra-Kelompok-8/e-complaint-api/assets/96558355/ca928750-d0d5-4521-997a-b1534a1e3af7)
+
+## High Level Architecture (HLA)
+![HLA](https://github.com/Capstone-Project-Alterra-Kelompok-8/e-complaint-api/assets/96558355/2755fe18-847c-4649-b6c0-7573537d6596)
+
 ## API Documentation
 https://documenter.getpostman.com/view/31634961/2sA3QngtbA
 
-## Entity Relationship Diagram (ERD)
-![Salinan ERD drawio](https://github.com/Capstone-Project-Alterra-Kelompok-8/e-complaint-api/assets/142136573/7ef3c53f-2d7d-4591-8f76-8bb86e2331a2)
-
-
-## High Level Architecture (HLA)
-![HLA drawio](https://github.com/Capstone-Project-Alterra-Kelompok-8/e-complaint-api/assets/142136573/5a38eaac-2cb0-4232-b109-978d54a87a3b)
-
+## Task Management
+https://docs.google.com/spreadsheets/d/1v_BGJRoif_1tqawjtOxRVz0vy32ZO_L2c-Opy3yZqv0/edit?usp=sharing
 
 ## Setup
 How To Setup This Project:
