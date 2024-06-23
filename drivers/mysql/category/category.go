@@ -61,5 +61,9 @@ func (r *CategoryRepo) DeleteCategory(id int) error {
 		return err
 	}
 
+	if err := r.DB.Where("category_id = ?", id).Delete(&entities.Complaint{}).Error; err != nil {
+		return err
+	}
+
 	return nil
 }
