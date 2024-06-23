@@ -52,4 +52,5 @@ var (
 	ErrEmailNotRegistered               = errors.New("email not registered")
 	ErrDiscussionNotFound               = errors.New("discussion not found")
 	ErrPasswordMustBeAtLeast8Characters = errors.New("password must be at least 8 characters")
+	ErrCategoryHasComplaints            = errors.New("category has complaints")
 )

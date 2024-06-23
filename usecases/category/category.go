@@ -90,7 +90,7 @@ func (uc *CategoryUseCase) DeleteCategory(id int) error {
 	}
 	err = uc.repository.DeleteCategory(id)
 	if err != nil {
-		return constants.ErrInternalServerError
+		return err
 	}
 	return nil
 }
