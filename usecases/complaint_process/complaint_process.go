@@ -35,7 +35,7 @@ func (u *ComplaintProcessUseCase) Create(complaintProcess *entities.ComplaintPro
 	if complaintProcess.Status == "Pending" {
 		if status == "On Progress" {
 			return entities.ComplaintProcess{}, constants.ErrComplaintNotVerified
-		} else if complaintProcess.Status == "Selesai" {
+		} else if status == "Selesai" {
 			return entities.ComplaintProcess{}, constants.ErrComplaintNotVerified
 		}
 	} else if complaintProcess.Status == "Verifikasi" {
