@@ -29,6 +29,10 @@ func (u *UserUseCase) Register(user *entities.User) (entities.User, error) {
 		return entities.User{}, constants.ErrAllFieldsMustBeFilled
 	}
 
+	if len(user.Password) < 8 {
+		return entities.User{}, constants.ErrPasswordMustBeAtLeast8Characters
+	}
+
 	err := u.repository.Register(user)
 
 	if err != nil {
@@ -76,29 +80,25 @@ func (u *UserUseCase) GetUserByID(id int) (*entities.User, error) {
 	user, err := u.repository.GetUserByID(id)
 
 	if err != nil {
-		return nil, constants.ErrInternalServerError
+		return nil, err
 	}
 
 	return user, nil
 }
 
 func (u *UserUseCase) UpdateUser(id int, user *entities.User) (entities.User, error) {
+	if user.Email == "" || user.Name == "" || user.TelephoneNumber == "" {
+		return entities.User{}, constants.ErrAllFieldsMustBeFilled
+	}
+
 	existingUser, err := u.repository.GetUserByID(id)
 	if err != nil {
-		return entities.User{}, constants.ErrInternalServerError
+		return entities.User{}, err
 	}
 
-	// Ensure existing data remains if no new data is provided
-	if user.Name != "" {
-		existingUser.Name = user.Name
-	}
-	if user.Email != "" {
-		existingUser.Email = user.Email
-	}
-
-	if user.TelephoneNumber != "" {
-		existingUser.TelephoneNumber = user.TelephoneNumber
-	}
+	existingUser.Name = user.Name
+	existingUser.Email = user.Email
+	existingUser.TelephoneNumber = user.TelephoneNumber
 
 	err = u.repository.UpdateUser(id, existingUser)
 	if err != nil {
@@ -131,16 +131,12 @@ func (u *UserUseCase) UpdateProfilePhoto(id int, profilePhoto *multipart.FileHea
 }
 
 func (u *UserUseCase) Delete(id int) error {
-	existingUser, err := u.repository.GetUserByID(id)
+	_, err := u.repository.GetUserByID(id)
 	if err != nil {
-		if errors.Is(err, constants.ErrNotFound) {
-			return constants.ErrNotFound
+		if errors.Is(err, constants.ErrUserNotFound) {
+			return constants.ErrUserNotFound
 		}
 		return constants.ErrInternalServerError
-	}
-
-	if existingUser == nil {
-		return constants.ErrNotFound
 	}
 
 	err = u.repository.Delete(id)
@@ -151,13 +147,13 @@ func (u *UserUseCase) Delete(id int) error {
 	return nil
 }
 
-func (u *UserUseCase) UpdatePassword(id int, newPassword, confirmNewPassword string) error {
-	if newPassword == "" || confirmNewPassword == "" {
+func (u *UserUseCase) UpdatePassword(id int, newPassword string) error {
+	if newPassword == "" {
 		return constants.ErrAllFieldsMustBeFilled
 	}
 
-	if newPassword != confirmNewPassword {
-		return constants.ErrConfirmPasswordDoesntMatch
+	if len(newPassword) < 8 {
+		return constants.ErrPasswordMustBeAtLeast8Characters
 	}
 
 	hash, _ := utils.HashPassword(newPassword)
@@ -207,6 +203,10 @@ func (u *UserUseCase) VerifyOTP(email, otp, otp_type string) error {
 func (u *UserUseCase) UpdatePasswordForgot(email, newPassword string) error {
 	if email == "" || newPassword == "" {
 		return constants.ErrAllFieldsMustBeFilled
+	}
+
+	if len(newPassword) < 8 {
+		return constants.ErrPasswordMustBeAtLeast8Characters
 	}
 
 	hash, _ := utils.HashPassword(newPassword)

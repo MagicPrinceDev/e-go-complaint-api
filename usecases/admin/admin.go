@@ -23,6 +23,10 @@ func (u *AdminUseCase) CreateAccount(admin *entities.Admin) (entities.Admin, err
 		return entities.Admin{}, constants.ErrAllFieldsMustBeFilled
 	}
 
+	if len(admin.Password) < 8 {
+		return entities.Admin{}, constants.ErrPasswordMustBeAtLeast8Characters
+	}
+
 	err := u.repository.CreateAccount(admin)
 
 	if err != nil {
@@ -74,11 +78,7 @@ func (u *AdminUseCase) GetAllAdmins() ([]entities.Admin, error) {
 func (u *AdminUseCase) GetAdminByID(id int) (*entities.Admin, error) {
 	admin, err := u.repository.GetAdminByID(id)
 	if admin == nil {
-		return nil, constants.ErrAdminNotFound
-	}
-
-	if err != nil {
-		return nil, constants.ErrInternalServerError
+		return nil, err
 	}
 
 	return admin, nil
@@ -106,10 +106,6 @@ func (u *AdminUseCase) UpdateAdmin(id int, admin *entities.Admin) (entities.Admi
 			return entities.Admin{}, constants.ErrAdminNotFound
 		}
 		return entities.Admin{}, constants.ErrInternalServerError
-	}
-
-	if admin == nil {
-		return entities.Admin{}, constants.ErrAdminNotFound
 	}
 
 	// Check if the email is already taken by another admin
@@ -142,6 +138,10 @@ func (u *AdminUseCase) UpdateAdmin(id int, admin *entities.Admin) (entities.Admi
 
 	if !isUpdated {
 		return *existingAdmin, constants.ErrNoChangesDetected
+	}
+
+	if len(admin.Password) < 8 {
+		return entities.Admin{}, constants.ErrPasswordMustBeAtLeast8Characters
 	}
 
 	err = u.repository.UpdateAdmin(id, existingAdmin)

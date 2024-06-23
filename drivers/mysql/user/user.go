@@ -66,7 +66,7 @@ func (r *UserRepo) GetUserByID(id int) (*entities.User, error) {
 
 	if err := r.DB.First(&user, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, constants.ErrNotFound
+			return nil, constants.ErrUserNotFound
 		}
 		return nil, err
 	}
@@ -107,7 +107,7 @@ func (r *UserRepo) SendOTP(email, otp string) error {
 
 	var user entities.User
 	if err := r.DB.Model(&entities.User{}).Where("email = ?", email).First(&user).Error; err != nil {
-		return constants.ErrUserNotFound
+		return constants.ErrEmailNotRegistered
 	}
 
 	user.Otp = otp
@@ -123,7 +123,7 @@ func (r *UserRepo) SendOTP(email, otp string) error {
 func (r *UserRepo) VerifyOTPRegister(email, otp string) error {
 	var user entities.User
 	if err := r.DB.Model(&entities.User{}).Where("email = ?", email).First(&user).Error; err != nil {
-		return constants.ErrUserNotFound
+		return constants.ErrEmailNotRegistered
 	}
 
 	if user.Otp != otp {

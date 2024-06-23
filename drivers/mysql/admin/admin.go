@@ -63,7 +63,7 @@ func (r *AdminRepo) GetAdminByID(id int) (*entities.Admin, error) {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, constants.ErrAdminNotFound
 		}
-		return nil, result.Error
+		return nil, constants.ErrInternalServerError
 	}
 	return admin, nil
 }

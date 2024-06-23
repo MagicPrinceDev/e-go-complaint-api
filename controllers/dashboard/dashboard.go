@@ -6,7 +6,6 @@ import (
 	"e-complaint-api/usecases/dashboard"
 	"github.com/labstack/echo/v4"
 	"net/http"
-	"time"
 )
 
 type DashboardController struct {
@@ -31,7 +30,7 @@ func (ctrl *DashboardController) GetDashboardData(c echo.Context) error {
 				Name: complaint.User.Name,
 			},
 			Complaint: response.Complaint{
-				Date:   complaint.Date.Format(time.RFC3339),
+				Date:   complaint.CreatedAt.Format("2 January 2006 15:04:05"),
 				Status: complaint.Status,
 			},
 			Category: response.Category{

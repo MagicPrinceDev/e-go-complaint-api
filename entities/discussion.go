@@ -8,10 +8,10 @@ import (
 
 type Discussion struct {
 	ID          int            `gorm:"primaryKey;autoIncrement"`
-	Comment     string         `gorm:"not null"`
 	UserID      *int           `gorm:"index;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
 	AdminID     *int           `gorm:"index;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
 	ComplaintID string         `gorm:"type:varchar(15);index;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
+	Comment     string         `gorm:"not null;type:text"`
 	User        User           `gorm:"foreignKey:UserID;references:ID"`
 	Admin       Admin          `gorm:"foreignKey:AdminID;references:ID"`
 	Complaint   Complaint      `gorm:"foreignKey:ComplaintID;references:ID"`

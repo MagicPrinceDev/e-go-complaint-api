@@ -4,6 +4,7 @@ import (
 	"e-complaint-api/constants"
 	"e-complaint-api/entities"
 	"errors"
+
 	"gorm.io/gorm"
 )
 
@@ -56,6 +57,16 @@ func (r *CategoryRepo) UpdateCategory(id int, category *entities.Category) (*ent
 }
 
 func (r *CategoryRepo) DeleteCategory(id int) error {
+	complaints := r.DB.Where("category_id = ?", id).Find(&entities.Complaint{})
+	if complaints.RowsAffected > 0 {
+		return constants.ErrCategoryHasBeenUsed
+	}
+
+	news := r.DB.Where("category_id = ?", id).Find(&entities.News{})
+	if news.RowsAffected > 0 {
+		return constants.ErrCategoryHasBeenUsed
+	}
+
 	if err := r.DB.Delete(&entities.Category{}, id).Error; err != nil {
 		return err
 	}

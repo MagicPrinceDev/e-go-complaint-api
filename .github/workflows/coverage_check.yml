@@ -1,0 +1,70 @@
+name: Test and Coverage Check
+
+on:
+  push:
+    branches:
+      - main
+      - development
+
+jobs:
+  test-and-check-coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.21.7'
+
+    - name: Install dependencies and update go.mod/go.sum
+      run: |
+        go get -t -v ./...
+        go mod tidy
+
+    - name: Run tests
+      run: |
+        go test -cover ./usecases/admin/...
+        go test -cover ./usecases/category/...
+        go test -cover ./usecases/chatbot/...
+        go test -cover ./usecases/complaint/...
+        go test -cover ./usecases/complaint_activity/...
+        go test -cover ./usecases/complaint_file/...
+        go test -cover ./usecases/complaint_like/...
+        go test -cover ./usecases/complaint_process/...
+        go test -cover ./usecases/dashboard/...
+        go test -cover ./usecases/discussion/...
+        go test -cover ./usecases/news/...
+        go test -cover ./usecases/news_comment/...
+        go test -cover ./usecases/news_file/...
+        go test -cover ./usecases/news_like/...
+        go test -cover ./usecases/regency/...
+        go test -cover ./usecases/user/...
+
+    - name: Check coverage
+      run: |
+        admin_coverage=$(go test -cover ./usecases/admin/... | grep -o '[0-9.]\+%' | cut -d'.' -f1 | tr -d '%')
+        category_coverage=$(go test -cover ./usecases/category/... | grep -o '[0-9.]\+%' | cut -d'.' -f1 | tr -d '%')
+        chatbot_coverage=$(go test -cover ./usecases/chatbot/... | grep -o '[0-9.]\+%' | cut -d'.' -f1 | tr -d '%')
+        complaint_coverage=$(go test -cover ./usecases/complaint/... | grep -o '[0-9.]\+%' | cut -d'.' -f1 | tr -d '%')
+        complaint_activity_coverage=$(go test -cover ./usecases/complaint_activity/... | grep -o '[0-9.]\+%' | cut -d'.' -f1 | tr -d '%')
+        complaint_file_coverage=$(go test -cover ./usecases/complaint_file/... | grep -o '[0-9.]\+%' | cut -d'.' -f1 | tr -d '%')
+        complaint_like_coverage=$(go test -cover ./usecases/complaint_like/... | grep -o '[0-9.]\+%' | cut -d'.' -f1 | tr -d '%')
+        complaint_process_coverage=$(go test -cover ./usecases/complaint_process/... | grep -o '[0-9.]\+%' | cut -d'.' -f1 | tr -d '%')
+        dashboard_coverage=$(go test -cover ./usecases/dashboard/... | grep -o '[0-9.]\+%' | cut -d'.' -f1 | tr -d '%')
+        discussion_coverage=$(go test -cover ./usecases/discussion/... | grep -o '[0-9.]\+%' | cut -d'.' -f1 | tr -d '%')
+        news_coverage=$(go test -cover ./usecases/news/... | grep -o '[0-9.]\+%' | cut -d'.' -f1 | tr -d '%')
+        news_comment_coverage=$(go test -cover ./usecases/news_comment/... | grep -o '[0-9.]\+%' | cut -d'.' -f1 | tr -d '%')
+        news_file_coverage=$(go test -cover ./usecases/news_file/... | grep -o '[0-9.]\+%' | cut -d'.' -f1 | tr -d '%')
+        news_like_coverage=$(go test -cover ./usecases/news_like/... | grep -o '[0-9.]\+%' | cut -d'.' -f1 | tr -d '%')
+        regency_coverage=$(go test -cover ./usecases/regency/... | grep -o '[0-9.]\+%' | cut -d'.' -f1 | tr -d '%')
+        user_coverage=$(go test -cover ./usecases/user/... | grep -o '[0-9.]\+%' | cut -d'.' -f1 | tr -d '%')
+    
+        if [ $admin_coverage -ge 90 ] && [ $category_coverage -ge 90 ] && [ $chatbot_coverage -ge 90 ] && [ $complaint_coverage -ge 90 ] && [ $complaint_activity_coverage -ge 90 ] && [ $complaint_file_coverage -ge 90 ] && [ $complaint_like_coverage -ge 90 ] && [ $complaint_process_coverage -ge 90 ] && [ $dashboard_coverage -ge 90 ] && [ $discussion_coverage -ge 90 ] && [ $news_coverage -ge 90 ] && [ $news_comment_coverage -ge 90 ] && [ $news_file_coverage -ge 90 ] && [ $news_like_coverage -ge 90 ] && [ $regency_coverage -ge 90 ] && [ $user_coverage -ge 90 ]; then
+          echo "All services have coverage above 90%"
+        else
+          echo "Some services have coverage below 90%"
+          exit 1
+        fi
