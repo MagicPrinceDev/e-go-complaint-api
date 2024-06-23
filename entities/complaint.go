@@ -8,7 +8,7 @@ import (
 )
 
 type Complaint struct {
-	ID            string             `gorm:"primaryKey;length:15"`
+	ID            string             `gorm:"primaryKey;type:varchar;size:15;"`
 	UserID        int                `gorm:"not null"`
 	CategoryID    int                `gorm:"not null"`
 	RegencyID     string             `gorm:"not null;type:varchar;size:4;"`

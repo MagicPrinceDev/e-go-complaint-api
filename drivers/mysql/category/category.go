@@ -57,11 +57,12 @@ func (r *CategoryRepo) UpdateCategory(id int, category *entities.Category) (*ent
 }
 
 func (r *CategoryRepo) DeleteCategory(id int) error {
-	if err := r.DB.Delete(&entities.Category{}, id).Error; err != nil {
-		return err
+	complaints := r.DB.Where("category_id = ?", id).Find(&entities.Complaint{})
+	if complaints.RowsAffected > 0 {
+		return constants.ErrCategoryHasComplaints
 	}
 
-	if err := r.DB.Where("category_id = ?", id).Delete(&entities.Complaint{}).Error; err != nil {
+	if err := r.DB.Delete(&entities.Category{}, id).Error; err != nil {
 		return err
 	}
 
