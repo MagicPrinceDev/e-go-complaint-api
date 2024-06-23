@@ -41,7 +41,7 @@ func ConvertResponseCode(err error) int {
 		constants.ErrInvalidCategoryIDFormat,
 		constants.ErrEmailNotRegistered,
 		constants.ErrPasswordMustBeAtLeast8Characters,
-		constants.ErrCategoryHasComplaints,
+		constants.ErrCategoryHasBeenUsed,
 	}
 
 	var notFoundErrors = []error{
