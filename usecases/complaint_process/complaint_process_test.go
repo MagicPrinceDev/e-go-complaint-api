@@ -4,9 +4,10 @@ import (
 	"e-complaint-api/constants"
 	"e-complaint-api/entities"
 	"errors"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"testing"
 )
 
 type MockComplaintProcess struct {
@@ -207,6 +208,25 @@ func TestCreate(t *testing.T) {
 		}
 
 		mockComplaintRepo.On("GetStatus", mock.Anything).Return("On Progress", nil)
+
+		result, err := usecase.Create(dummyComplaintProcess)
+
+		assert.Error(t, err)
+		assert.Equal(t, entities.ComplaintProcess{}, result)
+		assert.Equal(t, constants.ErrComplaintNotVerified, err)
+	})
+
+	t.Run("error when status is Pending and complaint status is Selesai", func(t *testing.T) {
+		mockComplaintProcessRepo := new(MockComplaintProcess)
+		mockComplaintRepo := new(MockComplaint)
+		usecase := NewComplaintProcessUseCase(mockComplaintProcessRepo, mockComplaintRepo)
+		dummyComplaintProcess := &entities.ComplaintProcess{
+			Message:     "Test Message",
+			Status:      "Pending",
+			ComplaintID: "123",
+		}
+
+		mockComplaintRepo.On("GetStatus", mock.Anything).Return("Selesai", nil)
 
 		result, err := usecase.Create(dummyComplaintProcess)
 
