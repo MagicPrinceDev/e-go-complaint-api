@@ -15,6 +15,6 @@ func GetFromEntitiesToResponse(data *entities.ComplaintLike) *Get {
 	return &Get{
 		ID:        data.ID,
 		User:      *user_response.GetUsersFromEntitiesToResponse(&data.User),
-		CreatedAt: data.CreatedAt.Format("3 January 2006 15:04:05"),
+		CreatedAt: data.CreatedAt.Format("2 January 2006 15:04:05"),
 	}
 }
