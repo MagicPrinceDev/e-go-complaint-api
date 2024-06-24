@@ -18,13 +18,13 @@ func GetFromEntitiesToResponse(data *entities.ComplaintActivity) *Get {
 		return &Get{
 			ID:         data.ID,
 			Discussion: discussion_response.FromEntitiesGetToResponse(&data.Discussion),
-			UpdatedAt:  data.UpdatedAt.Format("3 January 2006 15:04:05"),
+			UpdatedAt:  data.UpdatedAt.Format("2 January 2006 15:04:05"),
 		}
 	} else {
 		return &Get{
 			ID:        data.ID,
 			Like:      like_response.GetFromEntitiesToResponse(&data.Like),
-			UpdatedAt: data.UpdatedAt.Format("3 January 2006 15:04:05"),
+			UpdatedAt: data.UpdatedAt.Format("2 January 2006 15:04:05"),
 		}
 	}
 }

@@ -28,12 +28,7 @@ func (cc *CategoryController) GetAll(c echo.Context) error {
 		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
 
-	responseCategories := make([]*response.Get, len(categories))
-	for i, category := range categories {
-		responseCategories[i] = response.GetFromEntitiesToResponse(&category)
-	}
-
-	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success get all categories", responseCategories))
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success get all categories", categories))
 }
 
 func (cc *CategoryController) GetByID(c echo.Context) error {
@@ -47,6 +42,10 @@ func (cc *CategoryController) GetByID(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, base.NewErrorResponse(err.Error()))
 	}
 
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, base.NewErrorResponse(err.Error()))
+	}
+
 	category, err := cc.useCase.GetByID(id)
 	if err != nil {
 		if errors.Is(err, constants.ErrCategoryNotFound) {
@@ -55,9 +54,7 @@ func (cc *CategoryController) GetByID(c echo.Context) error {
 		return c.JSON(utils.ConvertResponseCode(err), base.NewErrorResponse(err.Error()))
 	}
 
-	responseCategory := response.GetFromEntitiesToResponse(&category)
-
-	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success get category by ID", responseCategory))
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success get category by ID", category))
 }
 
 func (cc *CategoryController) CreateCategory(c echo.Context) error {
