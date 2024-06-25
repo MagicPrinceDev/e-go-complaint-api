@@ -24,15 +24,15 @@ func ConnectDB(config Config) *gorm.DB {
 	if err != nil {
 		panic(err)
 	}
+	time.Local = loc
 
 	// Creating the DSN with loc parameter
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=%s",
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		config.DB_USERNAME,
 		config.DB_PASSWORD,
 		config.DB_HOST,
 		config.DB_PORT,
 		config.DB_NAME,
-		loc.String(),
 	)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
