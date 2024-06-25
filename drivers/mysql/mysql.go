@@ -5,6 +5,7 @@ import (
 	"e-complaint-api/drivers/mysql/seeder"
 	"e-complaint-api/entities"
 	"fmt"
+	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -19,6 +20,13 @@ type Config struct {
 }
 
 func ConnectDB(config Config) *gorm.DB {
+	loc, err := time.LoadLocation("Asia/Jakarta")
+	if err != nil {
+		panic(err)
+	}
+	time.Local = loc
+
+	// Creating the DSN with loc parameter
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		config.DB_USERNAME,
 		config.DB_PASSWORD,

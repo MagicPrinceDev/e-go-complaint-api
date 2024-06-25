@@ -2,6 +2,7 @@ package regency
 
 import (
 	"e-complaint-api/controllers/base"
+	"e-complaint-api/controllers/regency/response"
 	"e-complaint-api/entities"
 	"net/http"
 
@@ -22,5 +23,10 @@ func (rc *RegencyController) GetAll(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success get all regencies", regencies))
+	var responseRegencies []*response.Regency
+	for _, regency := range regencies {
+		responseRegencies = append(responseRegencies, response.FromEntitiesToResponse(&regency))
+	}
+
+	return c.JSON(http.StatusOK, base.NewSuccessResponse("Success get all regencies", responseRegencies))
 }

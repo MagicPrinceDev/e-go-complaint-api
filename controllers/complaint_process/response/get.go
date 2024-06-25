@@ -21,6 +21,6 @@ func GetFromEntitiesToResponse(data *entities.ComplaintProcess) *Get {
 		Admin:       admin_response.GetSimpleFromEntitiesToResponse(&data.Admin),
 		Status:      data.Status,
 		Message:     data.Message,
-		UpdatedAt:   data.UpdatedAt.Format("3 January 2006 15:04:05"),
+		UpdatedAt:   data.UpdatedAt.Format("2 January 2006 15:04:05"),
 	}
 }
