@@ -11,6 +11,7 @@ type Update struct {
 	Admin       *admin_response.GetSimple `json:"admin"`
 	Status      string                    `json:"status"`
 	Message     string                    `json:"message"`
+	UpdatedAt   string                    `json:"updated_at"`
 }
 
 func UpdateFromEntitiesToResponse(data *entities.ComplaintProcess) *Update {
@@ -20,5 +21,6 @@ func UpdateFromEntitiesToResponse(data *entities.ComplaintProcess) *Update {
 		Admin:       admin_response.GetSimpleFromEntitiesToResponse(&data.Admin),
 		Status:      data.Status,
 		Message:     data.Message,
+		UpdatedAt:   data.UpdatedAt.Format("2 January 2006 15:04:05"),
 	}
 }
